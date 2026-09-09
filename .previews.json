@@ -6,9 +6,9 @@
     "status": "ready"
   },
   "pulse-calibration": {
-    "attempt": "48a5f790fbba3e5e40dce553570335b18da00094f0c618a09dc29d138f099123",
+    "attempt": "478876c92c61acd684c33fa1dacdf582ea62a61dad31d2fec33f66db3743522d",
     "branch": "codex/pulse-calibration-tutorial",
-    "sha": "e674cb6e9cac3b29ae29ce917e1f9c53d8721825",
+    "sha": "8d19932488889876990d9590321c0e03c5366bd8",
     "status": "ready"
   },
   "pxp": {
@@ -18,9 +18,9 @@
     "status": "ready"
   },
   "qutrit-assisted-toffoli": {
-    "attempt": "22c44fcb00289bd2d3f8af26fe048be8c88a26b2ef0576da96da289df602b71b",
+    "attempt": "52883bad0d0dbda386ee845fc2d882bcd2a3632d13e17b3815cfd245922cdb2f",
     "branch": "codex/qutrit-assisted-toffoli",
-    "sha": "e0a5c9ae08bac516df2d3341baf7370981bfa01b",
+    "sha": "8071462c55f093b12f755d0e72233a3f17d82d4f",
     "status": "ready"
   }
 }

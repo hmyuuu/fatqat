@@ -754,10 +754,15 @@
 </li>
 </ul>
 </div>
-<p>This tutorial constructs a Toffoli gate using two qubits and a qutrit. The
-qutrit has a third level that we can use during the computation, then empty
-before returning the result. We will use it to build a gate whose inputs
-and outputs still behave as three qubits.</p>
+<p>In this tutorial, we build a Toffoli gate with three qubit–qutrit interactions
+and verify its action on quantum states. The middle system is a qutrit: it
+has levels <span class="arithmatex">\(|0\rangle\)</span>, <span class="arithmatex">\(|1\rangle\)</span>, and <span class="arithmatex">\(|2\rangle\)</span>. We use its first two
+levels as a logical qubit and borrow the third during the gate. The final
+checks will show that we recover the required logical output, including its
+relative phases, and empty the borrowed level.</p>
+<p>You should be familiar with qubit basis states, superpositions, and basic
+single-qubit gates. Here we use ideal gate simulation to study a register
+with different local dimensions.</p>
 <p>A Toffoli gate has two controls, <span class="arithmatex">\(a\)</span> and <span class="arithmatex">\(b\)</span>, and a target, <span class="arithmatex">\(t\)</span>. It flips
 the target exactly when both controls are <span class="arithmatex">\(1\)</span>:</p>
 <div class="arithmatex">\[
@@ -776,11 +781,12 @@ gate in three steps:</p>
 <li><strong>Return the control.</strong> Undo the first step so that <span class="arithmatex">\(b\)</span> has its
    original value.</li>
 </ol>
-<p>Each step uses a short sequence of gates, which we call a block. The
-extra level gives us room for this temporary change without adding another
-subsystem.</p>
+<p>Each step uses a short sequence of gates, which we call a block. At the
+end of the first block, occupation of level 2 records that both input
+controls were <span class="arithmatex">\(1\)</span>. We can then condition the target flip on this one level
+and undo the temporary encoding, using the same three subsystems throughout.</p>
 <h2 id="set-up-the-mixed-register">Set up the mixed register<a class="headerlink" href="#set-up-the-mixed-register" title="Permanent link">&para;</a></h2>
-<p>Each control and the target gets a named one-slot register. The registers
+<p>We give each control and the target a named one-slot register. The registers
 <code>a</code> and <code>t</code> use the default qubit dimension, while <code>dim=3</code> makes <code>b</code> a
 qutrit. We address their slots as <code>a[0]</code>, <code>b[0]</code>, and <code>t[0]</code>, following the
 <a href="../../guide/program/#mix-qubits-and-qutrits">mixed-register guide</a>.</p>
@@ -822,12 +828,16 @@ stays unchanged in either case.</p>
 phase. <code>SubspaceRY(theta, (1, 2))</code> applies the usual qubit <span class="arithmatex">\(R_y\)</span> rotation
 within the ordered pair <span class="arithmatex">\((|1\rangle,|2\rangle)\)</span> of <code>b</code>, leaving its
 <span class="arithmatex">\(|0\rangle\)</span> level untouched.</p>
-<p>Between the rotations, <code>CClock(1)</code> supplies a phase that depends on <code>a</code>.
-Its second operand sets the phase's root of unity. With operands
-<code>(b[0], a[0])</code>, that operand is a qubit, so the action is</p>
+<p>Between the rotations, we use <code>CClock(1)</code> to change a sign when <code>a=1</code>.
+Its second operand's dimension sets the phase's root of unity. We put the
+qutrit first and the qubit second, <code>(b[0], a[0])</code>, to obtain the binary
+phases <span class="arithmatex">\(\pm1\)</span>:</p>
 <div class="arithmatex">\[
 |b,a\rangle \longmapsto (-1)^{b a}|b,a\rangle.
 \]</div>
+<p>This formula uses the pair's operand order, <span class="arithmatex">\((b,a)\)</span>; the full register
+remains in <span class="arithmatex">\((a,b,t)\)</span> order. Putting the qutrit second would introduce third
+roots of unity and change the gate.</p>
 <p>When <code>a=0</code>, the phase is always <span class="arithmatex">\(+1\)</span> and the two opposite rotations cancel.
 When <code>a=1</code>, level <code>b=1</code> gains a minus sign, while levels 0 and 2 keep
 their phase. In the selected pair, placing this sign change between the
@@ -839,9 +849,9 @@ R_y(\pi/2)
 =\begin{pmatrix}0&amp;1\\1&amp;0\end{pmatrix}.
 \]</div>
 <p>The matrix on the right exchanges levels 1 and 2 with no extra phase.
-Matrix products act from right to left, so the positive rotation must be
-the first instruction. We store the three operations and their targets in
-execution order:</p>
+Matrix products act from right to left, so we apply the positive rotation
+first. The list below keeps the operations and their targets in execution
+order:</p>
 <div class="language-python highlight"><span class="filename">Python cell 3</span><pre><span></span><code><span class="n">controlled_exchange</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">SubspaceRY</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
     <span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">CClock</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
@@ -855,16 +865,17 @@ swaps the levels back, so the controlled exchange is its own inverse. The
 <a href="../../api/operations/qudit-gates/">qudit-gate reference</a> gives the full
 rotation and controlled-phase conventions.</p>
 <h2 id="flip-the-target-when-b2">Flip the target when b=2<a class="headerlink" href="#flip-the-target-when-b2" title="Permanent link">&para;</a></h2>
-<p>After the first block, we want to flip <code>t</code> for states with <code>b=2</code> and leave
-it unchanged for states with <code>b=0</code> or <code>b=1</code>.</p>
-<p>Start with the controlled phase on <code>(b[0], t[0])</code>. It applies <span class="arithmatex">\(Z\)</span> to <code>t</code>
-when <code>b=1</code> and the identity when <code>b=0</code> or <code>b=2</code>. Placing <code>H</code> before and
+<p>The first block has encoded the two-control condition in <code>b=2</code>. We now
+need a target flip conditioned on that level, while leaving <code>t</code> unchanged
+for <code>b=0</code> and <code>b=1</code>.</p>
+<p>We again put the qubit second in the controlled phase, now using
+<code>(b[0], t[0])</code>. It applies <span class="arithmatex">\(Z\)</span> to <code>t</code> when <code>b=1</code> and the identity when
+<code>b=0</code> or <code>b=2</code>. Placing <code>H</code> before and
 after it gives a target flip for <code>b=1</code>, because <span class="arithmatex">\(H Z H=X\)</span>. For the other
 two levels, the Hadamards cancel: <span class="arithmatex">\(H I H=I\)</span>.</p>
-<p>To make this sequence act on states that enter with <code>b=2</code>, first exchange
-levels 1 and 2 using <code>SwapLevels(1, 2)</code>. Apply the <code>H</code>, <code>CClock</code>, <code>H</code>
-sequence, then exchange the levels again. The table tracks <code>b</code> through
-these operations:</p>
+<p>To select states that enter with <code>b=2</code>, we exchange levels 1 and 2 using
+<code>SwapLevels(1, 2)</code> before the <code>H</code>, <code>CClock</code>, <code>H</code> sequence and exchange them
+again afterward. Tracking each possible value of <code>b</code> gives:</p>
 <table>
 <thead>
 <tr>
@@ -905,31 +916,24 @@ Only the target of a state that entered with <code>b=2</code> is flipped.</p>
     <span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">SwapLevels</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
 <span class="p">]</span>
 </code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">CClock operand order</p>
-<p>In both <code>CClock</code> calls, put the qutrit <code>b</code> first and the qubit (<code>a</code> or
-<code>t</code>) second. The second operand's dimension sets the phase's root of
-unity. A qubit gives the <span class="arithmatex">\(\pm1\)</span> phases used above; putting the qutrit
-second would instead introduce third roots of unity and change the gate.</p>
-</div>
 <h2 id="restore-the-middle-control">Restore the middle control<a class="headerlink" href="#restore-the-middle-control" title="Permanent link">&para;</a></h2>
 <p>For input <span class="arithmatex">\(|110\rangle\)</span>, the first two blocks produce <span class="arithmatex">\(|121\rangle\)</span>.
 The target has the correct value, <span class="arithmatex">\(t=1\)</span>, but the middle control is still
 at <span class="arithmatex">\(b=2\)</span>. Toffoli must leave both controls at their input values, so the
 required output is <span class="arithmatex">\(|111\rangle\)</span>.</p>
-<p>Repeat <code>controlled_exchange</code> to finish the gate. Since <code>a=1</code>, it exchanges
-<code>b</code>'s levels 1 and 2 again, taking <span class="arithmatex">\(|121\rangle\)</span> to <span class="arithmatex">\(|111\rangle\)</span> without
-changing the target. Inputs with <code>a=0</code> or <code>b=0</code> remain unchanged by this
-last block.</p>
-<p>This reversal of the temporary encoding is called uncomputation. It uses
-the same coherent gate operations as the first block, so it also restores
-superpositions. We will check an example below.</p>
+<p>We finish the gate by repeating <code>controlled_exchange</code>. Since <code>a=1</code>, it
+exchanges <code>b</code>'s levels 1 and 2 again, taking <span class="arithmatex">\(|121\rangle\)</span> to <span class="arithmatex">\(|111\rangle\)</span>
+without changing the target. Inputs with <code>a=0</code> or <code>b=0</code> remain unchanged
+by this last block.</p>
+<p>This reversal of the temporary encoding is called uncomputation. We undo
+the encoding with coherent gates, preserving the relative amplitudes of
+input branches. After tracing one basis input, we will check that restoration
+also works for a superposition.</p>
 <h2 id="assemble-and-run-the-program">Assemble and run the program<a class="headerlink" href="#assemble-and-run-the-program" title="Permanent link">&para;</a></h2>
-<p>Join the three blocks in order: the controlled level exchange, the target
-flip, and the same controlled exchange again. <code>make_program</code> appends their
-operations through <code>Program.add</code> in their execution order. Keeping the
-block lists lets us run the same
-construction up to any intermediate instruction later.</p>
+<p>We have the three blocks needed for Toffoli. Joining them in order gives
+the complete gate; keeping their instruction lists also lets us stop at
+block boundaries to inspect the temporary encoding. The helper
+<code>make_program</code> turns an instruction list into a <code>Program</code> through <code>Program.add</code>.</p>
 <div class="language-python highlight"><span class="filename">Python cell 5</span><pre><span></span><code><span class="n">sequence</span> <span class="o">=</span> <span class="n">controlled_exchange</span> <span class="o">+</span> <span class="n">flip_on_level_2</span> <span class="o">+</span> <span class="n">controlled_exchange</span>
 
 
@@ -942,13 +946,12 @@ construction up to any intermediate instruction later.</p>
 
 <span class="n">toffoli_program</span> <span class="o">=</span> <span class="n">make_program</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
 </code></pre></div>
-<p>We use ideal statevector simulation to inspect the complete complex state
-after a sequence of gates. <code>initial_state</code> supplies the input vector, and
-<code>result_config</code> disables counts and explicitly requests the final state.
-With no measurements or noise, these runs are deterministic and need no
-random seed.</p>
-<p>The following helper returns that statevector. It accepts the same lists
-as <code>make_program</code>, so it can run either the full gate or a prefix of it.</p>
+<p>To follow the borrowed level, we need the complex state after each block.
+The <code>statevector</code> method returns this vector. In <code>evolve</code>, <code>initial_state</code>
+chooses the input, and <code>result_config</code> requests the final state and disables
+counts. These ideal runs contain no measurements or noise, so they have no
+sampling uncertainty and need no random seed. We can use the same helper
+for the full gate or a prefix of its instructions.</p>
 <div class="language-python highlight"><span class="filename">Python cell 6</span><pre><span></span><code><span class="n">state_backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">Simulator</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"statevector"</span><span class="p">,</span> <span class="n">runtime</span><span class="o">=</span><span class="s2">"numpy"</span><span class="p">)</span>
 
 
@@ -961,10 +964,10 @@ as <code>make_program</code>, so it can run either the full gate or a prefix of 
     <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="follow-one-input-through-the-borrowed-level">Follow one input through the borrowed level<a class="headerlink" href="#follow-one-input-through-the-borrowed-level" title="Permanent link">&para;</a></h2>
-<p>Start with <span class="arithmatex">\(|110\rangle\)</span>: both controls are <span class="arithmatex">\(1\)</span>, and the target is <span class="arithmatex">\(0\)</span>.
+<p>We start with <span class="arithmatex">\(|110\rangle\)</span>: both controls are <span class="arithmatex">\(1\)</span>, and the target is <span class="arithmatex">\(0\)</span>.
 The controlled exchange moves the middle control to level 2, the middle
-block flips the target, and restoration brings the control back. The expected states at
-the block boundaries are</p>
+block flips the target, and restoration brings the control back. The
+expected states at the block boundaries are</p>
 <div class="arithmatex">\[
 |110\rangle
 \xrightarrow{\text{exchange}}|120\rangle
@@ -1002,10 +1005,10 @@ Flip target: |121&gt;, P(b=2) = 1.000e+00
     Restore: |111&gt;, P(b=2) = 7.183e-32
 </code></pre></div>
 </div>
-<p>The printed population is zero at the input, one after the exchange and the
-target flip, and zero again to numerical precision after restoration.
-The following figure places these populations beside the state labels so
-we can see when this input occupies the borrowed level.</p>
+<p>The printed populations follow <span class="arithmatex">\(0,1,1,0\)</span> to numerical precision. For this
+input, the middle control occupies level 2 after the exchange and target
+flip, then returns to level 1. The figure pairs each population with its
+state label so we can inspect both the control's return and the target's flip.</p>
 <div class="language-python highlight"><span class="filename">Python cell 8</span><pre><span></span><code><span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.6</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">))</span>
 <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">checkpoints</span><span class="p">))</span>
 <span class="n">axis</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">borrowed_populations</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#c97920"</span><span class="p">)</span>
@@ -1038,16 +1041,17 @@ we can see when this input occupies the borrowed level.</p>
 <p class="admonition-title">Runtime result</p>
 <p><img alt="One simulated input follows 110, 120, 121, and 111 at the input, controlled level exchange, target flip, and restoration checkpoints; the middle system's level-2 population is zero, one, one, and zero." src="../../assets/generated/tutorials/qutrit-assisted-toffoli-01.png" /></p>
 </div>
-<p>This figure follows one illustrative input. Its horizontal axis marks
-block boundaries, with no physical timing implied by their spacing.
-Rotations and swaps within a block can also populate level 2; the bars
-describe only the returned states at the four checkpoints. The tiny final
-residual is consistent with floating-point arithmetic.</p>
+<p>The horizontal axis marks block boundaries, not elapsed time. Rotations
+and swaps can also populate level 2 within a block; each bar describes the
+state at its checkpoint. The tiny final residual is consistent with
+floating-point arithmetic.</p>
 <h2 id="check-a-superposition">Check a superposition<a class="headerlink" href="#check-a-superposition" title="Permanent link">&para;</a></h2>
-<p>The basis-state trace shows where the population goes, but a quantum gate
-must also act correctly on superpositions. Prepare <code>a</code> with <code>H</code> followed
-by <code>S</code>, giving <span class="arithmatex">\((|0\rangle+i|1\rangle)/\sqrt2\)</span>. A <code>Shift(1)</code> puts <code>b</code>
-in level 1, while <code>t</code> starts at zero.</p>
+<p>The trace confirms the route through level 2 for one input. We now combine
+two branches: after the controlled exchange, one occupies level 2 and the
+other remains in the logical subspace. To prepare them, we apply <code>H</code> followed
+by <code>S</code> to <code>a</code>, giving
+<span class="arithmatex">\((|0\rangle+i|1\rangle)/\sqrt2\)</span>. A <code>Shift(1)</code> puts <code>b</code> in level 1,
+while <code>t</code> starts at zero. The factor <span class="arithmatex">\(i\)</span> gives us a relative phase to track.</p>
 <p>This input contains two branches. The <span class="arithmatex">\(|010\rangle\)</span> branch should stay
 unchanged because its first control is zero. The <span class="arithmatex">\(|110\rangle\)</span> branch
 should undergo the exchange, flip, and restoration we just traced. The
@@ -1058,10 +1062,10 @@ full gate should therefore give</p>
 \frac{|010\rangle+i|111\rangle}{\sqrt2}.
 \]</div>
 <p>After the first block, only the second branch occupies level 2. Restoration
-must bring it back without altering its relative factor <span class="arithmatex">\(i\)</span>. We keep preparation
-separate from the gate: first create <code>coherent_input</code>, then pass it to a run
-of <code>sequence</code>. The assertions check both the expected complex output and
-the absence of any remaining borrowed-level amplitude.</p>
+must bring it back without altering its relative factor <span class="arithmatex">\(i\)</span>. We keep
+preparation separate from the gate: first create <code>coherent_input</code>, then
+pass it to a run of <code>sequence</code>. The assertions check both the expected
+complex output and the absence of any remaining borrowed-level amplitude.</p>
 <div class="language-python highlight"><span class="filename">Python cell 9</span><pre><span></span><code><span class="n">preparation</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
     <span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
@@ -1096,17 +1100,18 @@ Final borrowed-level population: 3.0032757235022374e-32
 </code></pre></div>
 </div>
 <p>The two printed amplitudes are <span class="arithmatex">\(1/\sqrt2\)</span> and <span class="arithmatex">\(i/\sqrt2\)</span>, as expected.
-Both branches end with <code>b=1</code>, while <code>a</code> and <code>t</code> are entangled, much like
-the pair in the <a href="../bell-state/">Bell-state tutorial</a>, here with a relative
-phase of <span class="arithmatex">\(i\)</span>.</p>
+Both branches end with <code>b=1</code>, while <code>a</code> and <code>t</code> are entangled with a
+relative phase of <span class="arithmatex">\(i\)</span> between their <span class="arithmatex">\(|00\rangle\)</span> and <span class="arithmatex">\(|11\rangle\)</span> components.</p>
 <p>Measuring these branches in the computational basis would give equal
 probabilities. Replacing <span class="arithmatex">\(i\)</span> by <span class="arithmatex">\(-i\)</span> would give the same probabilities but
 a different quantum state. Comparing complex amplitudes lets us detect
 that phase error, which a probability-only check would miss.</p>
 <h2 id="check-all-eight-logical-inputs">Check all eight logical inputs<a class="headerlink" href="#check-all-eight-logical-inputs" title="Permanent link">&para;</a></h2>
-<p>We have checked two examples. To establish the gate's action on every
-logical input, switch to the <code>unitary</code> simulation method. It returns the
-full <span class="arithmatex">\(12\times12\)</span> matrix of the gate, with no input preparation included.</p>
+<p>The superposition check tests coherence for two input branches. We can
+cover the whole logical subspace by comparing the output for each of its
+eight basis states, including the complex amplitudes. The <code>unitary</code>
+simulation method gives us all those outputs in the full <span class="arithmatex">\(12\times12\)</span>
+matrix of the gate. We run <code>toffoli_program</code>, which contains only the gate.</p>
 <p>Each column is the output state for one basis input. Entry <span class="arithmatex">\((i,j)\)</span> is the
 amplitude for output state <span class="arithmatex">\(i\)</span> when the input is state <span class="arithmatex">\(j\)</span>. Both axes use
 the <a href="../../api/result/#ordering-and-mutable-values">result conventions</a>
@@ -1114,9 +1119,10 @@ introduced above. For example, the column for <span class="arithmatex">\(|110\ra
 unit amplitude in the row for <span class="arithmatex">\(|111\rangle\)</span>.</p>
 <p>The logical states are interleaved with the borrowed-level states in this
 ordering. We select the eight logical rows and columns to obtain the gate's
-logical matrix, and separately select the four borrowed-level output rows
-to check for leakage from logical inputs.</p>
-<p>For comparison, build an independent <span class="arithmatex">\(8\times8\)</span> Toffoli matrix from its
+logical matrix. We also select the four borrowed-level output rows to
+check for leakage: amplitude left outside the logical subspace at the end
+of the gate.</p>
+<p>For comparison, we build a reference <span class="arithmatex">\(8\times8\)</span> Toffoli matrix from its
 Boolean rule. Here the indices use the three-bit formula <span class="arithmatex">\(4a+2b+t\)</span>.
 For each input column, <code>t_bit ^ (a_bit &amp; b_bit)</code> gives the output target
 bit; we put a one in the corresponding output row and leave the other
@@ -1153,16 +1159,17 @@ Maximum final leakage amplitude: 2.0885136050691678e-16
 <p>Both printed errors should be near floating-point precision. The first
 assertion compares the logical matrix with Toffoli, including every complex
 phase. The second requires the amplitudes from logical inputs to level-2
-outputs to be zero. We use the returned arrays directly; FatQat's
-<code>Estimator</code> accepts qubit-only programs.</p>
+outputs to be zero. These checks use the returned amplitudes without a
+phase adjustment or renormalization, so a phase mismatch or amplitude left
+in level 2 would remain visible.</p>
 <p>Any logical superposition is a linear combination of the eight input
 columns. Matching all those columns, including their phases and their
 borrowed-level entries, therefore establishes the intended action for
-arbitrary logical superpositions to numerical precision. No phase adjustment
-or renormalization is applied in these comparisons.</p>
-<p>To read the truth table visually, plot the squared magnitudes of the eight
-logical input columns. Keep all twelve output rows so that any final
-population in the borrowed level would also appear.</p>
+arbitrary logical superpositions to numerical precision.</p>
+<p>With the complex matrix checked, we can visualize the truth table by
+plotting the squared magnitudes of the eight logical input columns. We keep
+all twelve output rows so that any final borrowed-level population would
+also appear.</p>
 <div class="language-python highlight"><span class="filename">Python cell 11</span><pre><span></span><code><span class="n">transition_probabilities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">unitary</span><span class="p">[:,</span> <span class="n">logical_indices</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
 <span class="n">logical_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">basis_labels</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">logical_indices</span><span class="p">]</span>
 
@@ -1197,11 +1204,11 @@ precision for all eight inputs. The figure shows the correct truth table
 and return to the logical subspace; the complex comparisons above supply
 the phase-sensitive verification.</p>
 <h2 id="count-the-interactions">Count the interactions<a class="headerlink" href="#count-the-interactions" title="Permanent link">&para;</a></h2>
-<p>Each <code>CClock</code> acts on the qutrit <code>b</code> and one qubit, either <code>a</code> or <code>t</code>, so
-these are qubit–qutrit interactions. The other gates act on one qubit or
-one qutrit at a time. Count both groups from the same <code>sequence</code> that we
-simulated, using each operation's <code>num_subsystems</code> value. Input preparation
-is separate and does not enter this count.</p>
+<p>Having verified the gate, we can count the operations needed to construct
+it. Each <code>CClock</code> couples the qutrit <code>b</code> to one qubit, either <code>a</code> or <code>t</code>.
+The other gates act on one subsystem at a time. We count these groups in
+the same <code>sequence</code> we simulated, using each operation's <code>num_subsystems</code>
+value. The count covers the gate itself; input preparation is separate.</p>
 <div class="language-python highlight"><span class="filename">Python cell 12</span><pre><span></span><code><span class="n">interaction_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">operation</span><span class="o">.</span><span class="n">num_subsystems</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">operation</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">sequence</span><span class="p">)</span>
 <span class="n">single_gate_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">operation</span><span class="o">.</span><span class="n">num_subsystems</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">operation</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">sequence</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Primitive instructions: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -1217,9 +1224,8 @@ Single-qubit or single-qutrit gates: 8
 </div>
 <p>There are eleven primitive instructions: three qubit–qutrit interactions,
 two single-qubit gates (<code>H</code> on <code>t</code>), and six single-qutrit gates (four
-rotations and two level swaps on <code>b</code>). Together they implement Toffoli on
-the eight logical states, preserving their relative phases and leaving no
-final population in the borrowed level to numerical precision.</p>
+rotations and two level swaps on <code>b</code>). Each of the three blocks uses one
+interaction, with local gates selecting how it acts on the logical states.</p>
 <p>In <a href="https://arxiv.org/abs/0806.0654"><em>Efficient Toffoli Gates Using Qudits</em></a>,
 Ralph, Resch, and Gilchrist showed how access to a third level reduces
 Toffoli to three controlled-sign interactions. This FatQat construction
@@ -1227,11 +1233,10 @@ follows that principle with a different gate sequence. To compare physical
 speed or fidelity, we would also need the durations and errors of the
 rotations and interactions.</p>
 <h2 id="exercise-leave-out-restoration">Exercise: leave out restoration<a class="headerlink" href="#exercise-leave-out-restoration" title="Permanent link">&para;</a></h2>
-<p>What happens if we stop after flipping the target? Run the following code
-after the tutorial cells. It applies only the first two blocks to
-<span class="arithmatex">\(|110\rangle\)</span>, then prints the output state and the probability that <code>b</code>
-is still at level 2. Before running it, predict whether <code>b</code> will end at
-level 1 or level 2.</p>
+<p>Run the following code after the tutorial cells to omit the restoration
+block. It applies the first two blocks to <span class="arithmatex">\(|110\rangle\)</span> and prints the
+output amplitudes and borrowed-level population. Predict the output state
+before running it, then compare it with the required <span class="arithmatex">\(|111\rangle\)</span>.</p>
 <div class="language-python highlight"><pre><span></span><code><span class="n">without_restoration</span> <span class="o">=</span> <span class="n">controlled_exchange</span> <span class="o">+</span> <span class="n">flip_on_level_2</span>
 <span class="n">unfinished_state</span> <span class="o">=</span> <span class="n">evolve</span><span class="p">(</span><span class="n">without_restoration</span><span class="p">,</span> <span class="n">basis_state</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">amplitude</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">basis_labels</span><span class="p">,</span> <span class="n">unfinished_state</span><span class="p">):</span>
@@ -1239,9 +1244,12 @@ level 1 or level 2.</p>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"|</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&gt;: </span><span class="si">{</span><span class="n">amplitude</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"P(b=2):"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">unfinished_state</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">dims</span><span class="p">)[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">:])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
 </code></pre></div>
-<p>Compare your result with the required output <span class="arithmatex">\(|111\rangle\)</span>, where <code>b=1</code>
-and <code>P(b=2)=0</code>. Check both the target and the middle control: has the gate
-returned both to their required values?</p>
+<p>Next, replace <code>basis_state(1, 1, 0)</code> in the exercise with <code>coherent_input</code>.
+Predict which branch will remain in level 2 and its contribution to
+<code>P(b=2)</code>, then compare the returned amplitudes with <code>expected_output</code>.
+Explain why getting the target bit right on each branch is insufficient
+to recover the intended quantum state. Finally, use the full <code>sequence</code>
+and check that the middle control returns to the logical subspace.</p>
 
 
 
