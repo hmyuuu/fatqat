@@ -3,3 +3,4 @@
 [previews]
 main = "main"
 pxp = "codex/pxp-incremental-evolution"
+pulse-calibration = "codex/pulse-calibration-tutorial"
