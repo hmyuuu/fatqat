@@ -1,0 +1,184 @@
+name: Documentation previews (fork only)
+
+on:
+  push:
+    branches: [codex/docs-hosting]
+    paths: [hosting/**, .github/workflows/docs-previews.yml]
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Rebuild all previews, including unchanged or failed commits
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# Serialize the entire refresh so plans and published state cannot race.
+concurrency:
+  group: fork-documentation-previews
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    if: github.repository == 'hmyuuu/fatqat' && github.ref == 'refs/heads/codex/docs-hosting'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      has_builds: ${{ steps.plan.outputs.has_builds }}
+      publish: ${{ steps.plan.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Test preview preservation
+        run: python -m unittest discover -s hosting -p 'test_*.py'
+      - name: Find changed branches
+        id: plan
+        env:
+          FORCE_REBUILD: ${{ inputs.force || false }}
+        run: python hosting/previews.py plan
+      - uses: actions/upload-artifact@v7
+        if: steps.plan.outputs.publish == 'true'
+        with:
+          name: preview-plan
+          path: ${{ runner.temp }}/plan.json
+          retention-days: 1
+          if-no-files-found: error
+
+  build:
+    needs: plan
+    if: needs.plan.outputs.has_builds == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        preview: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    name: Build ${{ matrix.preview.slug }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ matrix.preview.sha }}
+          path: source
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            source/pyproject.toml
+            source/docs/mkdocs/requirements.txt
+      - name: Build strict documentation for this commit
+        id: build
+        working-directory: source
+        env:
+          PREVIEW_URL: ${{ matrix.preview.url }}
+          PREVIEW_BRANCH: ${{ matrix.preview.branch }}
+          MPLBACKEND: Agg
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . -r docs/mkdocs/requirements.txt
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from urllib.parse import quote
+
+          overlay = {
+              "INHERIT": "mkdocs.yml",
+              "site_url": os.environ["PREVIEW_URL"],
+              "repo_name": "hmyuuu/fatqat",
+              "repo_url": "https://github.com/hmyuuu/fatqat",
+              "edit_uri": "blob/" + quote(os.environ["PREVIEW_BRANCH"], safe="") + "/docs/mkdocs/en/",
+          }
+          Path(".preview-mkdocs.yml").write_text(json.dumps(overlay), encoding="utf-8")
+          PY
+          python -m mkdocs build --strict --config-file .preview-mkdocs.yml --site-dir "$RUNNER_TEMP/preview-artifact/site"
+      - name: Record build outcome
+        if: always()
+        env:
+          BUILD_STATUS: ${{ steps.build.outcome }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          output = Path(os.environ["RUNNER_TEMP"]) / "preview-artifact"
+          output.mkdir(exist_ok=True)
+          (output / "result.json").write_text(json.dumps({"status": os.environ["BUILD_STATUS"]}))
+          PY
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: preview-${{ matrix.preview.slug }}
+          path: ${{ runner.temp }}/preview-artifact
+          retention-days: 1
+          if-no-files-found: error
+          include-hidden-files: true
+
+  publish:
+    needs: [plan, build]
+    if: always() && !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+      actions: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v8
+        with:
+          name: preview-plan
+          path: ${{ runner.temp }}/plan
+      - name: Download available branch results
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/artifacts"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --paginate \
+            --jq '.artifacts[].name | select(startswith("preview-") and . != "preview-plan")' > "$RUNNER_TEMP/artifact-names"
+          while IFS= read -r artifact; do
+            gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --name "$artifact" \
+              --dir "$RUNNER_TEMP/artifacts/$artifact"
+          done < "$RUNNER_TEMP/artifact-names"
+      - name: Assemble previews and prepare saved state
+        run: |
+          python hosting/previews.py publish
+          git -C "$RUNNER_TEMP/published" config user.name 'github-actions[bot]'
+          git -C "$RUNNER_TEMP/published" config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C "$RUNNER_TEMP/published" add --all
+          if ! git -C "$RUNNER_TEMP/published" diff --cached --quiet; then
+            git -C "$RUNNER_TEMP/published" commit -m 'Refresh branch documentation previews'
+          fi
+          mkdir -p "$RUNNER_TEMP/pages-site"
+          git -C "$RUNNER_TEMP/published" archive HEAD | tar -x -C "$RUNNER_TEMP/pages-site"
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: ${{ runner.temp }}/pages-site
+      - uses: actions/deploy-pages@v5
+        id: deployment
+      - name: Save state only after successful publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh auth setup-git
+          git -C "$RUNNER_TEMP/published" push origin HEAD:gh-pages

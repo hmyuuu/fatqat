@@ -1,0 +1,5 @@
+# Edit this file only on codex/docs-hosting.
+# Each key is a URL directory; each value is an existing branch in this fork.
+[previews]
+main = "main"
+pxp = "codex/pxp-incremental-evolution"
