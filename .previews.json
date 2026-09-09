@@ -16,5 +16,11 @@
     "branch": "codex/pxp-incremental-evolution",
     "sha": "8400ace88a85440b983806f99d1717033f974fca",
     "status": "ready"
+  },
+  "qutrit-assisted-toffoli": {
+    "attempt": "22c44fcb00289bd2d3f8af26fe048be8c88a26b2ef0576da96da289df602b71b",
+    "branch": "codex/qutrit-assisted-toffoli",
+    "sha": "e0a5c9ae08bac516df2d3341baf7370981bfa01b",
+    "status": "ready"
   }
 }

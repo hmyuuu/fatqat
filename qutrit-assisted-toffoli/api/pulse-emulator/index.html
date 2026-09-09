@@ -1,0 +1,4288 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Model quantum programs across simulation, hardware constraints, and physical dynamics">
+      
+      
+        <meta name="author" content="FatQat contributors">
+      
+      
+        <link rel="canonical" href="https://hmyuuu.github.io/fatqat/qutrit-assisted-toffoli/api/pulse-emulator/">
+      
+      
+        <link rel="prev" href="../emulators/">
+      
+      
+        <link rel="next" href="../atom-emulators/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Superconducting pulse emulator - FatQat</title>
+      
+    
+    
+  
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+  <link rel="stylesheet" href="../../assets/stylesheets/site.css">
+
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#superconducting-pulse-emulator" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="FatQat" class="md-header__button md-logo" aria-label="FatQat" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.36 2.64c1.64 0 3 1.36 3 3 0 1.65-1.36 3-3 3-1.65 0-3-1.35-3-3 0-.3.05-.58.14-.84-1.07-.51-2.25-.8-3.5-.8a8 8 0 0 0-8 8l.04.84-1.99.21L2 12A10 10 0 0 1 12 2c1.69 0 3.28.42 4.67 1.16.49-.33 1.07-.52 1.69-.52m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1c.56 0 1-.45 1-1 0-.56-.44-1-1-1M5.64 15.36c1.65 0 3 1.35 3 3 0 .3-.05.58-.14.84 1.07.51 2.25.8 3.5.8a8 8 0 0 0 8-8l-.04-.84 1.99-.21L22 12a10 10 0 0 1-10 10c-1.69 0-3.28-.42-4.67-1.16-.49.33-1.07.52-1.69.52-1.64 0-3-1.36-3-3 0-1.65 1.36-3 3-3m0 2c-.56 0-1 .45-1 1 0 .56.44 1 1 1a1 1 0 0 0 1-1 1 1 0 0 0-1-1M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FatQat
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Superconducting pulse emulator
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hmyuuu/fatqat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hmyuuu/fatqat
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guide/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tutorials/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="FatQat" class="md-nav__button md-logo" aria-label="FatQat" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.36 2.64c1.64 0 3 1.36 3 3 0 1.65-1.36 3-3 3-1.65 0-3-1.35-3-3 0-.3.05-.58.14-.84-1.07-.51-2.25-.8-3.5-.8a8 8 0 0 0-8 8l.04.84-1.99.21L2 12A10 10 0 0 1 12 2c1.69 0 3.28.42 4.67 1.16.49-.33 1.07-.52 1.69-.52m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1c.56 0 1-.45 1-1 0-.56-.44-1-1-1M5.64 15.36c1.65 0 3 1.35 3 3 0 .3-.05.58-.14.84 1.07.51 2.25.8 3.5.8a8 8 0 0 0 8-8l-.04-.84 1.99-.21L22 12a10 10 0 0 1-10 10c-1.69 0-3.28-.42-4.67-1.16-.49.33-1.07.52-1.69.52-1.64 0-3-1.36-3-3 0-1.65 1.36-3 3-3m0 2c-.56 0-1 .45-1 1 0 .56.44 1 1 1a1 1 0 0 0 1-1 1 1 0 0 0-1-1M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4"/></svg>
+
+    </a>
+    FatQat
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hmyuuu/fatqat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hmyuuu/fatqat
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../guide/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User guide
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../tutorials/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build programs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Build programs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../program/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Program
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compiler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compiler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../registers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../operations/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../pulse-control/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pulse control
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run and inspect
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Run and inspect
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../simulators/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simulators
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../emulators/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Emulators
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3_2" id="__nav_4_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_3_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Emulators
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transmon emulator
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transmon emulator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#create-the-emulator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create the emulator
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#execution-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execution methods
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#physics-model-and-calibration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Physics model and calibration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Physics model and calibration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model documents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate-transmon-grid-documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generate transmon grid documents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#units" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Units
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calibration-recipes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calibration recipes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pulse-implementation-maps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pulse implementation maps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#direct-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Direct controls
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lindblad-noise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lindblad noise
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#neutral-atom-pulse-emulator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neutral-atom pulse emulator
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonEmulator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;TransmonEmulator
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" TransmonEmulator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonEmulator.method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;method
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonEmulator.model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonEmulator.run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;run
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonEmulator.validate_noise_model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;validate_noise_model
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;TransmonModel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" TransmonModel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.basis_order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;basis_order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.time_unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;time_unit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.subsystem_ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;subsystem_ids
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.available_controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;available_controls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.from_document" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;from_document
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.frame" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;frame
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonCalibration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;TransmonCalibration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.generate_transmon_grid_documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;generate_transmon_grid_documents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.available_model_documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;available_model_documents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.load_model_document" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;load_model_document
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.default_transmon_calibration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;default_transmon_calibration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.superconducting.angular_rate_from_ghz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;angular_rate_from_ghz
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.default_transmon_gate_implementation_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;default_transmon_gate_implementation_map
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atom-emulators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Neutral-atom emulators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../noise/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Noise
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../estimator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Estimator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../job/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Job
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Result
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integrate and extend
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Integrate and extend
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../interoperability/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interoperability
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation maps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors and stability
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Errors and stability
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exceptions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exceptions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experimental/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experimental APIs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#create-the-emulator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create the emulator
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#execution-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execution methods
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#physics-model-and-calibration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Physics model and calibration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Physics model and calibration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model documents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate-transmon-grid-documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generate transmon grid documents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#units" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Units
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calibration-recipes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calibration recipes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pulse-implementation-maps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pulse implementation maps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#direct-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Direct controls
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lindblad-noise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lindblad noise
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#neutral-atom-pulse-emulator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neutral-atom pulse emulator
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonEmulator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;TransmonEmulator
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" TransmonEmulator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonEmulator.method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;method
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonEmulator.model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonEmulator.run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;run
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonEmulator.validate_noise_model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;validate_noise_model
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;TransmonModel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" TransmonModel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.basis_order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;basis_order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.time_unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;time_unit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.subsystem_ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;subsystem_ids
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.available_controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;available_controls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.from_document" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;from_document
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonModel.frame" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;frame
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.TransmonCalibration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;TransmonCalibration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.generate_transmon_grid_documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;generate_transmon_grid_documents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.available_model_documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;available_model_documents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.load_model_document" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;load_model_document
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.default_transmon_calibration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;default_transmon_calibration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.superconducting.angular_rate_from_ghz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;angular_rate_from_ghz
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fatqat.emulator.default_transmon_gate_implementation_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;default_transmon_gate_implementation_map
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    API reference
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../simulators/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Run and inspect
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../emulators/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Emulators
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="superconducting-pulse-emulator">Superconducting pulse emulator<a class="headerlink" href="#superconducting-pulse-emulator" title="Permanent link">&para;</a></h1>
+<p>The <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TransmonEmulator&lt;/span&gt;" href="#fatqat.emulator.TransmonEmulator"><code>TransmonEmulator</code></a> runs a
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt;" href="../program/#fatqat.Program"><code>Program</code></a> against a three-level transmon model. It evolves
+sampled controls over the full physical model, and <code>run()</code> returns an eager
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Job&lt;/span&gt;" href="../job/#fatqat.Job"><code>Job</code></a>.</p>
+<p>See <a href="../../guide/transmon-emulation/">Emulate a superconducting system</a> for a
+walkthrough covering calibrated gates and direct drive.</p>
+<p>Ordinary gates use <code>gate_implementation_map</code>. A
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;PulseOperation&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../pulse-control/pulse-operation/#fatqat.operations.PulseOperation"><code>PulseOperation</code></a> contains its own physical
+channels and does not use that map. See <a href="../pulse-control/">Pulse control</a> for direct
+pulse authoring.</p>
+<p>Unless a path is shown explicitly, the APIs on this page come from
+<code>fatqat.emulator</code>; the GHz conversion helper comes from
+<code>fatqat.emulator.superconducting</code>.</p>
+<h2 id="create-the-emulator">Create the emulator<a class="headerlink" href="#create-the-emulator" title="Permanent link">&para;</a></h2>
+<p>Load the packaged model and construct the emulator:</p>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+
+<span class="n">model_document</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">load_model_document</span><span class="p">(</span><span class="s2">"transmon.reference"</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonModel</span><span class="o">.</span><span class="n">from_document</span><span class="p">(</span><span class="n">model_document</span><span class="p">)</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonEmulator</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</code></pre></div>
+<p>To use an explicit calibration, build its gate map before constructing the
+emulator:</p>
+<div class="language-python highlight"><pre><span></span><code><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"calibration.json"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+    <span class="n">calibration</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonCalibration</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">))</span>
+<span class="n">gate_map</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">default_transmon_gate_implementation_map</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">calibration</span><span class="o">=</span><span class="n">calibration</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonEmulator</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">gate_implementation_map</span><span class="o">=</span><span class="n">gate_map</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>The packaged calibration is a reference configuration for simulation, not a
+hardware calibration. To customize it, supply a complete calibration document
+rather than a partial patch.</p>
+<p>By default, qubits in a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt;" href="../program/#fatqat.Program"><code>Program</code></a> bind in declaration order
+to <code>model.subsystem_ids</code>. Pass an explicit
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ResourceLayout&lt;/span&gt;" href="../registers/#fatqat.ResourceLayout"><code>ResourceLayout</code></a> to <code>run(resource_layout=...)</code> to
+override that binding; its device labels must be model subsystem IDs.
+Unaddressed transmons remain part of the full physical state and still
+contribute factors of three to state and operator dimensions. The result's
+<code>state_axes</code> lists every model transmon in model order, most-significant first.
+Statevectors and both axes of density matrices and unitaries use that order.
+State and unitary
+results may still use different documented terminal frames.</p>
+<p><code>TransmonEmulator(...)</code> accepts these optional arguments:</p>
+<p><strong>Constructor options</strong></p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>method</code></td>
+<td>Mathematical representation and method-native result field. Accepted case-insensitive values are <code>"statevector"</code> (the default), <code>"density_matrix"</code>, and <code>"unitary"</code>; <code>"SV"</code> and <code>"DM"</code> are aliases.</td>
+</tr>
+<tr>
+<td><code>noise</code></td>
+<td>A <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;NoiseModel&lt;/span&gt;" href="../noise/model/#fatqat.NoiseModel"><code>NoiseModel</code></a>. <code>None</code> means no noise.</td>
+</tr>
+<tr>
+<td><code>gate_implementation_map</code></td>
+<td>A <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;PulseImplementationMap&lt;/span&gt;" href="../pulse-control/gate-realization/#fatqat.emulator.PulseImplementationMap"><code>PulseImplementationMap</code></a> mapping operation families and device labels to pulse definitions. <code>None</code> uses the built-in map.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="execution-methods">Execution methods<a class="headerlink" href="#execution-methods" title="Permanent link">&para;</a></h2>
+<p><code>method</code> names a mathematical representation, not the internal differential-
+equation solver. The read-only <code>backend.method</code> property always returns the
+canonical full name, and <code>result.metadata["method"]</code> records it.</p>
+<p><strong>Method-native results</strong></p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Result accessor</th>
+<th>Shape for <code>m</code> transmons</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"statevector"</code></td>
+<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;get_statevector&lt;/span&gt;" href="../result/#fatqat.Result.get_statevector"><code>get_statevector</code></a></td>
+<td><code>(3**m,)</code></td>
+<td>A pure coherent state, or one seeded trajectory when Lindblad noise can act.</td>
+</tr>
+<tr>
+<td><code>"density_matrix"</code></td>
+<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;get_density_matrix&lt;/span&gt;" href="../result/#fatqat.Result.get_density_matrix"><code>get_density_matrix</code></a></td>
+<td><code>(3**m, 3**m)</code></td>
+<td>The exact ensemble state under supported Lindblad evolution.</td>
+</tr>
+<tr>
+<td><code>"unitary"</code></td>
+<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;get_unitary&lt;/span&gt;" href="../result/#fatqat.Result.get_unitary"><code>get_unitary</code></a></td>
+<td><code>(3**m, 3**m)</code></td>
+<td>The complete coherent operator.</td>
+</tr>
+</tbody>
+</table>
+<p>All three representations cover the complete physical qutrit model, not just
+the resources declared by the program. They use the same canonical model
+basis: terminal virtual-frame changes are composed into every returned state
+or operator. This does not convert the effective RWA model to a laboratory
+frame. <code>result_config</code> controls whether the method-native value is returned;
+it does not expose the solver's internal rotating-frame coordinates. Pulse
+emulators do not expose <code>superop</code> or internal solver names as methods.</p>
+<p>An unmeasured statevector run with potentially active Lindblad noise is
+stochastic, so the default result request retains metadata only. Request one
+reproducible trajectory with
+<code>result_config={"final_state": True}</code>, <code>shots=1</code>, and a non-negative
+<code>simulation_config["seed"]</code>. Choose <code>method="density_matrix"</code> for the
+exact ensemble instead.</p>
+<p>Each transmon statevector trajectory is an independent physical evolution, so
+the cost of a measured trajectory run grows with <code>shots</code>. Use
+<code>method="density_matrix"</code> when an exact ensemble result is more useful.</p>
+<p><code>method="unitary"</code> is available through <code>run()</code> and
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;get_unitary&lt;/span&gt;" href="../result/#fatqat.Result.get_unitary"><code>get_unitary</code></a>; there is no separate public
+propagator API. Unitary execution rejects measurement, reset, classical
+conditions, counts, and programs in which resolved Lindblad noise can act
+during nonzero-duration evolution. The check is deliberately structural:
+background noise is considered active whenever any nonzero-duration block
+exists, whereas operation-scoped noise is considered active only when attached
+to such a block. Conditioned blocks and zero-rate declarations still count as
+active; unmatched declarations and declarations scoped to zero-duration blocks
+do not. The check does not analyze reachability, trajectories, jump
+probability, or internal solver coefficients. Readout-only noise does not
+affect an unmeasured unitary run.</p>
+<p>The unitary uses per-subsystem near-resonant rotating frames and may differ
+from a conventional qubit <code>RZ</code> by global phase; compare ideal operators up to
+global phase.</p>
+<h2 id="run">Run<a class="headerlink" href="#run" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run&lt;/span&gt;" href="#fatqat.emulator.TransmonEmulator.run"><code>run</code></a> accepts these
+<code>simulation_config</code> keys:</p>
+<p><strong><code>simulation_config</code> keys</strong></p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Default</th>
+<th>Effect and constraints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>seed</code></td>
+<td><code>int</code> or <code>None</code>; not <code>bool</code></td>
+<td><code>None</code></td>
+<td>Seed stochastic sampling for measurement, reset, readout, and statevector trajectories. Use a non-negative integer; <code>None</code> uses fresh entropy.</td>
+</tr>
+<tr>
+<td><code>schedule_mode</code></td>
+<td><code>"ASAP"</code> or <code>"ALAP"</code></td>
+<td><code>"ASAP"</code></td>
+<td>Place operations as early or as late as possible while preserving dependencies and physical-resource conflicts.</td>
+</tr>
+</tbody>
+</table>
+<p>These are the only two keys for <code>TransmonEmulator</code>. Pulse emulators reject
+the matrix backend's <code>shot_parallelism</code>, <code>kernel_parallelism</code>, <code>max_workers</code>,
+and <code>fusion</code> settings.</p>
+<p><strong><code>result_config</code> keys</strong></p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Default</th>
+<th>Effect and constraints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>counts</code></td>
+<td><code>bool</code> or <code>None</code></td>
+<td><code>None</code></td>
+<td><code>True</code> requests sampled classical counts, <code>False</code> suppresses them, and <code>None</code> enables them when measurement exists. Counts require a positive integer <code>shots</code> value.</td>
+</tr>
+<tr>
+<td><code>final_state</code></td>
+<td><code>bool</code> or <code>None</code></td>
+<td><code>None</code></td>
+<td><code>True</code> requests the method-native state or operator, <code>False</code> suppresses it, and <code>None</code> enables deterministic unmeasured output. A stochastic final state requires an explicit request and <code>shots == 1</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Both configuration arguments must be a <code>dict</code> or <code>None</code>; unknown keys
+are rejected.</p>
+<p>Every run begins in the product state with each transmon in physical
+<code>|0&gt;</code>. Pulse emulators do not accept an <code>initial_state</code> argument.</p>
+<p>Measurement first samples a physical level, maps <code>0, 1, 2</code> to <code>0, 1, 1</code>,
+then applies any classical readout-confusion matrix. Reset prepares physical
+<code>|0&gt;</code>.</p>
+<p>Result metadata includes the effective run and result settings, identifies
+<code>runtime="qutip"</code>, and reports <code>solver</code> and <code>solver_options</code> inside
+<code>runtime_details</code>. <code>solver</code> is one solver name for a uniform run or a
+tuple of names when execution used multiple solvers. Metadata does not
+include the model or calibration documents. When a sampled-control run invokes
+a QuTiP solver, the reported <code>max_step</code> is derived separately for each program
+as half the smallest adjacent interval in its control-waveform grids. It is
+expressed in the model's native time unit (<code>ns</code> for Transmon and <code>us</code> for
+the atom emulators). This keeps narrow controls visible to QuTiP's adaptive
+solver without assuming a fixed pulse time scale.</p>
+<p><code>run()</code> raises validation errors before returning a job. If execution fails
+after a job is returned, <code>job.result()</code> raises
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;BackendExecutionError&lt;/span&gt;" href="../exceptions/#fatqat.errors.BackendExecutionError"><code>BackendExecutionError</code></a>.</p>
+<h2 id="physics-model-and-calibration">Physics model and calibration<a class="headerlink" href="#physics-model-and-calibration" title="Permanent link">&para;</a></h2>
+<p><code>TransmonModel.from_document(...)</code> accepts a decoded JSON-compatible model
+mapping; direct model construction is not supported. The
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TransmonCalibration&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="#fatqat.emulator.TransmonCalibration"><code>TransmonCalibration</code></a> constructor
+separately accepts a decoded calibration mapping. Use
+<code>load_model_document("transmon.reference")</code> for the packaged reference, or
+<code>json.load</code> or another JSON reader for custom documents. Documents must use a
+supported <code>format</code> ID and version. Missing or
+unknown keys, unsupported versions, non-finite values, and values outside the
+documented JSON-compatible types are rejected.</p>
+<p>Control and frame addresses name model resources. Invalid addresses are
+reported when you call <code>run()</code>.</p>
+<p>The built-in model contains fixed qutrit transmons and an arbitrary undirected
+coupling graph. A coupling declares where controlled exchange operations may
+be driven; it is not a residual always-on exchange Hamiltonian. Frequencies
+define the implicit resonant carriers.</p>
+<h3 id="model-documents">Model documents<a class="headerlink" href="#model-documents" title="Permanent link">&para;</a></h3>
+<p>Use <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;available_model_documents&lt;/span&gt;" href="#fatqat.emulator.available_model_documents"><code>available_model_documents</code></a> to
+discover the packaged model IDs and
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;load_model_document&lt;/span&gt;" href="#fatqat.emulator.load_model_document"><code>load_model_document</code></a> to load one. Create
+runtime models with
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;from_document&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-classmethod&quot;&gt;&lt;code&gt;classmethod&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="#fatqat.emulator.TransmonModel.from_document"><code>from_document</code></a>; direct construction
+is not supported.</p>
+<p>Retain the decoded source documents when application code needs the persisted
+model identity, physical parameters, or topology. In a model document,
+<code>model</code> contains the ID and revision, <code>system.control_edges</code> contains the
+coupling graph, and <code>parameters.subsystems</code> contains frequencies and
+anharmonicities. The runtime model exposes ordered device labels through
+<code>subsystem_ids</code>, but it does not expose normalized subsystem or coupling
+records.</p>
+<h3 id="generate-transmon-grid-documents">Generate transmon grid documents<a class="headerlink" href="#generate-transmon-grid-documents" title="Permanent link">&para;</a></h3>
+<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;generate_transmon_grid_documents&lt;/span&gt;" href="#fatqat.emulator.generate_transmon_grid_documents"><code>generate_transmon_grid_documents</code></a>
+is a shortcut for setting up a rectangular nearest-neighbor grid. It returns a
+model document and a matching calibration document, so you can start a
+simulation without writing either document by hand:</p>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+
+<span class="n">model_document</span><span class="p">,</span> <span class="n">calibration_document</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">generate_transmon_grid_documents</span><span class="p">(</span>
+    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="n">frequency_groups_ghz</span><span class="o">=</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Both values are ordinary JSON-compatible dictionaries. You can edit them or
+save them with the standard <code>json</code> module.</p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>shape</code></td>
+<td>Grid dimensions as <code>(rows, columns)</code>. The grid must contain at least two transmons.</td>
+</tr>
+<tr>
+<td><code>frequency_groups_ghz</code></td>
+<td>The two idle-frequency centers in GHz. The generator assigns them in a checkerboard pattern.</td>
+</tr>
+<tr>
+<td><code>frequency_std_ghz</code></td>
+<td>Standard deviation of the normally distributed frequency variation in GHz. The default is <code>0.010</code>.</td>
+</tr>
+<tr>
+<td><code>anharmonicity_ghz</code></td>
+<td>Anharmonicity used for every transmon. The default is <code>-0.22</code>.</td>
+</tr>
+<tr>
+<td><code>seed</code></td>
+<td>Seed for reproducible frequency values. The default is <code>0</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>The generator warns when the requested spread may make the two frequency
+groups overlap. It also warns if the generated values overlap or reverse the
+expected ordering on a neighboring pair. These warnings do not stop generation
+or change the values.</p>
+<p>The calibration contains fixed analytic starting values. The helper does not
+run numerical calibration or optimization, start a simulation, or calculate
+fidelity or leakage. See <a href="../../guide/transmon-emulation/#start-with-a-transmon-grid">Start with a transmon grid</a>
+for the complete workflow.</p>
+<h3 id="units">Units<a class="headerlink" href="#units" title="Permanent link">&para;</a></h3>
+<p>The runtime model exposes the pulse time coordinate:</p>
+<p><strong><code>model.time_unit</code> (<code>"ns"</code>)</strong></p>
+<p>The coordinate for <code>PulseDefinition.duration</code> and for each
+<code>PulseControl</code> waveform and <code>start_offset</code>.</p>
+<p>Model and calibration documents store ordinary frequencies in GHz. Convert
+document values to angular pulse rates with
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;angular_rate_from_ghz&lt;/span&gt;" href="#fatqat.emulator.superconducting.angular_rate_from_ghz"><code>fatqat.emulator.superconducting.angular_rate_from_ghz</code></a>.
+Each control selector exposes its accepted waveform unit through
+<code>selector.coefficient_unit</code>; the built-in drive, detuning, and exchange
+selectors use <code>"rad/ns"</code>.</p>
+<p>Transmon drive samples are the full complex Rabi rate <span class="arithmatex">\(\Omega(t)\)</span>. The
+Hamiltonian uses <span class="arithmatex">\(\operatorname{Re}\Omega/2\)</span> on the X quadrature and
+<span class="arithmatex">\(\operatorname{Im}\Omega/2\)</span> on the Y quadrature. Detuning and exchange
+samples are their direct Hamiltonian coefficients.</p>
+<p><code>model.basis_order</code> is <code>("0", "1", "2")</code>. Use it to interpret flattened
+physical results and derive the local dimension as <code>len(model.basis_order)</code>.</p>
+<p>The <code>model.control</code> namespace selects the Hamiltonian mechanism, while
+<code>model.frame(...)</code> selects a virtual-drive phase. The control-selector methods
+are also available by name through the <code>model.available_controls</code> mapping.
+Each mapping entry describes a supported control kind, not every fully bound
+channel instance. Selectors expose <code>scope</code>, required <code>operands</code>,
+<code>coefficient_domain</code>, and <code>coefficient_unit</code> for lightweight inspection.
+Calling a selector returns a channel address. When you run the program, the
+emulator checks resource names, declared pairs, waveform type, and values.</p>
+<div class="language-python highlight"><pre><span></span><code><span class="n">drive</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="s2">"q0"</span><span class="p">)</span>
+<span class="n">detuning</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">detuning</span><span class="p">(</span><span class="s2">"q1"</span><span class="p">)</span>
+<span class="n">exchange</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">exchange</span><span class="p">(</span><span class="s2">"q0"</span><span class="p">,</span> <span class="s2">"q1"</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">available_controls</span><span class="p">[</span><span class="s2">"drive"</span><span class="p">]</span> <span class="ow">is</span> <span class="n">model</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">drive</span>
+
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">selector</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">available_controls</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">selector</span><span class="o">.</span><span class="n">scope</span><span class="p">,</span> <span class="n">selector</span><span class="o">.</span><span class="n">operands</span><span class="p">,</span>
+          <span class="n">selector</span><span class="o">.</span><span class="n">coefficient_domain</span><span class="p">,</span> <span class="n">selector</span><span class="o">.</span><span class="n">coefficient_unit</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="calibration-recipes">Calibration recipes<a class="headerlink" href="#calibration-recipes" title="Permanent link">&para;</a></h3>
+<p>The built-in calibration schema contains <code>rx_ry</code>, <code>iswap</code>, and per-edge
+<code>cz</code> recipes. <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;RZ&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../operations/qubit-gates/#fatqat.operations.RZ"><code>RZ</code></a> is virtual and has no
+calibration recipe.</p>
+<p>The public scalar unit accessors <code>recipe_time_unit</code>,
+<code>recipe_frequency_unit</code>, and <code>recipe_dimensionless_unit</code> describe the
+stored recipe quantities. They are distinct from the model's pulse
+coordinate <code>time_unit</code> and each control selector's <code>coefficient_unit</code>.</p>
+<h2 id="pulse-implementation-maps">Pulse implementation maps<a class="headerlink" href="#pulse-implementation-maps" title="Permanent link">&para;</a></h2>
+<p>A <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;PulseImplementationMap&lt;/span&gt;" href="../pulse-control/gate-realization/#fatqat.emulator.PulseImplementationMap"><code>PulseImplementationMap</code></a> realizes ordinary gates.
+The transmon constructor names this capability <code>gate_implementation_map</code>;
+direct controls bypass it. The
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;default_transmon_gate_implementation_map&lt;/span&gt;" href="#fatqat.emulator.default_transmon_gate_implementation_map"><code>default_transmon_gate_implementation_map</code></a>
+builder returns a new map containing the built-in <code>RX</code>, <code>RY</code>, <code>RZ</code>, <code>iSwap</code>,
+and <code>CZ</code> rules for one model and calibration.</p>
+<p>A map built by <code>default_transmon_gate_implementation_map</code> is tied to the
+model's subsystem labels, anharmonicities, coupling topology, and selected CZ
+endpoints. Build a new map after changing any of these values. Model identity,
+revision, idle frequencies, declaration order, and edge IDs do not require a
+new map. This compatibility check does not apply to maps written by users.</p>
+<p>See <a href="../pulse-control/gate-realization/">Gate realization</a> for accepted rule forms and errors.</p>
+<h2 id="direct-controls">Direct controls<a class="headerlink" href="#direct-controls" title="Permanent link">&para;</a></h2>
+<p>The same model channels can be used without a gate-realization rule.
+Drive and detuning resolve one declared transmon; exchange resolves two
+transmons and their declared coupling. Drive accepts a full complex Rabi-rate
+envelope for the two quadratures, while detuning and exchange require real
+values. Pulse times use the model units described above. The current transmon
+model does not add amplitude or duration limits beyond requiring finite values.</p>
+<p>See <a href="../pulse-control/pulse-operation/">PulseOperation</a>,
+<a href="../pulse-control/pulse-control/">PulseControl</a>, and
+<a href="../pulse-control/sampled-waveform/">SampledWaveform</a> for construction and timing.
+<code>iSwap</code> is a gate whose built-in realization uses exchange;
+<code>iSwap</code> is not a channel name.</p>
+<h2 id="lindblad-noise">Lindblad noise<a class="headerlink" href="#lindblad-noise" title="Permanent link">&para;</a></h2>
+<p>Pass supported declarations through <code>noise=</code>. The transmon emulator provides
+the collapse-operator realizations documented in
+<a href="../noise/backend-support/#noise-emulator-support">Pulse emulators</a>, including
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TransitionRelaxation&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../noise/transition-relaxation/#fatqat.noise.TransitionRelaxation"><code>TransitionRelaxation</code></a>,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;PhaseDamping&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../noise/phase-damping/#fatqat.noise.PhaseDamping"><code>PhaseDamping</code></a>, and rate-form
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Depolarizing&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../noise/depolarizing/#fatqat.noise.Depolarizing"><code>Depolarizing</code></a>. Transition relaxation takes
+explicit level-pair coefficients; FATQAT does not insert a harmonic
+<code>sqrt(n)</code> ladder. Depolarization acts on the full three-level space and can
+populate <code>|2&gt;</code>. Rates use inverse nanoseconds and <code>t_phi</code> uses nanoseconds.
+The emulator accepts both background declarations and declarations scoped to
+ordinary operations. Finite probability forms, <code>AmplitudeDamping</code>, <code>Loss</code>,
+qubit-only <code>ThermalRelaxation</code>, and nonlocal declarations are rejected.</p>
+<p>Probability-form channels are not converted to rates. In particular,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;PauliChannel&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../noise/pauli-channel/#fatqat.noise.PauliChannel"><code>PauliChannel</code></a> remains Simulator-only. See
+<a href="../pulse-control/#pulse-probability-noise">Continuous-time noise</a>. Readout confusion is classical and must use a
+binary <code>2 x 2</code> matrix; construction and <code>validate_noise_model()</code> reject
+larger matrices before a measured run.</p>
+<p>Call <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;validate_noise_model&lt;/span&gt;" href="#fatqat.emulator.TransmonEmulator.validate_noise_model"><code>validate_noise_model</code></a> before
+running a program to validate its noise model. Program-specific selectors are
+checked at run time.</p>
+<h2 id="neutral-atom-pulse-emulator">Neutral-atom pulse emulator<a class="headerlink" href="#neutral-atom-pulse-emulator" title="Permanent link">&para;</a></h2>
+<p>The two-level atom backend also accepts an optional gate implementation map.
+It has its own continuous-noise implementations. <code>Atom2LevelEmulator</code> has an
+empty built-in gate map and global direct controls; user-supplied maps can add
+gate rules. See <a href="../atom-emulators/">Neutral-atom emulator</a> for its API and
+<a href="../../guide/neutral-atom-emulation/">Choose and run a neutral-atom workflow</a>
+for the complete workflow.</p>
+<h2 id="api">API<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="fatqat.emulator.TransmonEmulator" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TransmonEmulator</span>
+
+
+<a href="#fatqat.emulator.TransmonEmulator" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Run gates and direct controls on a three-level transmon model.</p>
+<p>Every run starts with all model transmons in physical <code>|0&gt;</code>. Ordinary
+gates use a pulse implementation map; <code>PulseOperation</code> values use their
+channels directly.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>model</code></b>
+              (<code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TransmonModel&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;fatqat.emulator.superconducting.model.TransmonModel&lt;/code&gt;)" href="#fatqat.emulator.TransmonModel">TransmonModel</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>Transmon model created with <code>TransmonModel.from_document</code>.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>method</code></b>
+              (<code><span title="str">str</span></code>, default:
+                  <code>&#39;statevector&#39;</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Mathematical result representation: <code>"statevector"</code>
+(default), <code>"density_matrix"</code>, or <code>"unitary"</code>. The aliases
+<code>"SV"</code> and <code>"DM"</code> are accepted.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>noise</code></b>
+              (<code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;NoiseModel&lt;/span&gt; (&lt;code&gt;fatqat.noise.NoiseModel&lt;/code&gt;)" href="../noise/model/#fatqat.NoiseModel">NoiseModel</a> | None</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Noise applied by this emulator. The default is no noise.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>gate_implementation_map</code></b>
+              (<code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;PulseImplementationMap&lt;/span&gt; (&lt;code&gt;fatqat.emulator._core.pulse.PulseImplementationMap&lt;/code&gt;)" href="../pulse-control/gate-realization/#fatqat.emulator.PulseImplementationMap">PulseImplementationMap</a> | None</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Gate-to-pulse rules. <code>None</code> uses the
+built-in transmon gate map and packaged calibration.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;BackendValidationError&lt;/span&gt; (&lt;code&gt;fatqat.errors.BackendValidationError&lt;/code&gt;)" href="../exceptions/#fatqat.errors.BackendValidationError">BackendValidationError</a></code>
+            –
+          <div class="doc-md-description">
+            <p>If an argument has the wrong type or <code>noise</code>
+contains a declaration unsupported by the selected rules, or if a
+standard gate map was compiled for an incompatible transmon model.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Examples:</span></p>
+    <div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonModel</span><span class="o">.</span><span class="n">from_document</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">load_model_document</span><span class="p">(</span><span class="s2">"transmon.reference"</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonEmulator</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">backend</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="n">model</span>
+<span class="go">True</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="fatqat.emulator.TransmonEmulator.method" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">method</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#fatqat.emulator.TransmonEmulator.method" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">method</span><span class="p">:</span> <span class="n"><span title="str">str</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Return the canonical mathematical representation for this emulator.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="fatqat.emulator.TransmonEmulator.model" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">model</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#fatqat.emulator.TransmonEmulator.model" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">model</span><span class="p">:</span> <span class="n"><span title="object">object</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Return this emulator's physics model.</p>
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="fatqat.emulator.TransmonEmulator.run" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">run</span>
+
+
+<a href="#fatqat.emulator.TransmonEmulator.run" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">run</span><span class="p">(</span><span class="n">program</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt; (&lt;code&gt;fatqat.program.Program&lt;/code&gt;)" href="../program/#fatqat.Program">Program</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">shots</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">resource_layout</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ResourceLayout&lt;/span&gt; (&lt;code&gt;fatqat.resource_layout.ResourceLayout&lt;/code&gt;)" href="../registers/#fatqat.ResourceLayout">ResourceLayout</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">simulation_config</span><span class="p">:</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">result_config</span><span class="p">:</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Job&lt;/span&gt; (&lt;code&gt;fatqat.job.Job&lt;/code&gt;)" href="../job/#fatqat.Job">Job</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Result&lt;/span&gt; (&lt;code&gt;fatqat.result.Result&lt;/code&gt;)" href="../result/#fatqat.Result">Result</a></span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Run a program on this pulse emulator.</p>
+<p>The emulator family fixes the initial product state; pulse backends do
+not accept an <code>initial_state</code> argument.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>program</code></b>
+              (<code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt; (&lt;code&gt;fatqat.program.Program&lt;/code&gt;)" href="../program/#fatqat.Program">Program</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>Program to execute.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>shots</code></b>
+              (<code><span title="int">int</span></code>, default:
+                  <code>1024</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Number of repetitions used when counts are requested.
+Counts require a positive built-in <code>int</code>. A stochastic
+final state requires <code>shots == 1</code>.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>resource_layout</code></b>
+              (<code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ResourceLayout&lt;/span&gt; (&lt;code&gt;fatqat.resource_layout.ResourceLayout&lt;/code&gt;)" href="../registers/#fatqat.ResourceLayout">ResourceLayout</a> | None</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Optional program-to-device mapping. The emulator
+uses its default mapping when omitted.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>simulation_config</code></b>
+              (<code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Optional <code>dict</code> of pulse-execution settings.
+Every pulse emulator accepts:</p>
+<ul>
+<li><code>"seed"</code> (<code>int | None</code>, default <code>None</code>): Seed
+  stochastic sampling. Use a non-negative integer; <code>None</code>
+  uses fresh entropy, and booleans are rejected.</li>
+<li><code>"schedule_mode"</code> (<code>str: "ASAP" or "ALAP"</code>, default
+  <code>"ASAP"</code>): Choose whether operations are placed as early
+  or as late as possible while preserving dependencies and
+  physical-resource conflicts.</li>
+</ul>
+<p><code>Atom2LevelEmulator</code> additionally accepts
+<code>"interaction_cutoff"</code> (finite nonnegative <code>Real</code> or
+<code>None</code>, default <code>None</code>) to truncate that run's static
+<code>C6/R^6</code> interaction Hamiltonian by pair distance.</p>
+<p>Other keys, including matrix-only execution settings, are
+rejected.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>result_config</code></b>
+              (<code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Optional <code>dict</code> of output requests. Accepted keys
+are:</p>
+<ul>
+<li><code>"counts"</code> (<code>bool | None</code>, default <code>None</code>):
+  <code>True</code> requests classical counts, <code>False</code> suppresses
+  them, and <code>None</code> enables them when measurement exists.
+  Counts require a positive integer <code>shots</code> value.</li>
+<li><code>"final_state"</code> (<code>bool | None</code>, default <code>None</code>):
+  <code>True</code> requests the method-native <code>statevector</code>,
+  <code>density_matrix</code>, or <code>unitary</code>; <code>False</code> suppresses it;
+  <code>None</code> enables deterministic unmeasured output. A
+  stochastic final state requires an explicit request and
+  <code>shots == 1</code>.</li>
+</ul>
+<p>Other keys are rejected.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Job&lt;/span&gt; (&lt;code&gt;fatqat.job.Job&lt;/code&gt;)" href="../job/#fatqat.Job">Job</a>[<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Result&lt;/span&gt; (&lt;code&gt;fatqat.result.Result&lt;/code&gt;)" href="../result/#fatqat.Result">Result</a>]</code>
+          –
+          <div class="doc-md-description">
+            <p>A terminal <code>Job</code>. Validation errors are raised by <code>run()</code>.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Job&lt;/span&gt; (&lt;code&gt;fatqat.job.Job&lt;/code&gt;)" href="../job/#fatqat.Job">Job</a>[<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Result&lt;/span&gt; (&lt;code&gt;fatqat.result.Result&lt;/code&gt;)" href="../result/#fatqat.Result">Result</a>]</code>
+          –
+          <div class="doc-md-description">
+            <p>Execution errors produce a failed job whose <code>result()</code> raises</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Job&lt;/span&gt; (&lt;code&gt;fatqat.job.Job&lt;/code&gt;)" href="../job/#fatqat.Job">Job</a>[<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Result&lt;/span&gt; (&lt;code&gt;fatqat.result.Result&lt;/code&gt;)" href="../result/#fatqat.Result">Result</a>]</code>
+          –
+          <div class="doc-md-description">
+            <p><code>BackendExecutionError</code>.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;BackendValidationError&lt;/span&gt; (&lt;code&gt;fatqat.errors.BackendValidationError&lt;/code&gt;)" href="../exceptions/#fatqat.errors.BackendValidationError">BackendValidationError</a></code>
+            –
+          <div class="doc-md-description">
+            <p>If the program, noise, or configuration
+is unsupported, or if requested results are incompatible with
+<code>shots</code> and measurement.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+              <code><span title="TypeError">TypeError</span></code>
+            –
+          <div class="doc-md-description">
+            <p>If <code>simulation_config</code> or <code>result_config</code> is not a
+<code>dict</code> or <code>None</code>.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;UnsupportedOperationError&lt;/span&gt; (&lt;code&gt;fatqat.errors.UnsupportedOperationError&lt;/code&gt;)" href="../exceptions/#fatqat.errors.UnsupportedOperationError">UnsupportedOperationError</a></code>
+            –
+          <div class="doc-md-description">
+            <p>If no pulse implementation exists for
+an operation family or its ordered device operands.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+              <code><span title="PulseImplementationError">PulseImplementationError</span></code>
+            –
+          <div class="doc-md-description">
+            <p>If a selected custom pulse rule fails
+unexpectedly or returns the wrong value type.</p>
+          </div>
+        </li>
+    </ul>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="fatqat.emulator.TransmonEmulator.validate_noise_model" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">validate_noise_model</span>
+
+
+<a href="#fatqat.emulator.TransmonEmulator.validate_noise_model" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">validate_noise_model</span><span class="p">(</span><span class="n">noise_model</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;NoiseModel&lt;/span&gt; (&lt;code&gt;fatqat.noise.NoiseModel&lt;/code&gt;)" href="../noise/model/#fatqat.NoiseModel">NoiseModel</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Raise if this emulator cannot use a noise model.</p>
+<p>This validation does not inspect a particular program or resource
+layout. Program references and physical selectors are checked when you
+call <code>run()</code>.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>noise_model</code></b>
+              (<code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;NoiseModel&lt;/span&gt; (&lt;code&gt;fatqat.noise.NoiseModel&lt;/code&gt;)" href="../noise/model/#fatqat.NoiseModel">NoiseModel</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>Noise model to validate without executing a program.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;BackendValidationError&lt;/span&gt; (&lt;code&gt;fatqat.errors.BackendValidationError&lt;/code&gt;)" href="../exceptions/#fatqat.errors.BackendValidationError">BackendValidationError</a></code>
+            –
+          <div class="doc-md-description">
+            <p>If <code>noise_model</code> is not a
+<code>fatqat.NoiseModel</code> or contains unsupported declarations.
+The message lists every problem found.</p>
+          </div>
+        </li>
+    </ul>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="fatqat.emulator.TransmonModel" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TransmonModel</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#fatqat.emulator.TransmonModel" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Describe a fixed collection of three-level transmons and couplings.</p>
+<p>Create a model with <code>from_document()</code>, then select drive, detuning, and
+exchange channels through <code>control</code>.</p>
+
+
+<p><span class="doc-section-title">Examples:</span></p>
+    <div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonModel</span><span class="o">.</span><span class="n">from_document</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">load_model_document</span><span class="p">(</span><span class="s2">"transmon.reference"</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">subsystem_ids</span>
+<span class="go">('q0', 'q1')</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="fatqat.emulator.TransmonModel.basis_order" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">basis_order</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#fatqat.emulator.TransmonModel.basis_order" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">basis_order</span><span class="p">:</span> <span class="n"><span title="tuple">tuple</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'0'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">,</span> <span class="s1">'2'</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="fatqat.emulator.TransmonModel.time_unit" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">time_unit</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#fatqat.emulator.TransmonModel.time_unit" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">time_unit</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">=</span> <span class="s1">'ns'</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="fatqat.emulator.TransmonModel.subsystem_ids" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">subsystem_ids</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#fatqat.emulator.TransmonModel.subsystem_ids" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">subsystem_ids</span><span class="p">:</span> <span class="n"><span title="tuple">tuple</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Return subsystem labels in the model document's declared order.</p>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="tuple">tuple</span>[<span title="str">str</span>, ...]</code>
+          –
+          <div class="doc-md-description">
+            <p>A tuple of labels accepted by local control selectors.</p>
+          </div>
+        </li>
+    </ul>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="fatqat.emulator.TransmonModel.control" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">control</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#fatqat.emulator.TransmonModel.control" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">control</span><span class="p">:</span> <span class="n"><span title="fatqat.emulator.superconducting.model._TransmonControls">_TransmonControls</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Return the <code>drive</code>, <code>detuning</code>, and <code>exchange</code> selectors.</p>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="fatqat.emulator.superconducting.model._TransmonControls">_TransmonControls</span></code>
+          –
+          <div class="doc-md-description">
+            <p>The available channel selectors.</p>
+          </div>
+        </li>
+    </ul>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="fatqat.emulator.TransmonModel.available_controls" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">available_controls</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#fatqat.emulator.TransmonModel.available_controls" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">available_controls</span><span class="p">:</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="fatqat.emulator._core.control_discovery._ControlSelector">_ControlSelector</span></span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Return the channel selectors keyed by control name.</p>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="fatqat.emulator._core.control_discovery._ControlSelector">_ControlSelector</span>]</code>
+          –
+          <div class="doc-md-description">
+            <p>A mapping containing <code>drive</code>, <code>detuning</code>, and <code>exchange</code>.</p>
+          </div>
+        </li>
+    </ul>
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="fatqat.emulator.TransmonModel.from_document" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">from_document</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#fatqat.emulator.TransmonModel.from_document" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">from_document</span><span class="p">(</span><span class="n">document</span><span class="p">:</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Self">Self</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Construct a validated transmon model from a JSON document.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>document</code></b>
+              (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Mapping using the supported transmon/exchange schema.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="typing.Self">Self</span></code>
+          –
+          <div class="doc-md-description">
+            <p>A validated transmon model.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;BackendValidationError&lt;/span&gt; (&lt;code&gt;fatqat.errors.BackendValidationError&lt;/code&gt;)" href="../exceptions/#fatqat.errors.BackendValidationError">BackendValidationError</a></code>
+            –
+          <div class="doc-md-description">
+            <p>If the document has an unsupported format
+or contains invalid model data.</p>
+          </div>
+        </li>
+    </ul>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="fatqat.emulator.TransmonModel.frame" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">frame</span>
+
+
+<a href="#fatqat.emulator.TransmonModel.frame" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">frame</span><span class="p">(</span><span class="n">subsystem_id</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="fatqat.emulator._core.target._FrameAddress">_FrameAddress</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Select the virtual drive frame for one subsystem.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>subsystem_id</code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Nonempty subsystem label. The emulator checks that
+the label exists when the frame is used.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="fatqat.emulator._core.target._FrameAddress">_FrameAddress</span></code>
+          –
+          <div class="doc-md-description">
+            <p>A frame for <code>PhaseShift</code> and <code>PhaseSwap</code>.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;BackendValidationError&lt;/span&gt; (&lt;code&gt;fatqat.errors.BackendValidationError&lt;/code&gt;)" href="../exceptions/#fatqat.errors.BackendValidationError">BackendValidationError</a></code>
+            –
+          <div class="doc-md-description">
+            <p>If <code>subsystem_id</code> is not a nonempty
+string.</p>
+          </div>
+        </li>
+    </ul>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="fatqat.emulator.TransmonCalibration" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TransmonCalibration</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#fatqat.emulator.TransmonCalibration" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Load transmon gate recipes from a decoded calibration document.</p>
+<p>All core fields are required; unknown fields are rejected. The document has:</p>
+<ul>
+<li><code>"format"</code>: <code>{"id": "sc.transmon_exchange_fixed_pulse",
+  "version": 1}</code>.</li>
+<li><code>"calibration"</code>: nonempty string <code>"id"</code> and <code>"revision"</code>.</li>
+<li><code>"units"</code>: exactly <code>{"time": "ns", "frequency": "GHz",
+  "dimensionless": "1"}</code>.</li>
+<li><code>"recipes"</code>: <code>"rx_ry"</code> with positive <code>"duration"</code> and finite
+  <code>"drag_coefficient"</code>; <code>"iswap"</code> with positive <code>"duration"</code>;
+  and <code>"cz"</code> with an <code>"edges"</code> array.</li>
+</ul>
+<p>Each CZ entry names a distinct two-endpoint <code>"canonical_edge"</code> already
+in ascending string order. Its recipe names one absolute
+<code>"detuned_subsystem"</code> endpoint, a positive <code>"duration"</code>, a
+non-negative <code>"ramp_duration"</code> shorter than half the duration, a finite
+<code>"park_detuning_ghz"</code>, and a non-negative finite
+<code>"branch_tolerance_ghz"</code>. The edge array may be empty.</p>
+<p>A package-generated document may also carry the strictly validated
+<code>"generated_reference_recipe"</code> provenance marker. This is origin
+metadata, not a runtime calibration or qualification interface.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>document</code></b>
+              (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Decoded mapping with the schema above.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="BackendValidationError">BackendValidationError</span></code>
+            –
+          <div class="doc-md-description">
+            <p>If the document has an unsupported format,
+missing or unknown keys, invalid units, or invalid recipe values.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Examples:</span></p>
+    <div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calibration</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">default_transmon_calibration</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calibration</span><span class="o">.</span><span class="n">recipe_time_unit</span>
+<span class="go">'ns'</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="fatqat.emulator.generate_transmon_grid_documents" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">generate_transmon_grid_documents</span>
+
+
+<a href="#fatqat.emulator.generate_transmon_grid_documents" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">generate_transmon_grid_documents</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n"><span title="tuple">tuple</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="int">int</span></span><span class="p">],</span> <span class="n">frequency_groups_ghz</span><span class="p">:</span> <span class="n"><span title="tuple">tuple</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">],</span> <span class="n">frequency_std_ghz</span><span class="p">:</span> <span class="n"><span title="float">float</span></span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">anharmonicity_ghz</span><span class="p">:</span> <span class="n"><span title="float">float</span></span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.22</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="tuple">tuple</span></span><span class="p">[</span><span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents first">
+
+        <p>Return matching model and calibration documents for a transmon grid.</p>
+<p>This function constructs model and analytic reference-calibration JSON. It
+performs no numerical calibration or simulation. Both returned mappings
+are mutable and owned by the caller.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="fatqat.emulator.available_model_documents" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">available_model_documents</span>
+
+
+<a href="#fatqat.emulator.available_model_documents" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">available_model_documents</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><span title="tuple">tuple</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents first">
+
+        <p>Return the stable names of package-shipped reference model documents.</p>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="str">str</span></code>
+          –
+          <div class="doc-md-description">
+            <p>Catalog names in deterministic order. Each name identifies a reference</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+              <code>...</code>
+          –
+          <div class="doc-md-description">
+            <p>snapshot, not a universal physical default.</p>
+          </div>
+        </li>
+    </ul>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="fatqat.emulator.load_model_document" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">load_model_document</span>
+
+
+<a href="#fatqat.emulator.load_model_document" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">load_model_document</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="object">object</span></span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents first">
+
+        <p>Load a fresh mutable copy of one reference model document.</p>
+<p>Inspect the returned identity, units, parameters, and references before
+passing it to the corresponding model family's <code>from_document</code> method.
+Mutating a returned document never changes later loads.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>name</code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>One name returned by <code>available_model_documents()</code>.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="object">object</span>]</code>
+          –
+          <div class="doc-md-description">
+            <p>A newly decoded, JSON-compatible mutable dictionary.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="TypeError">TypeError</span></code>
+            –
+          <div class="doc-md-description">
+            <p>If <code>name</code> is not a string.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+              <code><span title="KeyError">KeyError</span></code>
+            –
+          <div class="doc-md-description">
+            <p>If <code>name</code> is not in the public catalog.</p>
+          </div>
+        </li>
+    </ul>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="fatqat.emulator.default_transmon_calibration" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">default_transmon_calibration</span>
+
+
+<a href="#fatqat.emulator.default_transmon_calibration" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">default_transmon_calibration</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TransmonCalibration&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;fatqat.emulator.superconducting.calibration.TransmonCalibration&lt;/code&gt;)" href="#fatqat.emulator.TransmonCalibration">TransmonCalibration</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents first">
+
+        <p>Return the packaged reference transmon calibration.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="fatqat.emulator.superconducting.angular_rate_from_ghz" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">angular_rate_from_ghz</span>
+
+
+<a href="#fatqat.emulator.superconducting.angular_rate_from_ghz" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">angular_rate_from_ghz</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n"><span title="float">float</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="float">float</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents first">
+
+        <p>Convert an ordinary frequency in GHz to angular rate in rad/ns.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>value</code></b>
+              (<code><span title="float">float</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Ordinary frequency in GHz.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="float">float</span></code>
+          –
+          <div class="doc-md-description">
+            <p>The corresponding angular rate in radians per nanosecond.</p>
+          </div>
+        </li>
+    </ul>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="fatqat.emulator.default_transmon_gate_implementation_map" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">default_transmon_gate_implementation_map</span>
+
+
+<a href="#fatqat.emulator.default_transmon_gate_implementation_map" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">default_transmon_gate_implementation_map</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TransmonModel&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;fatqat.emulator.superconducting.model.TransmonModel&lt;/code&gt;)" href="#fatqat.emulator.TransmonModel">TransmonModel</a></span><span class="p">,</span> <span class="n">calibration</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TransmonCalibration&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;fatqat.emulator.superconducting.calibration.TransmonCalibration&lt;/code&gt;)" href="#fatqat.emulator.TransmonCalibration">TransmonCalibration</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;PulseImplementationMap&lt;/span&gt; (&lt;code&gt;fatqat.emulator._core.pulse.PulseImplementationMap&lt;/code&gt;)" href="../pulse-control/gate-realization/#fatqat.emulator.PulseImplementationMap">PulseImplementationMap</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents first">
+
+        <p>Build the standard transmon gate-to-pulse map.</p>
+<p>The returned rules use the model's channels, frames, subsystem parameters,
+and coupling graph together with the supplied calibration. Rebuild the map
+after changing values that should alter those pulse recipes.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>model</code></b>
+              (<code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TransmonModel&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;fatqat.emulator.superconducting.model.TransmonModel&lt;/code&gt;)" href="#fatqat.emulator.TransmonModel">TransmonModel</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>Model whose physical resources and parameters the rules use.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>calibration</code></b>
+              (<code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TransmonCalibration&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;fatqat.emulator.superconducting.calibration.TransmonCalibration&lt;/code&gt;)" href="#fatqat.emulator.TransmonCalibration">TransmonCalibration</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>Gate recipe values.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;PulseImplementationMap&lt;/span&gt; (&lt;code&gt;fatqat.emulator._core.pulse.PulseImplementationMap&lt;/code&gt;)" href="../pulse-control/gate-realization/#fatqat.emulator.PulseImplementationMap">PulseImplementationMap</a></code>
+          –
+          <div class="doc-md-description">
+            <p>A new map for <code>RX</code>, <code>RY</code>, <code>RZ</code>, <code>iSwap</code>, and coupled <code>CZ</code>.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;BackendValidationError&lt;/span&gt; (&lt;code&gt;fatqat.errors.BackendValidationError&lt;/code&gt;)" href="../exceptions/#fatqat.errors.BackendValidationError">BackendValidationError</a></code>
+            –
+          <div class="doc-md-description">
+            <p>If either argument has the wrong type, a model
+edge has no CZ recipe, or a selected CZ branch is incompatible
+with the model's signed anharmonicity.</p>
+          </div>
+        </li>
+    </ul>
+
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../emulators/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Emulators">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Emulators
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../atom-emulators/" class="md-footer__link md-footer__link--next" aria-label="Next: Neutral-atom emulators">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Neutral-atom emulators
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 FatQat contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.prune", "navigation.path", "navigation.top", "navigation.footer", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.tooltips"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+  
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["\\(", "\\)"]],
+        displayMath: [["\\[", "\\]"]],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        ignoreHtmlClass: ".*|",
+        processHtmlClass: "arithmatex"
+      }
+    };
+  </script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
+    integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    document$.subscribe(() => {
+      MathJax.startup.output.clearCache();
+      MathJax.typesetClear();
+      MathJax.texReset();
+      MathJax.typesetPromise();
+    });
+  </script>
+
+  </body>
+</html>
