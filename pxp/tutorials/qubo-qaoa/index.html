@@ -1,0 +1,1409 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Map a constrained combinatorial problem to a QUBO, turn it into an Ising Hamiltonian and a FatQat program, and read the answer back out of the measured distribution.">
+      
+      
+        <meta name="author" content="FatQat contributors">
+      
+      
+        <link rel="canonical" href="https://hmyuuu.github.io/fatqat/pxp/tutorials/qubo-qaoa/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Solve a QUBO with QAOA - FatQat</title>
+      
+    
+    
+  
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+  <link rel="stylesheet" href="../../assets/stylesheets/site.css">
+
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#solve-a-qubo-with-qaoa" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="FatQat" class="md-header__button md-logo" aria-label="FatQat" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.36 2.64c1.64 0 3 1.36 3 3 0 1.65-1.36 3-3 3-1.65 0-3-1.35-3-3 0-.3.05-.58.14-.84-1.07-.51-2.25-.8-3.5-.8a8 8 0 0 0-8 8l.04.84-1.99.21L2 12A10 10 0 0 1 12 2c1.69 0 3.28.42 4.67 1.16.49-.33 1.07-.52 1.69-.52m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1c.56 0 1-.45 1-1 0-.56-.44-1-1-1M5.64 15.36c1.65 0 3 1.35 3 3 0 .3-.05.58-.14.84 1.07.51 2.25.8 3.5.8a8 8 0 0 0 8-8l-.04-.84 1.99-.21L22 12a10 10 0 0 1-10 10c-1.69 0-3.28-.42-4.67-1.16-.49.33-1.07.52-1.69.52-1.64 0-3-1.36-3-3 0-1.65 1.36-3 3-3m0 2c-.56 0-1 .45-1 1 0 .56.44 1 1 1a1 1 0 0 0 1-1 1 1 0 0 0-1-1M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FatQat
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Solve a QUBO with QAOA
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hmyuuu/fatqat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hmyuuu/fatqat
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guide/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="FatQat" class="md-nav__button md-logo" aria-label="FatQat" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.36 2.64c1.64 0 3 1.36 3 3 0 1.65-1.36 3-3 3-1.65 0-3-1.35-3-3 0-.3.05-.58.14-.84-1.07-.51-2.25-.8-3.5-.8a8 8 0 0 0-8 8l.04.84-1.99.21L2 12A10 10 0 0 1 12 2c1.69 0 3.28.42 4.67 1.16.49-.33 1.07-.52 1.69-.52m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1c.56 0 1-.45 1-1 0-.56-.44-1-1-1M5.64 15.36c1.65 0 3 1.35 3 3 0 .3-.05.58-.14.84 1.07.51 2.25.8 3.5.8a8 8 0 0 0 8-8l-.04-.84 1.99-.21L22 12a10 10 0 0 1-10 10c-1.69 0-3.28-.42-4.67-1.16-.49.33-1.07.52-1.69.52-1.64 0-3-1.36-3-3 0-1.65 1.36-3 3-3m0 2c-.56 0-1 .45-1 1 0 .56.44 1 1 1a1 1 0 0 0 1-1 1 1 0 0 0-1-1M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4"/></svg>
+
+    </a>
+    FatQat
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hmyuuu/fatqat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hmyuuu/fatqat
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../guide/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User guide
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../api/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-as-a-qubo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The problem, as a QUBO
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-binary-variables-to-a-hamiltonian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From binary variables to a Hamiltonian
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-qaoa-program" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The QAOA program
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#two-ways-to-get-the-energy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two ways to get the energy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-depth-one-landscape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The depth-one landscape
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimizing-one-layer-at-a-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optimizing, one layer at a time
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reading-the-answer-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading the answer out
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-carries-over" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What carries over
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<!-- Generated from docs/mkdocs/tutorial-sources; do not edit here. -->
+
+<h1 id="solve-a-qubo-with-qaoa">Solve a QUBO with QAOA<a class="headerlink" href="#solve-a-qubo-with-qaoa" title="Permanent link">&para;</a></h1>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 15a3 3 0 0 1 3 3 3 3 0 0 1-3 3 2.99 2.99 0 0 1-2.83-2H14v-2h1.17c.41-1.17 1.52-2 2.83-2m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1m0-9a1.43 1.43 0 0 0 1.43-1.43 1.43 1.43 0 1 0-2.86 0A1.43 1.43 0 0 0 18 8m0-5.43a4 4 0 0 1 4 4C22 9.56 18 14 18 14s-4-4.44-4-7.43a4 4 0 0 1 4-4M8.83 17H10v2H8.83A2.99 2.99 0 0 1 6 21a3 3 0 0 1-3-3c0-1.31.83-2.42 2-2.83V14h2v1.17c.85.3 1.53.98 1.83 1.83M6 17a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1M6 3a3 3 0 0 1 3 3c0 1.31-.83 2.42-2 2.83V10H5V8.83A2.99 2.99 0 0 1 3 6a3 3 0 0 1 3-3m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1m5 14v-2h2v2zm-4-6H5v-2h2z"/></svg></span> <strong>Track</strong></p>
+<p>Algorithms</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></svg></span> <strong>Downloads</strong></p>
+<p><a download="qubo-qaoa.py" href="../../downloads/tutorials/qubo-qaoa.py">Python script <code>.py</code></a> · <a download="qubo-qaoa.ipynb" href="../../downloads/tutorials/qubo-qaoa.ipynb">Jupyter notebook <code>.ipynb</code></a></p>
+</li>
+</ul>
+</div>
+<p>Most discrete optimization problems that matter in practice — scheduling,
+routing, partitioning, portfolio selection — can be written as a <em>quadratic
+unconstrained binary optimization</em> problem:</p>
+<div class="arithmatex">\[
+f(x) = c + \sum_i a_i x_i + \sum_{i&lt;j} b_{ij} x_i x_j,
+\qquad x_i \in \{0, 1\}.
+\]</div>
+<p>QUBO is the lingua franca of quantum optimization because the map from <span class="arithmatex">\(f\)</span> to
+a quantum circuit is mechanical, and because the "unconstrained" part is a
+modeling convention rather than a limitation: a constraint becomes a penalty
+term that costs energy exactly when it is violated.</p>
+<p>This tutorial walks the whole path on a problem small enough to check by hand:
+splitting a nine-node weighted graph into two balanced halves while keeping
+two specific nodes apart. The graph is the WSCC 9-bus power network, with edge
+weights equal to the power flowing on each line, but nothing below uses that
+reading — it is simply a weighted graph with a partitioning problem on it.
+<a href="../islanding-model/">Model controlled islanding as a QUBO</a> takes the same
+network and asks the full engineering question.</p>
+<p>Along the way this tutorial establishes the pieces every QUBO application
+reuses:</p>
+<ol>
+<li><strong>Model.</strong> Write the objective and every constraint as one quadratic
+   function of binary variables.</li>
+<li><strong>Map.</strong> Substitute <span class="arithmatex">\(x_i = (1 - z_i)/2\)</span> to get an Ising Hamiltonian whose
+   ground state is the answer.</li>
+<li><strong>Build.</strong> Turn each Ising term into gates: an <code>RZ</code> per field term, a
+   <code>CX</code>-<code>RZ</code>-<code>CX</code> ladder per coupling, and an <code>RX</code> mixer.</li>
+<li><strong>Evaluate.</strong> Get the energy from <code>fatqat.Estimator</code>, or read the whole
+   outcome distribution from the simulator.</li>
+<li><strong>Optimize and read out.</strong> Move the angles downhill, then sample and decode.</li>
+</ol>
+<p>Everything is seeded, exact where it can be, and runs in a few seconds on a
+laptop CPU.</p>
+<h2 id="the-problem-as-a-qubo">The problem, as a QUBO<a class="headerlink" href="#the-problem-as-a-qubo" title="Permanent link">&para;</a></h2>
+<p>The graph has nine nodes and nine weighted edges. A partition assigns each node
+to side 0 or side 1, and its cost is the total weight of the edges it cuts. Two
+requirements come along with it: the two halves must be as equal as nine nodes
+allow, and nodes 1 and 7 must end up on opposite sides.</p>
+<p>One binary variable per node is enough, because with two sides the variable's
+value <em>is</em> the side. That is worth noticing early: an encoding that cannot
+represent an invalid assignment needs no penalty to forbid one.</p>
+<p>Nine nodes do not divide evenly into two halves, so the balance target is 4.5
+and the penalty cannot reach zero. It contributes a constant floor of
+<span class="arithmatex">\(2 \times 0.25\)</span> to every energy, and still prefers a 4/5 split over any other.</p>
+<div class="language-python highlight"><span class="filename">Python cell 1</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat.operations</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ops</span>
+
+<span class="c1"># The WSCC 9-bus network. Node labels are zero-based, so node 0 is bus 1.</span>
+<span class="n">EDGES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># (node, node, weight)</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.8855058426108287</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">1.0506270719315443</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.3795071371756076</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">0.7349783693597357</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">0.29891469957856975</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.9382048153285490</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.0147319144099027</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">1.0706524421112620</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.5028157475281494</span><span class="p">),</span>
+<span class="p">]</span>
+<span class="n">NODES</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">({</span><span class="n">node</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">EDGES</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)})</span>
+<span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">NODES</span><span class="p">)</span>
+<span class="n">SEPARATE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>  <span class="c1"># these two nodes must land on opposite sides</span>
+
+<span class="n">BALANCE_WEIGHT</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">SEPARATE_WEIGHT</span> <span class="o">=</span> <span class="mf">4.0</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2"> nodes, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">EDGES</span><span class="p">)</span><span class="si">}</span><span class="s2"> edges, total edge weight </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">w</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="o">*</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">EDGES</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>9 nodes, 9 edges, total edge weight 7.876
+</code></pre></div>
+</div>
+<p>A QUBO is just three containers: a constant, a vector of linear coefficients,
+and a dictionary of pair coefficients. Building it by hand keeps the algebra
+visible, and every term below is one line of the model.</p>
+<p>The cut term uses the identity <span class="arithmatex">\(x_i + x_j - 2 x_i x_j\)</span>, which is 1 when the two
+endpoints disagree and 0 when they agree. The balance term squares
+<span class="arithmatex">\(\sum_i x_i - N/2\)</span>. The separation term is <span class="arithmatex">\(1 - (x_i + x_j - 2 x_i x_j)\)</span>, which
+charges the penalty exactly when the two nodes agree.</p>
+<div class="language-python highlight"><span class="filename">Python cell 2</span><pre><span></span><code><span class="n">constant</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">linear</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+<span class="n">quadratic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">add_quadratic</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Accumulate a coefficient on the pair (i, j), stored with i &lt; j."""</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span> <span class="k">else</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">quadratic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">quadratic</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">value</span>
+
+
+<span class="c1"># Objective: the weight of every cut edge.</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">EDGES</span><span class="p">:</span>
+    <span class="n">linear</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">weight</span>
+    <span class="n">linear</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">weight</span>
+    <span class="n">add_quadratic</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span>
+
+<span class="c1"># Constraint: equal halves, as (sum_i x_i - N/2)**2 expanded with x*x = x.</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">N</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="n">constant</span> <span class="o">+=</span> <span class="n">BALANCE_WEIGHT</span> <span class="o">*</span> <span class="n">target</span><span class="o">**</span><span class="mi">2</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">NODES</span><span class="p">:</span>
+    <span class="n">linear</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">BALANCE_WEIGHT</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">target</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">NODES</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">NODES</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">:</span>
+            <span class="n">add_quadratic</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">BALANCE_WEIGHT</span><span class="p">)</span>
+
+<span class="c1"># Constraint: nodes 0 and 5 on opposite sides.</span>
+<span class="n">first</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">SEPARATE</span>
+<span class="n">constant</span> <span class="o">+=</span> <span class="n">SEPARATE_WEIGHT</span>
+<span class="n">linear</span><span class="p">[</span><span class="n">first</span><span class="p">]</span> <span class="o">-=</span> <span class="n">SEPARATE_WEIGHT</span>
+<span class="n">linear</span><span class="p">[</span><span class="n">second</span><span class="p">]</span> <span class="o">-=</span> <span class="n">SEPARATE_WEIGHT</span>
+<span class="n">add_quadratic</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">SEPARATE_WEIGHT</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"constant </span><span class="si">{</span><span class="n">constant</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"linear   </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">linear</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">quadratic</span><span class="p">)</span><span class="si">}</span><span class="s2"> pair terms"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>constant 24.250
+linear   [-7.114 -9.985 -6.949 -6.232 -6.886 -5.915 -6.763 -7.976 -6.427]
+36 pair terms
+</code></pre></div>
+</div>
+<p>With nine variables there are only 512 assignments, so the exact answer is one
+enumeration away. Every later result is measured against it.</p>
+<p>The enumeration also fixes a convention that matters everywhere else: <strong>row <span class="arithmatex">\(k\)</span>
+is the binary expansion of <span class="arithmatex">\(k\)</span> with variable 0 in the most significant
+position</strong>. That is exactly how FatQat orders a counts string and a statevector
+index, so the same array serves as the cost of each measurement outcome without
+any reindexing.</p>
+<div class="language-python highlight"><span class="filename">Python cell 3</span><pre><span></span><code><span class="n">codes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">bits</span> <span class="o">=</span> <span class="p">((</span><span class="n">codes</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+<span class="n">spectrum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">N</span><span class="p">,</span> <span class="n">constant</span><span class="p">)</span>
+<span class="n">spectrum</span> <span class="o">+=</span> <span class="n">bits</span> <span class="o">@</span> <span class="n">linear</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">quadratic</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">spectrum</span> <span class="o">+=</span> <span class="n">value</span> <span class="o">*</span> <span class="n">bits</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">bits</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span>
+
+<span class="n">optimal_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">spectrum</span><span class="p">,</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">min</span><span class="p">()))</span>
+<span class="n">uniform_probability</span> <span class="o">=</span> <span class="n">optimal_indices</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">size</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"minimum energy </span><span class="si">{</span><span class="n">spectrum</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">optimal_indices</span><span class="p">:</span>
+    <span class="n">assignment</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"0</span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">b"</span><span class="p">)</span>
+    <span class="n">side_one</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">NODES</span> <span class="k">if</span> <span class="n">assignment</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">]</span>
+    <span class="n">side_zero</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">NODES</span> <span class="k">if</span> <span class="n">assignment</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"0"</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">assignment</span><span class="si">}</span><span class="s2">  side 0 = </span><span class="si">{</span><span class="n">side_zero</span><span class="si">}</span><span class="s2">, side 1 = </span><span class="si">{</span><span class="n">side_one</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">optimal_indices</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> optimal assignments out of </span><span class="si">{</span><span class="n">spectrum</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"a uniform sampler finds one with probability </span><span class="si">{</span><span class="n">uniform_probability</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>minimum energy 2.9432
+  011011000  side 0 = [0, 3, 6, 7, 8], side 1 = [1, 2, 4, 5]
+  100100111  side 0 = [1, 2, 4, 5], side 1 = [0, 3, 6, 7, 8]
+2 optimal assignments out of 512
+a uniform sampler finds one with probability 0.0039
+</code></pre></div>
+</div>
+<p>Two optimal assignments, not one: relabeling the two sides gives back the same
+partition. That symmetry stays with us — it will show up again as an exactly
+zero magnetic field in the Ising model, and as two equally tall bars in the
+final histogram.</p>
+<h2 id="from-binary-variables-to-a-hamiltonian">From binary variables to a Hamiltonian<a class="headerlink" href="#from-binary-variables-to-a-hamiltonian" title="Permanent link">&para;</a></h2>
+<p>QAOA works with spins, not bits. Substituting <span class="arithmatex">\(x_i = (1 - z_i)/2\)</span> with
+<span class="arithmatex">\(z_i = \pm 1\)</span> turns the QUBO into</p>
+<div class="arithmatex">\[
+H(z) = \text{offset} + \sum_i h_i z_i + \sum_{i&lt;j} J_{ij} z_i z_j ,
+\]</div>
+<p>and the value of <span class="arithmatex">\(H\)</span> on a spin string equals the value of <span class="arithmatex">\(f\)</span> on the
+corresponding bit string. The convention <span class="arithmatex">\(z = +1\)</span> for <span class="arithmatex">\(x = 0\)</span> means the spin
+string reads directly off a measurement: qubit measured 0 is spin <span class="arithmatex">\(+1\)</span>.</p>
+<p>Working out the substitution term by term gives the coefficients below. The
+offset collects everything constant; it shifts every energy equally, so it
+never reaches a gate, but it must be added back before an energy is reported.</p>
+<div class="language-python highlight"><span class="filename">Python cell 4</span><pre><span></span><code><span class="n">offset</span> <span class="o">=</span> <span class="n">constant</span> <span class="o">+</span> <span class="n">linear</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">quadratic</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="mi">4</span>
+<span class="n">field</span> <span class="o">=</span> <span class="o">-</span><span class="n">linear</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">quadratic</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">field</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">value</span> <span class="o">/</span> <span class="mi">4</span>
+    <span class="n">field</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">value</span> <span class="o">/</span> <span class="mi">4</span>
+<span class="n">coupling</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="o">/</span> <span class="mi">4</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">quadratic</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+<span class="c1"># Summing many penalty terms leaves rounding residue where a coefficient should</span>
+<span class="c1"># cancel exactly. Dropping it keeps those non-terms from becoming gates.</span>
+<span class="n">TOLERANCE</span> <span class="o">=</span> <span class="mf">1e-12</span>
+<span class="n">field</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">TOLERANCE</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">coupling</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">coupling</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">TOLERANCE</span><span class="p">}</span>
+
+<span class="n">spins</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">bits</span>
+<span class="n">ising_energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">N</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span> <span class="o">+</span> <span class="n">spins</span> <span class="o">@</span> <span class="n">field</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">coupling</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">ising_energies</span> <span class="o">+=</span> <span class="n">value</span> <span class="o">*</span> <span class="n">spins</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">spins</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"offset </span><span class="si">{</span><span class="n">offset</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"field  </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">field</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">coupling</span><span class="p">)</span><span class="si">}</span><span class="s2"> couplings, largest |J| = </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">coupling</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"max |QUBO - Ising| over all </span><span class="si">{</span><span class="n">spectrum</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> assignments: "</span>
+      <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">spectrum</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ising_energies</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>offset 8.1880
+field  [0. 0. 0. 0. 0. 0. 0. 0. 0.]
+36 couplings, largest |J| = 1.4926
+max |QUBO - Ising| over all 512 assignments: 1.15e-14
+</code></pre></div>
+</div>
+<p>The field is identically zero. That is the side-relabeling symmetry again: the
+problem cannot prefer <span class="arithmatex">\(z\)</span> over <span class="arithmatex">\(-z\)</span>, so no single-spin term survives, and the
+whole Hamiltonian lives in the couplings. Nothing in what follows depends on
+that, but it is a useful check that the model says what it was meant to say.</p>
+<h2 id="the-qaoa-program">The QAOA program<a class="headerlink" href="#the-qaoa-program" title="Permanent link">&para;</a></h2>
+<p>QAOA prepares the equal superposition, then alternates two evolutions <span class="arithmatex">\(p\)</span>
+times: a phase separator <span class="arithmatex">\(e^{-i\gamma H}\)</span> that stamps a phase proportional to
+each assignment's cost, and a mixer <span class="arithmatex">\(e^{-i\beta \sum_i X_i}\)</span> that moves
+amplitude between assignments.</p>
+<p>Both pieces are elementary gates. FatQat's <code>RZ(theta)</code> is
+<span class="arithmatex">\(\mathrm{diag}(e^{-i\theta/2}, e^{+i\theta/2})\)</span>, so a field term needs
+<code>RZ(2*gamma*h)</code>. A coupling term is the same rotation conjugated by a <code>CX</code>
+pair, which writes the parity of the two qubits onto the target before rotating
+it. The mixer is <code>RX(2*beta)</code> on every qubit.</p>
+<p>Program qubit <span class="arithmatex">\(i\)</span> is variable <span class="arithmatex">\(i\)</span>, and FatQat keeps qubit 0 leftmost in a
+counts string and most significant in a statevector index — the same order the
+enumeration above already uses.</p>
+<div class="language-python highlight"><span class="filename">Python cell 5</span><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">qaoa_program</span><span class="p">(</span><span class="n">betas</span><span class="p">,</span> <span class="n">gammas</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">measure</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the QAOA program for this problem at the given angles."""</span>
+    <span class="n">program</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span> <span class="k">if</span> <span class="n">measure</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">qubit</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">betas</span><span class="p">,</span> <span class="n">gammas</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">qubit</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">RZ</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">value</span><span class="p">),</span> <span class="n">qubit</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">coupling</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">CX</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+            <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">RZ</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">value</span><span class="p">),</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">CX</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+            <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">RX</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">beta</span><span class="p">),</span> <span class="n">qubit</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">measure</span><span class="p">:</span>
+        <span class="n">program</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">program</span>
+
+
+<span class="n">demo</span> <span class="o">=</span> <span class="n">qaoa_program</span><span class="p">([</span><span class="mf">0.4</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">])</span>
+
+<span class="c1"># Draw onto an axis this cell created, so the figure belongs to pyplot.</span>
+<span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">11.0</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">))</span>
+<span class="n">demo</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"One QAOA layer"</span><span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"depth-one program: </span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2"> qubits, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">coupling</span><span class="p">)</span><span class="si">}</span><span class="s2"> couplings, "</span>
+      <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">coupling</span><span class="p">)</span><span class="si">}</span><span class="s2"> two-qubit gates per layer"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>depth-one program: 9 qubits, 36 couplings, 72 two-qubit gates per layer
+</code></pre></div>
+<p><img alt="One QAOA layer drawn as a circuit on nine qubits" src="../../assets/generated/tutorials/qubo-qaoa-01.png" /></p>
+</div>
+<p>A parameter cannot be scaled inside a gate argument — FatQat gate angles take a
+number or a bare <code>fatqat.Parameter</code>, not an expression — and every phase
+rotation here needs <span class="arithmatex">\(\gamma\)</span> multiplied by its own coupling. The program is
+therefore rebuilt for each set of angles, which costs about a millisecond and
+disappears next to the simulation.</p>
+<h2 id="two-ways-to-get-the-energy">Two ways to get the energy<a class="headerlink" href="#two-ways-to-get-the-energy" title="Permanent link">&para;</a></h2>
+<p>The quantity to minimize is <span class="arithmatex">\(\langle \psi(\beta,\gamma) | H | \psi(\beta,\gamma)
+\rangle\)</span>. FatQat offers two routes to it, and they are worth comparing once
+before trusting either.</p>
+<p><code>fatqat.Estimator</code> takes the Hamiltonian as an <code>Observable</code> and returns the
+expectation directly. <code>Observable.from_sparse</code> names only the non-identity
+factors of each term, which suits a Hamiltonian with many two-body terms, and
+the identity term carries the offset.</p>
+<p>The second route exploits a property specific to QUBO: <span class="arithmatex">\(H\)</span> is diagonal, so its
+expectation is just the cost of each outcome averaged over the output
+distribution. One statevector, one dot product against the spectrum computed
+earlier — and it is exact, cheaper, and gives the whole distribution rather
+than only its mean.</p>
+<div class="language-python highlight"><span class="filename">Python cell 6</span><pre><span></span><code><span class="n">terms</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"I"</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">offset</span><span class="p">)]</span>
+<span class="n">terms</span> <span class="o">+=</span> <span class="p">[(</span><span class="s2">"Z"</span><span class="p">,</span> <span class="p">(</span><span class="n">index</span><span class="p">,),</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">]</span>
+<span class="n">terms</span> <span class="o">+=</span> <span class="p">[(</span><span class="s2">"ZZ"</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">coupling</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+<span class="n">hamiltonian</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">from_sparse</span><span class="p">(</span><span class="n">terms</span><span class="p">,</span> <span class="n">num_qubits</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+
+<span class="n">simulator</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">Simulator</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"statevector"</span><span class="p">)</span>
+<span class="n">estimator</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Estimator</span><span class="p">(</span><span class="n">simulator</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">probabilities</span><span class="p">(</span><span class="n">betas</span><span class="p">,</span> <span class="n">gammas</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the exact output distribution over the 2**N bitstrings."""</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">qaoa_program</span><span class="p">(</span><span class="n">betas</span><span class="p">,</span> <span class="n">gammas</span><span class="p">),</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">result_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"final_state"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">())</span> <span class="o">**</span> <span class="mi">2</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">energy</span><span class="p">(</span><span class="n">betas</span><span class="p">,</span> <span class="n">gammas</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the exact mean energy, contracted against the cost spectrum."""</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">probabilities</span><span class="p">(</span><span class="n">betas</span><span class="p">,</span> <span class="n">gammas</span><span class="p">)</span> <span class="o">@</span> <span class="n">spectrum</span><span class="p">)</span>
+
+
+<span class="n">test_betas</span><span class="p">,</span> <span class="n">test_gammas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">]</span>
+<span class="n">from_estimator</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+    <span class="n">estimator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">qaoa_program</span><span class="p">(</span><span class="n">test_betas</span><span class="p">,</span> <span class="n">test_gammas</span><span class="p">),</span> <span class="n">hamiltonian</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_expectation</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">from_spectrum</span> <span class="o">=</span> <span class="n">energy</span><span class="p">(</span><span class="n">test_betas</span><span class="p">,</span> <span class="n">test_gammas</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"estimator            </span><span class="si">{</span><span class="n">from_estimator</span><span class="si">:</span><span class="s2">.10f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"distribution contract </span><span class="si">{</span><span class="n">from_spectrum</span><span class="si">:</span><span class="s2">.10f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"difference            </span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">from_estimator</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">from_spectrum</span><span class="p">)</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>estimator            11.5957077247
+distribution contract 11.5957077247
+difference            1.42e-14
+</code></pre></div>
+</div>
+<p>The two agree to machine precision, which confirms the observable, the gate
+construction, and the bit ordering all at once. From here on the distribution
+route is used, because it also reports how much probability sits on the optimum
+— the number that actually decides whether a run succeeded.</p>
+<h2 id="the-depth-one-landscape">The depth-one landscape<a class="headerlink" href="#the-depth-one-landscape" title="Permanent link">&para;</a></h2>
+<p>At <span class="arithmatex">\(p = 1\)</span> there are only two angles, so the entire landscape can be drawn.
+This is the cheapest way to learn the scale a problem wants: <span class="arithmatex">\(\gamma\)</span> enters
+the circuit multiplied by a coupling, so a Hamiltonian with large couplings has
+its structure squeezed into small <span class="arithmatex">\(\gamma\)</span>, and an optimizer started on the
+wrong scale will wander over featureless terrain.</p>
+<div class="language-python highlight"><span class="filename">Python cell 7</span><pre><span></span><code><span class="n">gamma_scale</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">coupling</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="n">beta_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">49</span><span class="p">)</span>
+<span class="n">gamma_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">gamma_scale</span><span class="p">,</span> <span class="mi">97</span><span class="p">)</span>
+<span class="n">landscape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">energy</span><span class="p">([</span><span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="n">g</span><span class="p">])</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gamma_grid</span><span class="p">]</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">beta_grid</span><span class="p">])</span>
+
+<span class="n">row</span><span class="p">,</span> <span class="n">column</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">landscape</span><span class="p">),</span> <span class="n">landscape</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">grid_best</span> <span class="o">=</span> <span class="p">(</span><span class="n">beta_grid</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">gamma_grid</span><span class="p">[</span><span class="n">column</span><span class="p">])</span>
+
+<span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">))</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">axis</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span><span class="n">gamma_grid</span><span class="p">,</span> <span class="n">beta_grid</span><span class="p">,</span> <span class="n">landscape</span><span class="p">,</span> <span class="n">shading</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"viridis"</span><span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">grid_best</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"w*"</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"grid minimum"</span><span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\gamma$"</span><span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\beta$"</span><span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Depth-one QAOA energy landscape"</span><span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper right"</span><span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\langle H \rangle$"</span><span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"largest coupling |J| = </span><span class="si">{</span><span class="n">gamma_scale</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, so gamma is scanned over [0, </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">gamma_scale</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"grid minimum </span><span class="si">{</span><span class="n">landscape</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> at beta=</span><span class="si">{</span><span class="n">grid_best</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, gamma=</span><span class="si">{</span><span class="n">grid_best</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"random-guess average </span><span class="si">{</span><span class="n">landscape</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, exact minimum </span><span class="si">{</span><span class="n">spectrum</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>largest coupling |J| = 1.493, so gamma is scanned over [0, 2.105)
+grid minimum 5.9237 at beta=1.309, gamma=0.285
+random-guess average 8.9654, exact minimum 2.9432
+</code></pre></div>
+<p><img alt="Energy landscape of a depth-one QAOA over its two angles" src="../../assets/generated/tutorials/qubo-qaoa-02.png" /></p>
+</div>
+<p>The landscape is smooth and periodic in <span class="arithmatex">\(\beta\)</span> with period <span class="arithmatex">\(\pi\)</span>, and its
+structure in <span class="arithmatex">\(\gamma\)</span> repeats on the scale set by the couplings. The minimum is
+a broad basin, which is why a gradient-free optimizer started anywhere sensible
+finds it.</p>
+<h2 id="optimizing-one-layer-at-a-time">Optimizing, one layer at a time<a class="headerlink" href="#optimizing-one-layer-at-a-time" title="Permanent link">&para;</a></h2>
+<p>Depth is what makes QAOA work: as <span class="arithmatex">\(p\)</span> grows the ansatz can concentrate more
+amplitude on low-energy assignments. The angles at depth <span class="arithmatex">\(p\)</span>, however, are hard
+to find from a cold start, because the landscape grows a local minimum for
+roughly every new dimension.</p>
+<p>The standard remedy is to grow the depth: solve <span class="arithmatex">\(p = 1\)</span> from several random
+starts, then seed <span class="arithmatex">\(p = 2\)</span> from that solution, and so on. Two seeds are worth
+trying at each step. Repeating the last layer's angles usually reaches a deeper
+basin, while setting the new layer's angles to zero makes it the identity, so
+the deeper ansatz begins exactly at the shallower optimum and cannot do worse.
+Taking the better of the two — plus a couple of perturbed variants — keeps the
+curve monotone without an expensive global search at every depth.</p>
+<p>COBYLA suits the inner loop because it needs no gradient, which matters as soon
+as the energy comes from finite sampling rather than exact simulation.</p>
+<div class="language-python highlight"><span class="filename">Python cell 8</span><pre><span></span><code><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">2024</span><span class="p">)</span>
+<span class="n">depths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<span class="n">mean_energies</span><span class="p">,</span> <span class="n">optimum_probabilities</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="n">betas</span> <span class="o">=</span> <span class="n">gammas</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">for</span> <span class="n">depth</span> <span class="ow">in</span> <span class="n">depths</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">objective</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">energy</span><span class="p">(</span><span class="n">parameters</span><span class="p">[:</span><span class="n">depth</span><span class="p">],</span> <span class="n">parameters</span><span class="p">[</span><span class="n">depth</span><span class="p">:])</span>
+
+    <span class="k">if</span> <span class="n">betas</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Cold start: random guesses on the scales the landscape showed.</span>
+        <span class="n">starts</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">depth</span><span class="p">),</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">gamma_scale</span><span class="p">,</span> <span class="n">depth</span><span class="p">)]</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">starts</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="c1"># Repeat the last layer, which usually lands in a deeper basin.</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">betas</span><span class="p">,</span> <span class="n">betas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:],</span> <span class="n">gammas</span><span class="p">,</span> <span class="n">gammas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]]),</span>
+            <span class="c1"># Make the new layer the identity, so this depth starts exactly at</span>
+            <span class="c1"># the previous optimum and can never do worse.</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">betas</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">gammas</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]),</span>
+        <span class="p">]</span>
+        <span class="n">starts</span> <span class="o">+=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">betas</span><span class="p">,</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">gammas</span><span class="p">,</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">gamma_scale</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="n">best</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">minimize</span><span class="p">(</span>
+                <span class="n">objective</span><span class="p">,</span>
+                <span class="n">start</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="s2">"COBYLA"</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"maxiter"</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">"rhobeg"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">gamma_scale</span><span class="p">),</span> <span class="s2">"tol"</span><span class="p">:</span> <span class="mf">1e-8</span><span class="p">},</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="n">starts</span>
+        <span class="p">),</span>
+        <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">outcome</span><span class="p">:</span> <span class="n">outcome</span><span class="o">.</span><span class="n">fun</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">betas</span><span class="p">,</span> <span class="n">gammas</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">x</span><span class="p">[:</span><span class="n">depth</span><span class="p">],</span> <span class="n">best</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">depth</span><span class="p">:]</span>
+
+    <span class="n">distribution</span> <span class="o">=</span> <span class="n">probabilities</span><span class="p">(</span><span class="n">betas</span><span class="p">,</span> <span class="n">gammas</span><span class="p">)</span>
+    <span class="n">mean_energies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">best</span><span class="o">.</span><span class="n">fun</span><span class="p">))</span>
+    <span class="n">optimum_probabilities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">distribution</span><span class="p">[</span><span class="n">optimal_indices</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"p=</span><span class="si">{</span><span class="n">depth</span><span class="si">}</span><span class="s2">: mean energy </span><span class="si">{</span><span class="n">mean_energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">7.4f</span><span class="si">}</span><span class="s2">   "</span>
+        <span class="sa">f</span><span class="s2">"P(optimal) </span><span class="si">{</span><span class="n">optimum_probabilities</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">   "</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">optimum_probabilities</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">uniform_probability</span><span class="si">:</span><span class="s2">5.1f</span><span class="si">}</span><span class="s2">x uniform"</span>
+    <span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"exact minimum </span><span class="si">{</span><span class="n">spectrum</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>p=1: mean energy  5.9219   P(optimal) 0.0196     5.0x uniform
+p=2: mean energy  5.1285   P(optimal) 0.0589    15.1x uniform
+p=3: mean energy  4.5730   P(optimal) 0.1058    27.1x uniform
+p=4: mean energy  4.2270   P(optimal) 0.1672    42.8x uniform
+p=5: mean energy  3.9384   P(optimal) 0.2465    63.1x uniform
+exact minimum 2.9432
+</code></pre></div>
+</div>
+<p>Both numbers improve with every layer, and they measure different things. The
+mean energy is what the optimizer sees; it falls toward the exact minimum but
+never reaches it, because the state stays a superposition over many
+assignments. The probability of measuring an optimal assignment is what
+actually matters for solving the problem, and it is the number to quote.</p>
+<div class="language-python highlight"><span class="filename">Python cell 9</span><pre><span></span><code><span class="n">figure</span><span class="p">,</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">))</span>
+
+<span class="n">left</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">depths</span><span class="p">,</span> <span class="n">mean_energies</span><span class="p">,</span> <span class="s2">"o-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#1f77b4"</span><span class="p">)</span>
+<span class="n">left</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#444444"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"exact minimum"</span><span class="p">)</span>
+<span class="n">left</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#aaaaaa"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"random guessing"</span><span class="p">)</span>
+<span class="n">left</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"QAOA depth $p$"</span><span class="p">)</span>
+<span class="n">left</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\langle H \rangle$"</span><span class="p">)</span>
+<span class="n">left</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Mean energy"</span><span class="p">)</span>
+<span class="n">left</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">depths</span><span class="p">)</span>
+<span class="n">left</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">right</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">depths</span><span class="p">,</span> <span class="n">optimum_probabilities</span><span class="p">,</span> <span class="s2">"s-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#d62728"</span><span class="p">)</span>
+<span class="n">right</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">uniform_probability</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#aaaaaa"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"uniform sampling"</span><span class="p">)</span>
+<span class="n">right</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"QAOA depth $p$"</span><span class="p">)</span>
+<span class="n">right</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"probability of an optimal assignment"</span><span class="p">)</span>
+<span class="n">right</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Solution probability"</span><span class="p">)</span>
+<span class="n">right</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">depths</span><span class="p">)</span>
+<span class="n">right</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<p><img alt="Mean energy and optimal-solution probability against QAOA depth" src="../../assets/generated/tutorials/qubo-qaoa-03.png" /></p>
+</div>
+<h2 id="reading-the-answer-out">Reading the answer out<a class="headerlink" href="#reading-the-answer-out" title="Permanent link">&para;</a></h2>
+<p>A QAOA circuit is a sampler, not an oracle: it returns a distribution in which
+good assignments are over-represented. The practical procedure is to measure a
+few thousand shots, evaluate the true objective on each distinct outcome, and
+keep the best. Evaluating the objective is classical and cheap, so a run
+succeeds as soon as <em>one</em> shot lands on a good assignment — a far weaker
+requirement than the mean energy reaching the minimum.</p>
+<div class="language-python highlight"><span class="filename">Python cell 10</span><pre><span></span><code><span class="n">SHOTS</span> <span class="o">=</span> <span class="mi">4000</span>
+<span class="n">measured</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+    <span class="n">qaoa_program</span><span class="p">(</span><span class="n">betas</span><span class="p">,</span> <span class="n">gammas</span><span class="p">,</span> <span class="n">measure</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">shots</span><span class="o">=</span><span class="n">SHOTS</span><span class="p">,</span>
+    <span class="n">simulation_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"seed"</span><span class="p">:</span> <span class="mi">11</span><span class="p">},</span>
+<span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">measured</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
+
+<span class="n">ranked</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">spectrum</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span><span class="si">}</span><span class="s2"> distinct outcomes in </span><span class="si">{</span><span class="n">SHOTS</span><span class="si">}</span><span class="s2"> shots"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"best outcomes by true objective value:"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">assignment</span><span class="p">,</span> <span class="n">shots</span> <span class="ow">in</span> <span class="n">ranked</span><span class="p">[:</span><span class="mi">4</span><span class="p">]:</span>
+    <span class="n">side_one</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">NODES</span> <span class="k">if</span> <span class="n">assignment</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">]</span>
+    <span class="n">cut</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">w</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">EDGES</span> <span class="k">if</span> <span class="p">(</span><span class="n">assignment</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">assignment</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">assignment</span><span class="si">}</span><span class="s2">  energy </span><span class="si">{</span><span class="n">spectrum</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">assignment</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)]</span><span class="si">:</span><span class="s2">7.4f</span><span class="si">}</span><span class="s2">  "</span>
+        <span class="sa">f</span><span class="s2">"cut weight </span><span class="si">{</span><span class="n">cut</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  side 1 = </span><span class="si">{</span><span class="n">side_one</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">shots</span><span class="si">}</span><span class="s2"> shots)"</span>
+    <span class="p">)</span>
+
+<span class="n">best_assignment</span> <span class="o">=</span> <span class="n">ranked</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">best sampled energy </span><span class="si">{</span><span class="n">spectrum</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">best_assignment</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, "</span>
+      <span class="sa">f</span><span class="s2">"exact minimum </span><span class="si">{</span><span class="n">spectrum</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>184 distinct outcomes in 4000 shots
+best outcomes by true objective value:
+  100100111  energy  2.9432  cut weight 2.69  side 1 = [0, 3, 6, 7, 8]  (515 shots)
+  011011000  energy  2.9432  cut weight 2.69  side 1 = [1, 2, 4, 5]  (519 shots)
+  001001111  energy  3.5025  cut weight 3.25  side 1 = [2, 5, 6, 7, 8]  (285 shots)
+  110110000  energy  3.5025  cut weight 3.25  side 1 = [0, 1, 3, 4]  (279 shots)
+
+best sampled energy 2.9432, exact minimum 2.9432
+</code></pre></div>
+</div>
+<div class="language-python highlight"><span class="filename">Python cell 11</span><pre><span></span><code><span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">))</span>
+<span class="n">measured</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span>
+    <span class="n">number_to_keep</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">sort</span><span class="o">=</span><span class="s2">"count"</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Most frequent outcomes (</span><span class="si">{</span><span class="n">SHOTS</span><span class="si">}</span><span class="s2"> shots)"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">optimal_strings</span> <span class="o">=</span> <span class="p">{</span><span class="nb">format</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"0</span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">b"</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">optimal_indices</span><span class="p">}</span>
+<span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">axis</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span> <span class="ow">in</span> <span class="n">optimal_strings</span><span class="p">:</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s2">"#d62728"</span><span class="p">)</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">set_fontweight</span><span class="p">(</span><span class="s2">"bold"</span><span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"outcome (optimal assignments in red)"</span><span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<p><img alt="Sampled outcome histogram with the optimal bitstrings highlighted" src="../../assets/generated/tutorials/qubo-qaoa-04.png" /></p>
+</div>
+<p>The two optimal assignments are among the most frequent outcomes, and they are
+each other's bitwise complement — the side-relabeling symmetry, surviving all
+the way from the Hamiltonian's zero field to the measured histogram.</p>
+<h2 id="what-carries-over">What carries over<a class="headerlink" href="#what-carries-over" title="Permanent link">&para;</a></h2>
+<p>Nothing above was specific to graph partitioning. The QUBO containers, the
+substitution to spins, the phase-separator and mixer construction, the two ways
+of getting an energy, the depth-growing optimizer, and the sample-and-decode
+readout are the same for any QUBO. Applying them to a new problem means writing
+one function: the one that turns the application's objective and constraints
+into <code>constant</code>, <code>linear</code>, and <code>quadratic</code>.</p>
+<p>Three lessons generalize with them:</p>
+<ul>
+<li><strong>The encoding is the first optimization.</strong> Choosing one variable per node
+  rather than one per node-and-side halved the qubit count <em>and</em> removed a
+  penalty term, before any quantum work happened.</li>
+<li><strong>Penalty weights must dominate what they forbid.</strong> A violation has to cost
+  more than the objective improvement it could buy, or the ground state will
+  simply be infeasible.</li>
+<li><strong>Not every constraint belongs in the QUBO.</strong> Requirements that are awkward
+  to write quadratically are often cheaper to check classically after
+  measurement, since decoding is free compared with the circuit.</li>
+</ul>
+<p><a href="../islanding-model/">Model controlled islanding as a QUBO</a> puts all three to
+work on a real application, where the choice of encoding decides whether the
+problem fits on the hardware at all, and
+<a href="../islanding-qaoa/">Split a power grid into islands with QAOA</a> runs it.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 FatQat contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.prune", "navigation.path", "navigation.top", "navigation.footer", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.tooltips"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+  
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["\\(", "\\)"]],
+        displayMath: [["\\[", "\\]"]],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        ignoreHtmlClass: ".*|",
+        processHtmlClass: "arithmatex"
+      }
+    };
+  </script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
+    integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    document$.subscribe(() => {
+      MathJax.startup.output.clearCache();
+      MathJax.typesetClear();
+      MathJax.texReset();
+      MathJax.typesetPromise();
+    });
+  </script>
+
+  </body>
+</html>

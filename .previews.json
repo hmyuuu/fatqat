@@ -1,0 +1,14 @@
+{
+  "main": {
+    "attempt": "ad5194f14fade090af5ee56af33fb14bbba06494dd899816fc9efb69da4cc7ac",
+    "branch": "main",
+    "sha": "047a1c8a4a9fab097f1d7fbc52d13c2c41bdb77c",
+    "status": "ready"
+  },
+  "pxp": {
+    "attempt": "3a99d6d87469ddac4a87ff8b09a55c45e1b30b66bd31bfbe0b1e34224d5d4e35",
+    "branch": "codex/pxp-incremental-evolution",
+    "sha": "8400ace88a85440b983806f99d1717033f974fca",
+    "status": "ready"
+  }
+}

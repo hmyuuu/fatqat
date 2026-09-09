@@ -1,0 +1,1493 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Why splitting a power grid to stop a cascading failure is a combinatorial optimization problem, and how to write it as a QUBO that a quantum optimizer can take.">
+      
+      
+        <meta name="author" content="FatQat contributors">
+      
+      
+        <link rel="canonical" href="https://hmyuuu.github.io/fatqat/pxp/tutorials/islanding-model/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Model controlled islanding as a QUBO - FatQat</title>
+      
+    
+    
+  
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+  <link rel="stylesheet" href="../../assets/stylesheets/site.css">
+
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#model-controlled-islanding-as-a-qubo" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="FatQat" class="md-header__button md-logo" aria-label="FatQat" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.36 2.64c1.64 0 3 1.36 3 3 0 1.65-1.36 3-3 3-1.65 0-3-1.35-3-3 0-.3.05-.58.14-.84-1.07-.51-2.25-.8-3.5-.8a8 8 0 0 0-8 8l.04.84-1.99.21L2 12A10 10 0 0 1 12 2c1.69 0 3.28.42 4.67 1.16.49-.33 1.07-.52 1.69-.52m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1c.56 0 1-.45 1-1 0-.56-.44-1-1-1M5.64 15.36c1.65 0 3 1.35 3 3 0 .3-.05.58-.14.84 1.07.51 2.25.8 3.5.8a8 8 0 0 0 8-8l-.04-.84 1.99-.21L22 12a10 10 0 0 1-10 10c-1.69 0-3.28-.42-4.67-1.16-.49.33-1.07.52-1.69.52-1.64 0-3-1.36-3-3 0-1.65 1.36-3 3-3m0 2c-.56 0-1 .45-1 1 0 .56.44 1 1 1a1 1 0 0 0 1-1 1 1 0 0 0-1-1M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FatQat
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Model controlled islanding as a QUBO
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hmyuuu/fatqat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hmyuuu/fatqat
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guide/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="FatQat" class="md-nav__button md-logo" aria-label="FatQat" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.36 2.64c1.64 0 3 1.36 3 3 0 1.65-1.36 3-3 3-1.65 0-3-1.35-3-3 0-.3.05-.58.14-.84-1.07-.51-2.25-.8-3.5-.8a8 8 0 0 0-8 8l.04.84-1.99.21L2 12A10 10 0 0 1 12 2c1.69 0 3.28.42 4.67 1.16.49-.33 1.07-.52 1.69-.52m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1c.56 0 1-.45 1-1 0-.56-.44-1-1-1M5.64 15.36c1.65 0 3 1.35 3 3 0 .3-.05.58-.14.84 1.07.51 2.25.8 3.5.8a8 8 0 0 0 8-8l-.04-.84 1.99-.21L22 12a10 10 0 0 1-10 10c-1.69 0-3.28-.42-4.67-1.16-.49.33-1.07.52-1.69.52-1.64 0-3-1.36-3-3 0-1.65 1.36-3 3-3m0 2c-.56 0-1 .45-1 1 0 .56.44 1 1 1a1 1 0 0 0 1-1 1 1 0 0 0-1-1M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4"/></svg>
+
+    </a>
+    FatQat
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hmyuuu/fatqat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hmyuuu/fatqat
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../guide/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User guide
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../api/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-is-a-combinatorial-optimization-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why this is a combinatorial optimization problem
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constraints-are-what-make-it-interesting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constraints are what make it interesting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-this-tutorial-stops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where this tutorial stops
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The networks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#two-encodings-for-the-same-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two encodings for the same decision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-model-actually-says" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the model actually says
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-model-is-and-what-it-leaves-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the model is, and what it leaves out
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<!-- Generated from docs/mkdocs/tutorial-sources; do not edit here. -->
+
+<h1 id="model-controlled-islanding-as-a-qubo">Model controlled islanding as a QUBO<a class="headerlink" href="#model-controlled-islanding-as-a-qubo" title="Permanent link">&para;</a></h1>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 15a3 3 0 0 1 3 3 3 3 0 0 1-3 3 2.99 2.99 0 0 1-2.83-2H14v-2h1.17c.41-1.17 1.52-2 2.83-2m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1m0-9a1.43 1.43 0 0 0 1.43-1.43 1.43 1.43 0 1 0-2.86 0A1.43 1.43 0 0 0 18 8m0-5.43a4 4 0 0 1 4 4C22 9.56 18 14 18 14s-4-4.44-4-7.43a4 4 0 0 1 4-4M8.83 17H10v2H8.83A2.99 2.99 0 0 1 6 21a3 3 0 0 1-3-3c0-1.31.83-2.42 2-2.83V14h2v1.17c.85.3 1.53.98 1.83 1.83M6 17a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1M6 3a3 3 0 0 1 3 3c0 1.31-.83 2.42-2 2.83V10H5V8.83A2.99 2.99 0 0 1 3 6a3 3 0 0 1 3-3m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1m5 14v-2h2v2zm-4-6H5v-2h2z"/></svg></span> <strong>Track</strong></p>
+<p>Power systems</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></svg></span> <strong>Downloads</strong></p>
+<p><a download="islanding-model.py" href="../../downloads/tutorials/islanding-model.py">Python script <code>.py</code></a> · <a download="islanding-model.ipynb" href="../../downloads/tutorials/islanding-model.ipynb">Jupyter notebook <code>.ipynb</code></a></p>
+</li>
+</ul>
+</div>
+<p>A power grid is a machine that has to stay synchronized. Every generator on it
+spins at the same electrical frequency, held there by the power flowing through
+the transmission lines. When a large disturbance hits — a line trips, a
+generator drops out — that balance is disturbed, and if the disturbance is
+severe enough the machines begin to pull apart from one another. Protective
+relays see the resulting swings and trip more lines, which makes the swings
+worse. That runaway is a <em>cascading failure</em>, and it is how a local fault
+becomes a regional blackout.</p>
+<p><em>Controlled islanding</em> is the last-resort defense: instead of fighting the
+cascade, the operator deliberately splits the network into separate <strong>islands</strong>,
+each of which contains enough generation to supply its own load and can run
+independently until the system is repaired. The cascade stops at the island
+boundaries.</p>
+<p>The engineering question is <em>where to cut</em>, and it has to be answered in
+seconds.</p>
+<h2 id="why-this-is-a-combinatorial-optimization-problem">Why this is a combinatorial optimization problem<a class="headerlink" href="#why-this-is-a-combinatorial-optimization-problem" title="Permanent link">&para;</a></h2>
+<p>Strip away the physics and a network is a weighted graph: <strong>buses</strong> (substations)
+are the nodes, <strong>transmission lines</strong> are the edges, and each edge carries a
+weight equal to the power flowing on it. Splitting the grid means assigning
+every bus to an island, and the lines whose two endpoints land in different
+islands are the ones that get opened.</p>
+<p>That gives the shape of the problem:</p>
+<ul>
+<li><strong>The cost is the total weight of the cut lines.</strong> Opening a line interrupts
+  the power flowing on it, and that power has to be made up somewhere — by
+  shedding load or by ramping a generator. So the objective is to cut as little
+  power flow as possible.</li>
+<li><strong>The decision is discrete.</strong> A bus is either in island 0 or island 1. There
+  is no useful notion of a bus being 40% in one island.</li>
+<li><strong>The choices interact.</strong> Whether a line is cut depends on <em>two</em> buses at
+  once, so the cost is not a sum of independent per-bus decisions. This is what
+  makes the problem quadratic rather than linear, and what makes it hard.</li>
+</ul>
+<p>Assigning <span class="arithmatex">\(n\)</span> buses to <span class="arithmatex">\(k\)</span> islands gives <span class="arithmatex">\(k^n\)</span> possible assignments. There is no
+known way to search that space efficiently in general — minimum cut with
+balance requirements is NP-hard — and the assignment has to be found fast enough
+to act on. That combination, an exponential discrete search under a hard time
+budget, is exactly the class of problem quantum optimization is aimed at.</p>
+<h2 id="constraints-are-what-make-it-interesting">Constraints are what make it interesting<a class="headerlink" href="#constraints-are-what-make-it-interesting" title="Permanent link">&para;</a></h2>
+<p>A pure minimum cut is not a usable answer, because a split that is cheap to
+make can still be one the grid cannot survive. Four requirements matter:</p>
+<ul>
+<li><strong>Generator coherency.</strong> After a disturbance, generators do not swing
+  randomly: they separate into groups whose members accelerate together and
+  decelerate together. Two generators from <em>different</em> groups left inside one
+  island will pull against each other, lose synchronism, and trip the island
+  they were supposed to save. Coherent generators must therefore stay together,
+  and incoherent ones must be separated. This is the requirement that makes
+  controlled islanding different from graph partitioning, and it comes from the
+  dynamics rather than the topology.</li>
+<li><strong>Each island must be able to run.</strong> It needs generation, it needs load to
+  absorb that generation, and it needs to be more than a stub.</li>
+<li><strong>Each island must be connected.</strong> A set of buses with no path between them
+  is not an island; it is two islands, one of which may have no generator at
+  all.</li>
+</ul>
+<p>The identification of coherent groups is a separate problem with its own
+literature [2]. The search for a splitting strategy that respects them is the
+problem modeled here, and [3] is a good entry point to the classical
+approaches. This tutorial takes the coherent groups as given data and asks for
+the split.</p>
+<h2 id="where-this-tutorial-stops">Where this tutorial stops<a class="headerlink" href="#where-this-tutorial-stops" title="Permanent link">&para;</a></h2>
+<p>By the end you will have a QUBO — a quadratic function of binary variables
+whose minimum is the split — checked against exhaustive enumeration on two
+IEEE test systems, plus a clear picture of what the model does and does not
+capture. Running it on a quantum circuit is the subject of
+<a href="../islanding-qaoa/">Split a power grid into islands with QAOA</a>.</p>
+<p>The formulation developed here follows REGRID-QAOA [1], which introduces this
+coherency-informed model of controlled islanding together with the structured
+post-processing the companion tutorial uses.</p>
+<p>The mechanics of QUBOs in general, and of turning one into a FatQat program,
+are covered in <a href="../qubo-qaoa/">Solve a QUBO with QAOA</a>.</p>
+<h2 id="the-networks">The networks<a class="headerlink" href="#the-networks" title="Permanent link">&para;</a></h2>
+<p>Two systems are carried in full here, the WSCC 9-bus and the IEEE 14-bus. Three
+larger ones appear in the qubit accounting of
+<a href="../islanding-qaoa/">Split a power grid into islands with QAOA</a>, which is where
+the width of the model starts to matter. Bus labels are zero-based, so bus 0 is
+the system's bus 1. Line weights are the steady-state power flows of the
+reference case, which is what makes the cut weight the power interrupted by the
+split.</p>
+<p>The coherency groups are the interesting part of the data. On the 14-bus
+system, generators 0, 1, and 2 swing together and generators 5 and 7 swing
+together, so any acceptable split must put <code>{0, 1, 2}</code> on one side and
+<code>{5, 7}</code> on the other. That single requirement is what stops the answer from
+being the cheapest cut in the graph.</p>
+<div class="language-python highlight"><span class="filename">Python cell 1</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat.operations</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ops</span>
+
+<span class="n">SYSTEMS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"9-bus"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"edges"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.8855058426108287</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">1.0506270719315443</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.3795071371756076</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">0.7349783693597357</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">0.29891469957856975</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.9382048153285490</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.0147319144099027</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">1.0706524421112620</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.5028157475281494</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="s2">"generators"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+        <span class="s2">"loads"</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>
+        <span class="s2">"coherency"</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+        <span class="s2">"islands"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">"14-bus"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"edges"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">154.73</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">74.129</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">72.076</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">55.293</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">41.064</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">23.472</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">61.415</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">28.074</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">16.080</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">44.087</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">7.3256</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mf">7.7502</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mf">17.642</span><span class="p">),</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">5.7112e-11</span><span class="p">),</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">28.074</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mf">5.2211</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mf">9.3683</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">3.7916</span><span class="p">),</span> <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mf">1.6111</span><span class="p">),</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mf">5.6168</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="s2">"generators"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+        <span class="s2">"loads"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">],</span>
+        <span class="s2">"coherency"</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">]],</span>
+        <span class="s2">"islands"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">SYSTEMS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">spec</span><span class="p">[</span><span class="s2">"buses"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">({</span><span class="n">b</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"edges"</span><span class="p">]</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)})</span>
+    <span class="n">spec</span><span class="p">[</span><span class="s2">"lines"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"edges"</span><span class="p">]]</span>
+    <span class="n">spec</span><span class="p">[</span><span class="s2">"weight"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span> <span class="n">w</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"edges"</span><span class="p">]}</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">'buses'</span><span class="p">])</span><span class="si">}</span><span class="s2"> buses, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">'lines'</span><span class="p">])</span><span class="si">}</span><span class="s2"> lines, "</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">'generators'</span><span class="p">])</span><span class="si">}</span><span class="s2"> generators, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">'loads'</span><span class="p">])</span><span class="si">}</span><span class="s2"> loads, "</span>
+        <span class="sa">f</span><span class="s2">"coherency groups </span><span class="si">{</span><span class="n">spec</span><span class="p">[</span><span class="s1">'coherency'</span><span class="p">]</span><span class="si">}</span><span class="s2">, "</span>
+        <span class="sa">f</span><span class="s2">"total flow </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">w</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="o">*</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spec</span><span class="p">[</span><span class="s1">'edges'</span><span class="p">])</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">line_weight</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the flow on a line, accepting either endpoint order."""</span>
+    <span class="k">return</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"weight"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"weight"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">))</span>
+
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">SYSTEMS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">buses</span><span class="p">,</span> <span class="n">islands</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">"buses"</span><span class="p">]),</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"islands"</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">islands</span><span class="si">}</span><span class="s2">**</span><span class="si">{</span><span class="n">buses</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">islands</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="n">buses</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> possible assignments"</span>
+    <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">and for the larger systems this tutorial does not carry in full:"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">buses</span><span class="p">,</span> <span class="n">islands</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"24-bus"</span><span class="p">),</span> <span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"30-bus"</span><span class="p">),</span> <span class="p">(</span><span class="mi">39</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"39-bus"</span><span class="p">)]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">islands</span><span class="si">}</span><span class="s2">**</span><span class="si">{</span><span class="n">buses</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">islands</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="n">buses</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> assignments"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>9-bus: 9 buses, 9 lines, 3 generators, 4 loads, coherency groups [[1, 2], [0]], total flow 7.876
+14-bus: 14 buses, 20 lines, 5 generators, 11 loads, coherency groups [[0, 1, 2], [5, 7]], total flow 656.821
+
+9-bus: 2**9 = 512 possible assignments
+14-bus: 2**14 = 16,384 possible assignments
+
+and for the larger systems this tutorial does not carry in full:
+24-bus: 3**24 = 2.824e+11 assignments
+30-bus: 2**30 = 1.074e+09 assignments
+39-bus: 3**39 = 4.053e+18 assignments
+</code></pre></div>
+</div>
+<p>The 9-bus system has 512 assignments, which a laptop enumerates instantly. The
+39-bus system has more than <span class="arithmatex">\(4 \times 10^{18}\)</span>. Real transmission networks have
+thousands of buses. Enumeration stops being an option almost immediately, which
+is why the classical literature reaches for ordered binary decision diagrams,
+spectral clustering, and submodular relaxations — and why the problem is a
+candidate for quantum optimization.</p>
+<h2 id="two-encodings-for-the-same-decision">Two encodings for the same decision<a class="headerlink" href="#two-encodings-for-the-same-decision" title="Permanent link">&para;</a></h2>
+<p>The textbook encoding gives every bus one binary variable per island:
+<span class="arithmatex">\(y_{i,g} = 1\)</span> when bus <span class="arithmatex">\(i\)</span> joins island <span class="arithmatex">\(g\)</span>. It handles any number of islands,
+but most of its bitstrings are nonsense — a bus can be assigned to two islands,
+or to none — so it needs a one-hot penalty <span class="arithmatex">\(\sum_i (\sum_g y_{i,g} - 1)^2\)</span> to
+forbid them, and it costs <span class="arithmatex">\(n_\text{buses} \times k\)</span> qubits.</p>
+<p>When there are exactly two islands, the one-hot rule says <span class="arithmatex">\(y_{i,1} = 1 -
+y_{i,0}\)</span>: the second variable carries no information. Keeping one variable per
+bus, whose value names the island directly, halves the qubit count <em>and</em>
+deletes the penalty, because no bitstring can violate a rule the encoding
+cannot express. That is the single largest lever available on a near-term
+device, and it costs nothing. Encodings that push the same idea further, and
+the reductions that go with them, are the subject of [5] and [6].</p>
+<p>Both encodings are built below. The rest of the requirements are the same in
+each: they only differ in how "bus <span class="arithmatex">\(i\)</span> is in island <span class="arithmatex">\(g\)</span>" is written down.</p>
+<div class="language-python highlight"><span class="filename">Python cell 2</span><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_qubo</span><span class="p">(</span>
+    <span class="n">spec</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"binary"</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">balance_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_coherency</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return (constant, linear, quadratic, variables) for one islanding model.</span>
+
+<span class="sd">    Set use_coherency=False to build the pure minimum-cut model, which is</span>
+<span class="sd">    useful for showing what the coherency requirement actually buys.</span>
+<span class="sd">    """</span>
+    <span class="n">buses</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"buses"</span><span class="p">],</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"lines"</span><span class="p">],</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"islands"</span><span class="p">]</span>
+    <span class="c1"># Line weights are physical flows, so they differ by orders of magnitude</span>
+    <span class="c1"># between systems. Every penalty is stated as a multiple of the heaviest</span>
+    <span class="c1"># line, which bounds what any single reassignment can save.</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">line_weight</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">penalty</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">penalty</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">scale</span>
+    <span class="k">if</span> <span class="n">balance_weight</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Balance only has to forbid a degenerate one-bus island, so it sits</span>
+        <span class="c1"># far below the hard constraints; heavier, and it overrides the</span>
+        <span class="c1"># objective it is meant to guard.</span>
+        <span class="n">balance_weight</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">scale</span>
+    <span class="k">if</span> <span class="n">encoding</span> <span class="o">==</span> <span class="s2">"binary"</span> <span class="ow">and</span> <span class="n">k</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"the binary encoding needs exactly two islands"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">encoding</span> <span class="o">==</span> <span class="s2">"one_hot"</span><span class="p">:</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">]"</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">buses</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">]"</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">buses</span><span class="p">]</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">position</span> <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">variables</span><span class="p">)}</span>
+
+    <span class="n">constant</span><span class="p">,</span> <span class="n">linear</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">))</span>
+    <span class="n">quadratic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_quadratic</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">index</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span>
+            <span class="n">linear</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">value</span>          <span class="c1"># x * x == x for binary x</span>
+            <span class="k">return</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span> <span class="k">else</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">quadratic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">quadratic</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_square</span><span class="p">(</span><span class="n">terms</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Add weight * (sum_k c_k v_k + offset)**2, expanded with x*x = x."""</span>
+        <span class="k">nonlocal</span> <span class="n">constant</span>
+        <span class="n">constant</span> <span class="o">+=</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">offset</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">:</span>
+            <span class="n">linear</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">weight</span> <span class="o">*</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">offset</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">terms</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">terms</span><span class="p">)):</span>
+                <span class="n">add_quadratic</span><span class="p">(</span><span class="n">terms</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">terms</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">terms</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">terms</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">member</span><span class="p">(</span><span class="n">bus</span><span class="p">,</span> <span class="n">island</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Terms and offset whose sum is 1 exactly when bus is in island."""</span>
+        <span class="k">if</span> <span class="n">encoding</span> <span class="o">==</span> <span class="s2">"one_hot"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">bus</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">island</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)],</span> <span class="mf">0.0</span>
+        <span class="c1"># Under the binary encoding, island 1 is the variable and island 0 is</span>
+        <span class="c1"># its complement.</span>
+        <span class="k">return</span> <span class="p">([(</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">bus</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)],</span> <span class="mf">0.0</span><span class="p">)</span> <span class="k">if</span> <span class="n">island</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="p">([(</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">bus</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)],</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># Objective: the flow on every cut line.</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">line_weight</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">encoding</span> <span class="o">==</span> <span class="s2">"one_hot"</span><span class="p">:</span>
+            <span class="n">constant</span> <span class="o">+=</span> <span class="n">w</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+                <span class="n">add_quadratic</span><span class="p">(</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="o">-</span><span class="n">w</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">linear</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]"</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">w</span>
+            <span class="n">linear</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">]"</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">w</span>
+            <span class="n">add_quadratic</span><span class="p">(</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
+
+    <span class="c1"># Exactly one island per bus. Unnecessary, and skipped, under "binary".</span>
+    <span class="k">if</span> <span class="n">encoding</span> <span class="o">==</span> <span class="s2">"one_hot"</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">buses</span><span class="p">:</span>
+            <span class="n">add_square</span><span class="p">([(</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">bus</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)],</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">penalty</span><span class="p">)</span>
+
+    <span class="c1"># Coherency: groups stay whole, and different groups stay apart.</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"coherency"</span><span class="p">]</span> <span class="k">if</span> <span class="n">use_coherency</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">encoding</span> <span class="o">==</span> <span class="s2">"one_hot"</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+                        <span class="n">add_square</span><span class="p">(</span>
+                            <span class="p">[(</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">group</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">group</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)],</span>
+                            <span class="mf">0.0</span><span class="p">,</span> <span class="n">penalty</span><span class="p">,</span>
+                        <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">add_square</span><span class="p">(</span>
+                        <span class="p">[(</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">group</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">group</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">penalty</span>
+                    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">[</span><span class="n">a</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">[</span><span class="n">b</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">encoding</span> <span class="o">==</span> <span class="s2">"one_hot"</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+                            <span class="n">add_quadratic</span><span class="p">(</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="n">penalty</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># 1 - (y_i + y_j - 2 y_i y_j) is 1 when they agree.</span>
+                        <span class="n">constant</span> <span class="o">+=</span> <span class="n">penalty</span>
+                        <span class="n">linear</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]"</span><span class="p">]]</span> <span class="o">-=</span> <span class="n">penalty</span>
+                        <span class="n">linear</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">]"</span><span class="p">]]</span> <span class="o">-=</span> <span class="n">penalty</span>
+                        <span class="n">add_quadratic</span><span class="p">(</span><span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"y[</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">]"</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">penalty</span><span class="p">)</span>
+
+    <span class="c1"># Balance: islands of equal size. An equality, so it needs no slack qubits,</span>
+    <span class="c1"># and it rules out the degenerate split that isolates a single bus.</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">buses</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span>
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+        <span class="n">terms</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="p">[],</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">buses</span><span class="p">:</span>
+            <span class="n">bus_terms</span><span class="p">,</span> <span class="n">bus_offset</span> <span class="o">=</span> <span class="n">member</span><span class="p">(</span><span class="n">bus</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
+            <span class="n">terms</span> <span class="o">+=</span> <span class="n">bus_terms</span>
+            <span class="n">offset</span> <span class="o">+=</span> <span class="n">bus_offset</span>
+        <span class="n">add_square</span><span class="p">(</span><span class="n">terms</span><span class="p">,</span> <span class="n">offset</span> <span class="o">-</span> <span class="n">target</span><span class="p">,</span> <span class="n">balance_weight</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">constant</span><span class="p">,</span> <span class="n">linear</span><span class="p">,</span> <span class="n">quadratic</span><span class="p">,</span> <span class="n">variables</span>
+
+
+<span class="k">for</span> <span class="n">encoding</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"one_hot"</span><span class="p">,</span> <span class="s2">"binary"</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">SYSTEMS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">constant</span><span class="p">,</span> <span class="n">linear</span><span class="p">,</span> <span class="n">quadratic</span><span class="p">,</span> <span class="n">variables</span> <span class="o">=</span> <span class="n">build_qubo</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">8</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">encoding</span><span class="si">:</span><span class="s2">8</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2"> qubits, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">quadratic</span><span class="p">)</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2"> pair terms"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>9-bus    one_hot   18 qubits,   81 pair terms
+14-bus   one_hot   28 qubits,  196 pair terms
+9-bus    binary     9 qubits,   36 pair terms
+14-bus   binary    14 qubits,   91 pair terms
+</code></pre></div>
+</div>
+<h2 id="what-the-model-actually-says">What the model actually says<a class="headerlink" href="#what-the-model-actually-says" title="Permanent link">&para;</a></h2>
+<p>With 14 or fewer variables the whole space fits in memory, so the model can be
+checked exhaustively before any quantum work. That check is worth doing, and on
+this problem it turns up something important.</p>
+<p>The energy of a bitstring is only half the story. Decoding it into an island
+assignment and running the operating checks — including connectivity, which is
+deliberately <em>not</em> in the QUBO — is what says whether the split is usable.</p>
+<div class="language-python highlight"><span class="filename">Python cell 3</span><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">spectrum_of</span><span class="p">(</span><span class="n">constant</span><span class="p">,</span> <span class="n">linear</span><span class="p">,</span> <span class="n">quadratic</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return every assignment's energy, indexed the way FatQat indexes states."""</span>
+    <span class="n">codes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">[((</span><span class="n">codes</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+    <span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">n</span><span class="p">,</span> <span class="n">constant</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">linear</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">energies</span><span class="p">[</span><span class="n">columns</span><span class="p">[</span><span class="n">position</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">value</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">quadratic</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">energies</span><span class="p">[</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">columns</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">energies</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">to_bits</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">index</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">connected</span><span class="p">(</span><span class="n">members</span><span class="p">,</span> <span class="n">lines</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return whether the subgraph induced on a bus set is connected."""</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">members</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="n">inside</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">members</span><span class="p">)</span>
+    <span class="n">adjacency</span> <span class="o">=</span> <span class="p">{</span><span class="n">bus</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">inside</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inside</span> <span class="ow">and</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">inside</span><span class="p">:</span>
+            <span class="n">adjacency</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+            <span class="n">adjacency</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">inside</span><span class="p">))</span>
+    <span class="n">seen</span><span class="p">,</span> <span class="n">stack</span> <span class="o">=</span> <span class="p">{</span><span class="n">start</span><span class="p">},</span> <span class="p">[</span><span class="n">start</span><span class="p">]</span>
+    <span class="k">while</span> <span class="n">stack</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">adjacency</span><span class="p">[</span><span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()]:</span>
+            <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+                <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+                <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">seen</span> <span class="o">==</span> <span class="n">inside</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">bits</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"binary"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the island assignment a bitstring encodes, plus its checks."""</span>
+    <span class="n">buses</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"buses"</span><span class="p">],</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"lines"</span><span class="p">],</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"islands"</span><span class="p">]</span>
+    <span class="n">placement</span><span class="p">,</span> <span class="n">unassigned</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">encoding</span> <span class="o">==</span> <span class="s2">"binary"</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">bus</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">buses</span><span class="p">):</span>
+            <span class="n">placement</span><span class="p">[</span><span class="n">bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bits</span><span class="p">[</span><span class="n">position</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">bus</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">buses</span><span class="p">):</span>
+            <span class="n">chosen</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">if</span> <span class="n">bits</span><span class="p">[</span><span class="n">position</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="n">g</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chosen</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">unassigned</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">chosen</span><span class="p">:</span>
+                <span class="n">placement</span><span class="p">[</span><span class="n">bus</span><span class="p">]</span> <span class="o">=</span> <span class="n">chosen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">islands</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">placement</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">g</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)}</span>
+    <span class="n">cut</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="n">placement</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="n">placement</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)]</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"coherency"</span><span class="p">]</span>
+    <span class="n">coherent</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">({</span><span class="n">placement</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">g</span><span class="p">})</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+        <span class="ow">not</span> <span class="p">({</span><span class="n">placement</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">[</span><span class="n">a</span><span class="p">]}</span> <span class="o">&amp;</span> <span class="p">{</span><span class="n">placement</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">[</span><span class="n">c</span><span class="p">]})</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="n">checks</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"assigned"</span><span class="p">:</span> <span class="ow">not</span> <span class="n">unassigned</span><span class="p">,</span>
+        <span class="s2">"coherency"</span><span class="p">:</span> <span class="n">coherent</span><span class="p">,</span>
+        <span class="s2">"connected"</span><span class="p">:</span> <span class="nb">all</span><span class="p">(</span><span class="n">connected</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">islands</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">m</span><span class="p">),</span>
+        <span class="s2">"generators"</span><span class="p">:</span> <span class="nb">all</span><span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">b</span> <span class="ow">in</span> <span class="n">m</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"generators"</span><span class="p">])</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">islands</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+        <span class="s2">"loads"</span><span class="p">:</span> <span class="nb">all</span><span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">b</span> <span class="ow">in</span> <span class="n">m</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"loads"</span><span class="p">])</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">islands</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+        <span class="s2">"min buses"</span><span class="p">:</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">islands</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"islands"</span><span class="p">:</span> <span class="n">islands</span><span class="p">,</span>
+        <span class="s2">"cut_lines"</span><span class="p">:</span> <span class="n">cut</span><span class="p">,</span>
+        <span class="s2">"cut_weight"</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">line_weight</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">cut</span><span class="p">),</span>
+        <span class="s2">"checks"</span><span class="p">:</span> <span class="n">checks</span><span class="p">,</span>
+        <span class="s2">"feasible"</span><span class="p">:</span> <span class="nb">all</span><span class="p">(</span><span class="n">checks</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+    <span class="p">}</span>
+
+
+<span class="n">references</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">SYSTEMS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">constant</span><span class="p">,</span> <span class="n">linear</span><span class="p">,</span> <span class="n">quadratic</span><span class="p">,</span> <span class="n">variables</span> <span class="o">=</span> <span class="n">build_qubo</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="s2">"binary"</span><span class="p">)</span>
+    <span class="n">energies</span> <span class="o">=</span> <span class="n">spectrum_of</span><span class="p">(</span><span class="n">constant</span><span class="p">,</span> <span class="n">linear</span><span class="p">,</span> <span class="n">quadratic</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">))</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"stable"</span><span class="p">)</span>
+
+    <span class="n">ground</span> <span class="o">=</span> <span class="n">decode</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">to_bits</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">order</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)))</span>
+    <span class="n">best_feasible</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">decode</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">to_bits</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">))))</span>
+            <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">order</span>
+            <span class="k">if</span> <span class="n">decode</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">to_bits</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)))[</span><span class="s2">"feasible"</span><span class="p">]</span>
+        <span class="p">),</span>
+        <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">references</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"spec"</span><span class="p">:</span> <span class="n">spec</span><span class="p">,</span> <span class="s2">"energies"</span><span class="p">:</span> <span class="n">energies</span><span class="p">,</span> <span class="s2">"variables"</span><span class="p">:</span> <span class="n">variables</span><span class="p">,</span>
+        <span class="s2">"qubo"</span><span class="p">:</span> <span class="p">(</span><span class="n">constant</span><span class="p">,</span> <span class="n">linear</span><span class="p">,</span> <span class="n">quadratic</span><span class="p">),</span>
+        <span class="s2">"best_index"</span><span class="p">:</span> <span class="n">best_feasible</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"best"</span><span class="p">:</span> <span class="n">best_feasible</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="s2">"best_energy"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">energies</span><span class="p">[</span><span class="n">best_feasible</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span>
+    <span class="p">}</span>
+
+    <span class="n">failed</span> <span class="o">=</span> <span class="p">[</span><span class="n">check</span> <span class="k">for</span> <span class="n">check</span><span class="p">,</span> <span class="n">ok</span> <span class="ow">in</span> <span class="n">ground</span><span class="p">[</span><span class="s2">"checks"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  QUBO ground state  energy </span><span class="si">{</span><span class="n">energies</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="si">:</span><span class="s2">9.4f</span><span class="si">}</span><span class="s2">  "</span>
+          <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'feasible'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">failed</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'FAILS: '</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">failed</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  best feasible      energy </span><span class="si">{</span><span class="n">references</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">'best_energy'</span><span class="p">]</span><span class="si">:</span><span class="s2">9.4f</span><span class="si">}</span><span class="s2">  "</span>
+          <span class="sa">f</span><span class="s2">"cut weight </span><span class="si">{</span><span class="n">best_feasible</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">'cut_weight'</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  islands </span><span class="si">{</span><span class="n">best_feasible</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">'islands'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>9-bus
+  QUBO ground state  energy    1.9064  feasible
+  best feasible      energy    1.9064  cut weight 1.8056
+  islands {0: [0, 3, 4, 8], 1: [1, 2, 5, 6, 7]}
+
+14-bus
+  QUBO ground state  energy   58.6764  FAILS: connected
+  best feasible      energy  212.0250  cut weight 88.2410
+  islands {0: [0, 1, 2, 3, 4], 1: [5, 6, 7, 8, 9, 10, 11, 12, 13]}
+</code></pre></div>
+</div>
+<p>On the 9-bus system the QUBO's ground state is the answer. On the 14-bus system
+it is not: the cheapest assignment the QUBO knows about leaves an island in two
+disconnected pieces, and the best <em>usable</em> split costs noticeably more.</p>
+<p>This is not a modeling mistake — it is a deliberate trade. Writing connectivity
+as a quadratic penalty needs auxiliary variables and a great many terms, which
+buys width and depth on a device that has neither to spare. Checking it after
+decoding costs nothing. The consequence is that minimizing the QUBO is not the
+same as solving the problem, and the gap has to be closed somewhere else. That
+is the job of the postprocessing in
+<a href="../islanding-qaoa/">Split a power grid into islands with QAOA</a>.</p>
+<div class="language-python highlight"><span class="filename">Python cell 4</span><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">spring_layout</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">400</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Lay out a graph with a force model: edges pull, every pair pushes."""</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="n">position</span> <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nodes</span><span class="p">)}</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">link</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">])</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">position</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">position</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-9</span>
+        <span class="n">push</span> <span class="o">=</span> <span class="p">(</span><span class="n">delta</span> <span class="o">/</span> <span class="n">distance</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">distance</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">push</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">))]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">net</span> <span class="o">=</span> <span class="n">push</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">along</span> <span class="o">=</span> <span class="n">position</span><span class="p">[</span><span class="n">link</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span> <span class="o">-</span> <span class="n">position</span><span class="p">[</span><span class="n">link</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">along</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-9</span>
+        <span class="n">pull</span> <span class="o">=</span> <span class="p">(</span><span class="n">along</span> <span class="o">/</span> <span class="n">length</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">length</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">link</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">pull</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">link</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pull</span><span class="p">)</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">step</span> <span class="o">/</span> <span class="n">steps</span><span class="p">)</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-9</span>
+        <span class="n">position</span> <span class="o">+=</span> <span class="n">net</span> <span class="o">/</span> <span class="n">norm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">norm</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span>
+    <span class="n">position</span> <span class="o">-=</span> <span class="n">position</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">position</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">position</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="n">position</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="n">node</span><span class="p">]]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">draw_split</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">solution</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Draw a network with its islands colored and its cut lines dashed."""</span>
+    <span class="n">layout</span> <span class="o">=</span> <span class="n">spring_layout</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s2">"buses"</span><span class="p">],</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"lines"</span><span class="p">])</span>
+    <span class="n">cut</span> <span class="o">=</span> <span class="p">{</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">solution</span><span class="p">[</span><span class="s2">"cut_lines"</span><span class="p">]}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"lines"</span><span class="p">]:</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#d62728"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">frozenset</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span> <span class="ow">in</span> <span class="n">cut</span>
+            <span class="k">else</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#c8c8c8"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="nb">zip</span><span class="p">(</span><span class="n">layout</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">layout</span><span class="p">[</span><span class="n">j</span><span class="p">]),</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">style</span><span class="p">)</span>
+    <span class="n">palette</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"#1f77b4"</span><span class="p">,</span> <span class="s2">"#ff7f0e"</span><span class="p">,</span> <span class="s2">"#2ca02c"</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">island</span><span class="p">,</span> <span class="n">members</span> <span class="ow">in</span> <span class="n">solution</span><span class="p">[</span><span class="s2">"islands"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">members</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">layout</span><span class="p">[</span><span class="n">bus</span><span class="p">]</span> <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">members</span><span class="p">])</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+            <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">330</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">palette</span><span class="p">[</span><span class="n">island</span><span class="p">],</span>
+            <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"island </span><span class="si">{</span><span class="n">island</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"buses"</span><span class="p">]:</span>
+        <span class="n">marker</span> <span class="o">=</span> <span class="s2">"*"</span> <span class="k">if</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"generators"</span><span class="p">]</span> <span class="k">else</span> <span class="s2">""</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">bus</span><span class="si">}{</span><span class="n">marker</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">layout</span><span class="p">[</span><span class="n">bus</span><span class="p">],</span> <span class="n">ha</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">legend</span><span class="p">:</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+
+
+<span class="n">SHOWCASE</span> <span class="o">=</span> <span class="s2">"9-bus"</span>
+<span class="n">showcase_spec</span> <span class="o">=</span> <span class="n">SYSTEMS</span><span class="p">[</span><span class="n">SHOWCASE</span><span class="p">]</span>
+
+<span class="c1"># The same network modeled without the coherency requirement: pure minimum cut</span>
+<span class="c1"># with a balance preference, which is the graph-theoretic problem alone.</span>
+<span class="n">plain</span> <span class="o">=</span> <span class="n">build_qubo</span><span class="p">(</span><span class="n">showcase_spec</span><span class="p">,</span> <span class="n">use_coherency</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plain_energies</span> <span class="o">=</span> <span class="n">spectrum_of</span><span class="p">(</span><span class="n">plain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">plain</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">plain</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">plain</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+<span class="n">cheapest</span> <span class="o">=</span> <span class="n">decode</span><span class="p">(</span><span class="n">showcase_spec</span><span class="p">,</span> <span class="n">to_bits</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">plain_energies</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">plain</span><span class="p">[</span><span class="mi">3</span><span class="p">])))</span>
+
+<span class="n">coherent</span> <span class="o">=</span> <span class="n">references</span><span class="p">[</span><span class="n">SHOWCASE</span><span class="p">][</span><span class="s2">"best"</span><span class="p">]</span>
+
+<span class="n">figure</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">4.4</span><span class="p">))</span>
+<span class="n">draw_split</span><span class="p">(</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">showcase_spec</span><span class="p">,</span> <span class="n">cheapest</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"Cheapest split: cut weight </span><span class="si">{</span><span class="n">cheapest</span><span class="p">[</span><span class="s1">'cut_weight'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">draw_split</span><span class="p">(</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">showcase_spec</span><span class="p">,</span> <span class="n">coherent</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"Coherency respected: cut weight </span><span class="si">{</span><span class="n">coherent</span><span class="p">[</span><span class="s1">'cut_weight'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">SHOWCASE</span><span class="si">}</span><span class="s2">: what generator coherency costs "</span>
+    <span class="s2">"(generators marked *, cut lines dashed)"</span>
+<span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+<span class="n">groups</span> <span class="o">=</span> <span class="n">showcase_spec</span><span class="p">[</span><span class="s2">"coherency"</span><span class="p">]</span>
+<span class="n">placement</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">bus</span><span class="p">:</span> <span class="n">island</span> <span class="k">for</span> <span class="n">island</span><span class="p">,</span> <span class="n">members</span> <span class="ow">in</span> <span class="n">cheapest</span><span class="p">[</span><span class="s2">"islands"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">members</span>
+<span class="p">}</span>
+<span class="n">broken</span> <span class="o">=</span> <span class="p">[</span><span class="n">check</span> <span class="k">for</span> <span class="n">check</span><span class="p">,</span> <span class="n">ok</span> <span class="ow">in</span> <span class="n">cheapest</span><span class="p">[</span><span class="s2">"checks"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"cheapest split      cut weight </span><span class="si">{</span><span class="n">cheapest</span><span class="p">[</span><span class="s1">'cut_weight'</span><span class="p">]</span><span class="si">:</span><span class="s2">8.3f</span><span class="si">}</span><span class="s2">  "</span>
+      <span class="sa">f</span><span class="s2">"violates: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">broken</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">broken</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'nothing'</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    coherent group </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2"> sits in islands "</span>
+          <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">sorted</span><span class="p">({</span><span class="n">placement</span><span class="p">[</span><span class="n">bus</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">bus</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">group</span><span class="p">})</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"coherency respected cut weight </span><span class="si">{</span><span class="n">coherent</span><span class="p">[</span><span class="s1">'cut_weight'</span><span class="p">]</span><span class="si">:</span><span class="s2">8.3f</span><span class="si">}</span><span class="s2">  "</span>
+      <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">coherent</span><span class="p">[</span><span class="s1">'cut_weight'</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">cheapest</span><span class="p">[</span><span class="s1">'cut_weight'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">x the cheapest)"</span><span class="p">)</span>
+
+<span class="c1"># The same comparison on the other system, where a different requirement binds.</span>
+<span class="n">other</span> <span class="o">=</span> <span class="s2">"14-bus"</span> <span class="k">if</span> <span class="n">SHOWCASE</span> <span class="o">==</span> <span class="s2">"9-bus"</span> <span class="k">else</span> <span class="s2">"9-bus"</span>
+<span class="n">other_spec</span> <span class="o">=</span> <span class="n">SYSTEMS</span><span class="p">[</span><span class="n">other</span><span class="p">]</span>
+<span class="n">other_plain</span> <span class="o">=</span> <span class="n">build_qubo</span><span class="p">(</span><span class="n">other_spec</span><span class="p">,</span> <span class="n">use_coherency</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">other_cheapest</span> <span class="o">=</span> <span class="n">decode</span><span class="p">(</span>
+    <span class="n">other_spec</span><span class="p">,</span>
+    <span class="n">to_bits</span><span class="p">(</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">spectrum_of</span><span class="p">(</span><span class="o">*</span><span class="n">other_plain</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">other_plain</span><span class="p">[</span><span class="mi">3</span><span class="p">])))),</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">other_plain</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">other_broken</span> <span class="o">=</span> <span class="p">[</span><span class="n">check</span> <span class="k">for</span> <span class="n">check</span><span class="p">,</span> <span class="n">ok</span> <span class="ow">in</span> <span class="n">other_cheapest</span><span class="p">[</span><span class="s2">"checks"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">other</span><span class="si">}</span><span class="s2">: cheapest split cut weight </span><span class="si">{</span><span class="n">other_cheapest</span><span class="p">[</span><span class="s1">'cut_weight'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, "</span>
+      <span class="sa">f</span><span class="s2">"violates: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">other_broken</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">other_broken</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'nothing'</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">other</span><span class="si">}</span><span class="s2">: best feasible  cut weight </span><span class="si">{</span><span class="n">references</span><span class="p">[</span><span class="n">other</span><span class="p">][</span><span class="s1">'best'</span><span class="p">][</span><span class="s1">'cut_weight'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>cheapest split      cut weight    0.802  violates: coherency
+    coherent group [1, 2] sits in islands [0, 1]
+    coherent group [0] sits in islands [0]
+coherency respected cut weight    1.806  (2.3x the cheapest)
+
+14-bus: cheapest split cut weight 58.676, violates: connected
+14-bus: best feasible  cut weight 88.241
+</code></pre></div>
+<p><img alt="The cheapest split of the WSCC 9-bus network compared with the split that respects generator coherency" src="../../assets/generated/tutorials/islanding-model-01.png" /></p>
+</div>
+<p>On the 9-bus system the cheapest split tears a coherent group in half, which is
+precisely the failure the exercise exists to prevent: those two machines would
+swing apart inside one island and trip it. Keeping them together costs more than
+twice as much interrupted power. That trade — a worse cut in exchange for a
+split the grid survives — is why this is a constrained optimization problem and
+not a minimum-cut computation.</p>
+<p>The 14-bus system is bound by a different requirement. There the cheapest split
+happens to separate the coherent groups correctly, and what makes it unusable is
+that one of its islands falls into two disconnected pieces. Both systems land on
+the same lesson from opposite directions: the cheap answer is not the usable
+one.</p>
+<p>Here are the answers the full model gives on each.</p>
+<div class="language-python highlight"><span class="filename">Python cell 5</span><pre><span></span><code><span class="n">figure</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">SYSTEMS</span><span class="p">)):</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">references</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">draw_split</span><span class="p">(</span>
+        <span class="n">axis</span><span class="p">,</span> <span class="n">reference</span><span class="p">[</span><span class="s2">"spec"</span><span class="p">],</span> <span class="n">reference</span><span class="p">[</span><span class="s2">"best"</span><span class="p">],</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: cut weight </span><span class="si">{</span><span class="n">reference</span><span class="p">[</span><span class="s1">'best'</span><span class="p">][</span><span class="s1">'cut_weight'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">legend</span><span class="o">=</span><span class="p">(</span><span class="n">position</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Best feasible split (generators marked *, cut lines dashed)"</span><span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<p><img alt="Best feasible two-island split of the 9-bus and 14-bus networks with their cut lines" src="../../assets/generated/tutorials/islanding-model-02.png" /></p>
+</div>
+<h2 id="what-the-model-is-and-what-it-leaves-out">What the model is, and what it leaves out<a class="headerlink" href="#what-the-model-is-and-what-it-leaves-out" title="Permanent link">&para;</a></h2>
+<p>The model is now complete enough to hand to an optimizer. It is a quadratic
+function of binary variables in which:</p>
+<ul>
+<li>the <strong>objective</strong> is the interrupted power flow;</li>
+<li><strong>generator coherency</strong>, <strong>island balance</strong>, and — optionally — generation,
+  load, and minimum size per island are quadratic penalties that vanish exactly
+  when the requirement holds;</li>
+<li><strong>connectivity is not represented at all</strong>, and is checked after a candidate
+  is decoded.</li>
+</ul>
+<p>That last point is a deliberate trade, and on the 14-bus system it has teeth:
+the QUBO's own minimum is a split whose islands are disconnected, so minimizing
+the model is not the same as solving the problem. Closing that gap is a
+postprocessing step rather than a modeling one, and it is where the next
+tutorial begins.</p>
+<p><a href="../islanding-qaoa/">Split a power grid into islands with QAOA</a> takes this model,
+maps it onto a circuit, runs it on FatQat's simulator, and repairs what comes
+back.</p>
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Y. Jiang, Y. Zhang, Z. Liang, Q. Guan, Y. Li, and G. K. Venayagamoorthy,
+   "REGRID-QAOA: A Resource-Efficient Hybrid QAOA Framework for
+   Physics-Constrained Power System Islanding",
+   <a href="https://arxiv.org/abs/2606.15083">arXiv:2606.15083</a> (2026). The
+   coherency-informed formulation this tutorial develops.</li>
+<li>H. You, V. Vittal, and X. Wang, "Slow coherency-based islanding", <em>IEEE
+   Transactions on Power Systems</em> <strong>19</strong>(1), 483–491 (2004). How coherent
+   generator groups are identified; this tutorial takes them as given data.</li>
+<li>K. Sun, D.-Z. Zheng, and Q. Lu, "Splitting strategies for islanding
+   operation of large-scale power systems using OBDD-based methods", <em>IEEE
+   Transactions on Power Systems</em> <strong>18</strong>(2), 912–923 (2003). A classical
+   approach to the same search, evaluated on the same IEEE test systems.</li>
+<li>A. Lucas, "Ising formulations of many NP problems", <em>Frontiers in Physics</em>
+   <strong>2</strong>, 5 (2014). The standard catalogue of constraint-to-penalty mappings,
+   and the reference for writing a requirement as a quadratic penalty.</li>
+<li>Y. Jiang, Z. Liang, Q. Guan, Y. Li, and G. K. Venayagamoorthy, "PACE-QAOA:
+   Physics-Constrained Quantum Optimization for Qubit-Efficient Power System
+   Islanding", <a href="https://arxiv.org/abs/2608.02789">arXiv:2608.02789</a> (2026).
+   Compact encodings and Lagrangian constraint handling for qubit-efficient
+   islanding.</li>
+<li>Y. Jiang, Z. Liang, Q. Guan, Y. Li, and G. K. Venayagamoorthy, "SPLIT-Q: A
+   Scalable Sequential Quantum Computing Framework for Coherent Controlled
+   Islanding", <a href="https://arxiv.org/abs/2608.12711">arXiv:2608.12711</a> (2026).
+   Sequential regional QUBOs that keep circuit width independent of network
+   size.</li>
+</ol>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 FatQat contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.prune", "navigation.path", "navigation.top", "navigation.footer", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.tooltips"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+  
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["\\(", "\\)"]],
+        displayMath: [["\\[", "\\]"]],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        ignoreHtmlClass: ".*|",
+        processHtmlClass: "arithmatex"
+      }
+    };
+  </script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
+    integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    document$.subscribe(() => {
+      MathJax.startup.output.clearCache();
+      MathJax.typesetClear();
+      MathJax.texReset();
+      MathJax.typesetPromise();
+    });
+  </script>
+
+  </body>
+</html>
