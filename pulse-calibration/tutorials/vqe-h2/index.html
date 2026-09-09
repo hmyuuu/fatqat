@@ -1,0 +1,1210 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Run exact, finite-shot, and noisy VQE loops for molecular hydrogen and make the variational bound and sampling uncertainty explicit.">
+      
+      
+        <meta name="author" content="FatQat contributors">
+      
+      
+        <link rel="canonical" href="https://hmyuuu.github.io/fatqat/pulse-calibration/tutorials/vqe-h2/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Find the ground-state energy of H₂ with VQE - FatQat</title>
+      
+    
+    
+  
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+  <link rel="stylesheet" href="../../assets/stylesheets/site.css">
+
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#find-the-ground-state-energy-of-h₂-with-vqe" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="FatQat" class="md-header__button md-logo" aria-label="FatQat" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.36 2.64c1.64 0 3 1.36 3 3 0 1.65-1.36 3-3 3-1.65 0-3-1.35-3-3 0-.3.05-.58.14-.84-1.07-.51-2.25-.8-3.5-.8a8 8 0 0 0-8 8l.04.84-1.99.21L2 12A10 10 0 0 1 12 2c1.69 0 3.28.42 4.67 1.16.49-.33 1.07-.52 1.69-.52m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1c.56 0 1-.45 1-1 0-.56-.44-1-1-1M5.64 15.36c1.65 0 3 1.35 3 3 0 .3-.05.58-.14.84 1.07.51 2.25.8 3.5.8a8 8 0 0 0 8-8l-.04-.84 1.99-.21L22 12a10 10 0 0 1-10 10c-1.69 0-3.28-.42-4.67-1.16-.49.33-1.07.52-1.69.52-1.64 0-3-1.36-3-3 0-1.65 1.36-3 3-3m0 2c-.56 0-1 .45-1 1 0 .56.44 1 1 1a1 1 0 0 0 1-1 1 1 0 0 0-1-1M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FatQat
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Find the ground-state energy of H₂ with VQE
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hmyuuu/fatqat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hmyuuu/fatqat
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guide/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="FatQat" class="md-nav__button md-logo" aria-label="FatQat" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.36 2.64c1.64 0 3 1.36 3 3 0 1.65-1.36 3-3 3-1.65 0-3-1.35-3-3 0-.3.05-.58.14-.84-1.07-.51-2.25-.8-3.5-.8a8 8 0 0 0-8 8l.04.84-1.99.21L2 12A10 10 0 0 1 12 2c1.69 0 3.28.42 4.67 1.16.49-.33 1.07-.52 1.69-.52m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1c.56 0 1-.45 1-1 0-.56-.44-1-1-1M5.64 15.36c1.65 0 3 1.35 3 3 0 .3-.05.58-.14.84 1.07.51 2.25.8 3.5.8a8 8 0 0 0 8-8l-.04-.84 1.99-.21L22 12a10 10 0 0 1-10 10c-1.69 0-3.28-.42-4.67-1.16-.49.33-1.07.52-1.69.52-1.64 0-3-1.36-3-3 0-1.65 1.36-3 3-3m0 2c-.56 0-1 .45-1 1 0 .56.44 1 1 1a1 1 0 0 0 1-1 1 1 0 0 0-1-1M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4"/></svg>
+
+    </a>
+    FatQat
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hmyuuu/fatqat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hmyuuu/fatqat
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../guide/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User guide
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../api/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-hamiltonian-and-its-exact-spectrum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hamiltonian and its exact spectrum
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-hamiltonian-as-observables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Hamiltonian as observables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-ansatz-a-parameterized-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The ansatz: a parameterized template
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-exact-energy-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The exact energy function
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optimization
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#finite-shot-expectations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Finite-shot expectations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-depolarizing-noise-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A depolarizing noise model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-to-go-from-here" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where to go from here
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<!-- Generated from docs/mkdocs/tutorial-sources; do not edit here. -->
+
+<h1 id="find-the-ground-state-energy-of-h₂-with-vqe">Find the ground-state energy of H₂ with VQE<a class="headerlink" href="#find-the-ground-state-energy-of-h₂-with-vqe" title="Permanent link">&para;</a></h1>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 15a3 3 0 0 1 3 3 3 3 0 0 1-3 3 2.99 2.99 0 0 1-2.83-2H14v-2h1.17c.41-1.17 1.52-2 2.83-2m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1m0-9a1.43 1.43 0 0 0 1.43-1.43 1.43 1.43 0 1 0-2.86 0A1.43 1.43 0 0 0 18 8m0-5.43a4 4 0 0 1 4 4C22 9.56 18 14 18 14s-4-4.44-4-7.43a4 4 0 0 1 4-4M8.83 17H10v2H8.83A2.99 2.99 0 0 1 6 21a3 3 0 0 1-3-3c0-1.31.83-2.42 2-2.83V14h2v1.17c.85.3 1.53.98 1.83 1.83M6 17a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1M6 3a3 3 0 0 1 3 3c0 1.31-.83 2.42-2 2.83V10H5V8.83A2.99 2.99 0 0 1 3 6a3 3 0 0 1 3-3m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1m5 14v-2h2v2zm-4-6H5v-2h2z"/></svg></span> <strong>Track</strong></p>
+<p>Algorithms</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></svg></span> <strong>Downloads</strong></p>
+<p><a download="vqe-h2.py" href="../../downloads/tutorials/vqe-h2.py">Python script <code>.py</code></a> · <a download="vqe-h2.ipynb" href="../../downloads/tutorials/vqe-h2.ipynb">Jupyter notebook <code>.ipynb</code></a></p>
+</li>
+</ul>
+</div>
+<p>The variational quantum eigensolver (VQE) estimates the ground-state
+energy of a Hamiltonian <span class="arithmatex">\(H\)</span> by making the variational principle
+<span class="arithmatex">\(E(\theta) \geq E_0\)</span> do the work: a parameterized circuit prepares
+<span class="arithmatex">\(|\psi(\theta)\rangle\)</span>, the energy</p>
+<div class="arithmatex">\[
+E(\theta) = \langle\psi(\theta)|H|\psi(\theta)\rangle
+\]</div>
+<p>is evaluated on the quantum processor, and a classical optimizer walks
+<span class="arithmatex">\(\theta\)</span> downhill. The lowest energy found is an upper bound on the
+true ground-state energy <span class="arithmatex">\(E_0\)</span>.</p>
+<p>This tutorial runs the full loop on the smallest interesting chemistry
+example: molecular hydrogen in the STO-3G basis, reduced to two qubits by
+qubit tapering (the form used in O'Malley et al.,
+<a href="https://arxiv.org/abs/1512.06860">arXiv:1512.06860</a>). The Hamiltonian
+is a sum of five Pauli terms,</p>
+<div class="arithmatex">\[
+H = -1.0524\,II + 0.3979\,IZ - 0.3979\,ZI - 0.0113\,ZZ + 0.1809\,XX,
+\]</div>
+<p>so the energy is a weighted sum of expectation values — exactly what an
+Estimator computes against one circuit evaluation.</p>
+<p>The tutorial source contains three executable acts:</p>
+<ol>
+<li><strong>Exact VQE</strong> — the energy is evaluated exactly from the statevector,
+   and COBYLA minimizes it. The convergence curve is compared against the
+   exact ground energy, obtained here by dense diagonalization.</li>
+<li><strong>Finite-shot VQE</strong> — the same loop, but every expectation is estimated
+   from 1024 shots, with the statistical standard error made explicit.</li>
+<li><strong>VQE under noise</strong> — a depolarizing noise model is attached to the
+   simulator, and the energy floor moves up: a two-line summary of why
+   NISQ chemistry is hard.</li>
+</ol>
+<p>Everything is seeded and runs in seconds on a laptop CPU.</p>
+<h2 id="the-hamiltonian-and-its-exact-spectrum">The Hamiltonian and its exact spectrum<a class="headerlink" href="#the-hamiltonian-and-its-exact-spectrum" title="Permanent link">&para;</a></h2>
+<p>The five Pauli terms are inlined as data. Pauli strings follow the convention <em>leftmost character =
+qubit 0</em>: <code>IZ</code> acts with <span class="arithmatex">\(Z\)</span> on qubit 1.</p>
+<p>The exact ground energy is obtained by dense diagonalization of the
+4x4 matrix. It serves two purposes: the reference line on the
+convergence plots, and a reminder that the variational principle bounds
+the <em>lowest</em> eigenvalue — the other three are printed for context.</p>
+<div class="language-python highlight"><span class="filename">Python cell 1</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat.operations</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">op</span>
+
+<span class="n">H2_TERMS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># (Pauli string, coefficient); leftmost character acts on qubit 0.</span>
+    <span class="p">(</span><span class="s2">"II"</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.052373245772859</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"IZ"</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.39793742484318045</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"ZI"</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.39793742484318045</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"ZZ"</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01128010425623538</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"XX"</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.18093119978423156</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">PAULI</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"I"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+    <span class="s2">"X"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]),</span>
+    <span class="s2">"Y"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]),</span>
+    <span class="s2">"Z"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]),</span>
+<span class="p">}</span>
+
+<span class="c1"># np.kron's first factor matches FATQAT public qubit 0.</span>
+<span class="n">H_MATRIX</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+    <span class="n">coeff</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">PAULI</span><span class="p">[</span><span class="n">pauli</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">PAULI</span><span class="p">[</span><span class="n">pauli</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="k">for</span> <span class="n">pauli</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">H2_TERMS</span>
+<span class="p">)</span>
+<span class="n">eigenvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvalsh</span><span class="p">(</span><span class="n">H_MATRIX</span><span class="p">)</span>
+<span class="n">E0</span> <span class="o">=</span> <span class="n">eigenvalues</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"exact spectrum:"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ground-state energy E0 = </span><span class="si">{</span><span class="n">E0</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> Ha"</span><span class="p">)</span>
+
+<span class="n">CHEMICAL_ACCURACY</span> <span class="o">=</span> <span class="mf">1.6e-3</span>  <span class="c1"># 1.6 mHa, the conventional accuracy target</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>exact spectrum: [-1.85728 -1.24458 -0.88272 -0.22491]
+ground-state energy E0 = -1.85728 Ha
+</code></pre></div>
+</div>
+<p>The identity term has expectation 1 in every state, so it folds into a
+constant offset. The optimizer only ever sees the four non-identity
+expectations:</p>
+<div class="language-python highlight"><span class="filename">Python cell 2</span><pre><span></span><code><span class="n">OFFSET</span> <span class="o">=</span> <span class="n">H2_TERMS</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># the II coefficient</span>
+<span class="n">COEFFS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">coeff</span> <span class="k">for</span> <span class="n">pauli</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">H2_TERMS</span><span class="p">[</span><span class="mi">1</span><span class="p">:]])</span>
+</code></pre></div>
+<h2 id="the-hamiltonian-as-observables">The Hamiltonian as observables<a class="headerlink" href="#the-hamiltonian-as-observables" title="Permanent link">&para;</a></h2>
+<p>Each non-identity Pauli term becomes one <code>fq.Observable</code>, built with
+<code>from_sparse</code>: only the non-identity factors are named, as explicit
+<code>(pauli, (qubit,), coefficient)</code> entries. The explicit qubit index
+sidesteps the string-endianness trap noted above (<code>IZ</code> means <em>Z on
+qubit 1</em>). One entry is a product — <code>("ZZ", (0, 1), 1.0)</code> is the
+single term <span class="arithmatex">\(Z_0 Z_1\)</span>, while two entries would sum. Every
+observable carries coefficient 1.0; the Hamiltonian coefficients live
+in <code>COEFFS</code> and are applied classically, so the energy is <code>OFFSET</code>
+plus the weighted sum of the four expectations.</p>
+<div class="language-python highlight"><span class="filename">Python cell 3</span><pre><span></span><code><span class="n">NUM_QUBITS</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">NUM_ROUNDS</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">OBSERVABLES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">fq</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">from_sparse</span><span class="p">([(</span><span class="s2">"Z"</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="mf">1.0</span><span class="p">)],</span> <span class="n">num_qubits</span><span class="o">=</span><span class="n">NUM_QUBITS</span><span class="p">),</span>    <span class="c1"># IZ</span>
+    <span class="n">fq</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">from_sparse</span><span class="p">([(</span><span class="s2">"Z"</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="mf">1.0</span><span class="p">)],</span> <span class="n">num_qubits</span><span class="o">=</span><span class="n">NUM_QUBITS</span><span class="p">),</span>    <span class="c1"># ZI</span>
+    <span class="n">fq</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">from_sparse</span><span class="p">([(</span><span class="s2">"ZZ"</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)],</span> <span class="n">num_qubits</span><span class="o">=</span><span class="n">NUM_QUBITS</span><span class="p">),</span>
+    <span class="n">fq</span><span class="o">.</span><span class="n">Observable</span><span class="o">.</span><span class="n">from_sparse</span><span class="p">([(</span><span class="s2">"XX"</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)],</span> <span class="n">num_qubits</span><span class="o">=</span><span class="n">NUM_QUBITS</span><span class="p">),</span>
+<span class="p">]</span>
+</code></pre></div>
+<h2 id="the-ansatz-a-parameterized-template">The ansatz: a parameterized template<a class="headerlink" href="#the-ansatz-a-parameterized-template" title="Permanent link">&para;</a></h2>
+<p><code>THETA</code> is a <code>fq.ParameterVector</code> of length 4 — a group of named
+placeholders. <code>build_template()</code> assembles the two-qubit ansatz with
+the placeholders in place of angles: two layers, each applying <code>RY</code>
+on both wires (one parameter each) and closing with <code>CX</code> from qubit 0
+to qubit 1. The template is built once; binding it returns a new
+program and never mutates it.</p>
+<p>Because the Hamiltonian is real, its ground state can be chosen real,
+and four <code>RY</code> angles interleaved with an entangler span every real
+two-qubit state — so this ansatz can reach <span class="arithmatex">\(E_0\)</span> in principle.</p>
+<div class="language-python highlight"><span class="filename">Python cell 4</span><pre><span></span><code><span class="n">THETA</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">ParameterVector</span><span class="p">(</span><span class="s2">"theta"</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_template</span><span class="p">():</span>
+    <span class="n">program</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="n">NUM_QUBITS</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_ROUNDS</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_QUBITS</span><span class="p">):</span>
+            <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">RY</span><span class="p">(</span><span class="n">THETA</span><span class="p">[</span><span class="n">r</span> <span class="o">*</span> <span class="n">NUM_QUBITS</span> <span class="o">+</span> <span class="n">q</span><span class="p">]),</span> <span class="n">q</span><span class="p">)</span>
+        <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">CX</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">program</span>
+
+<span class="n">template</span> <span class="o">=</span> <span class="n">build_template</span><span class="p">()</span>
+</code></pre></div>
+<p>The template draws like any other program: two layers of
+parameter-bearing <code>RY</code> rotations, each closed by the entangler.</p>
+<div class="language-python highlight"><span class="filename">Python cell 5</span><pre><span></span><code><span class="n">figure</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s2">"matplotlib"</span><span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="the-exact-energy-function">The exact energy function<a class="headerlink" href="#the-exact-energy-function" title="Permanent link">&para;</a></h2>
+<p>One energy evaluation binds the template at the current parameters —
+<code>Estimator.run</code> rejects programs that still contain unbound
+parameters — then evaluates all four observables against a single
+evolution. With <code>shots=0</code>, the Estimator default, the expectations
+are exact; the energy is their weighted sum plus the identity offset.</p>
+<div class="language-python highlight"><span class="filename">Python cell 6</span><pre><span></span><code><span class="n">ESTIMATOR_SV</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Estimator</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">Simulator</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"SV"</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">energy_exact</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Exact energy of the ansatz at ``theta``"""</span>
+    <span class="n">bound</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">assign_parameters</span><span class="p">({</span><span class="n">THETA</span><span class="p">:</span> <span class="n">theta</span><span class="p">})</span>
+    <span class="n">expectations</span> <span class="o">=</span> <span class="n">ESTIMATOR_SV</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">bound</span><span class="p">,</span> <span class="n">OBSERVABLES</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_expectation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">OFFSET</span> <span class="o">+</span> <span class="n">COEFFS</span> <span class="o">@</span> <span class="n">expectations</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="optimization">Optimization<a class="headerlink" href="#optimization" title="Permanent link">&para;</a></h2>
+<p>COBYLA minimizes the black-box energy from a small random start — no
+gradients needed. The trace is recorded for the convergence plot.</p>
+<div class="language-python highlight"><span class="filename">Python cell 7</span><pre><span></span><code><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_trace</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">energy</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">trace</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span> <span class="o">%</span> <span class="mi">25</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"eval </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">  energy </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="n">trace_exact</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">result_exact</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">theta</span><span class="p">:</span> <span class="n">_trace</span><span class="p">(</span><span class="n">energy_exact</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">trace_exact</span><span class="p">),</span>
+    <span class="n">x0</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">"COBYLA"</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"maxiter"</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">"rhobeg"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"exact VQE minimum </span><span class="si">{</span><span class="n">result_exact</span><span class="o">.</span><span class="n">fun</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> Ha "</span>
+      <span class="sa">f</span><span class="s2">"(error </span><span class="si">{</span><span class="n">result_exact</span><span class="o">.</span><span class="n">fun</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">E0</span><span class="si">:</span><span class="s2">+.5f</span><span class="si">}</span><span class="s2"> Ha)"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>eval   25  energy -1.85521
+eval   50  energy -1.85715
+eval   75  energy -1.85720
+eval  100  energy -1.85725
+eval  125  energy -1.85727
+eval  150  energy -1.85727
+eval  175  energy -1.85727
+eval  200  energy -1.85727
+exact VQE minimum -1.85727 Ha (error +0.00000 Ha)
+</code></pre></div>
+</div>
+<div class="language-python highlight"><span class="filename">Python cell 8</span><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">E0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"exact $E_0$ = </span><span class="si">{</span><span class="n">E0</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhspan</span><span class="p">(</span><span class="n">E0</span><span class="p">,</span> <span class="n">E0</span> <span class="o">+</span> <span class="n">CHEMICAL_ACCURACY</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"tab:green"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="s2">"chemical accuracy (1.6 mHa)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">trace_exact</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"exact VQE trace"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"energy evaluation"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"energy (Ha)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Exact VQE converges to the ground state"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<p><img alt="Exact VQE convergence trace" src="../../assets/generated/tutorials/vqe-h2-01.png" /></p>
+</div>
+<h2 id="finite-shot-expectations">Finite-shot expectations<a class="headerlink" href="#finite-shot-expectations" title="Permanent link">&para;</a></h2>
+<p>The same energy, estimated the way hardware would deliver it: every
+expectation comes from 1024 measurement shots. <code>shots</code> is a per-run
+option, not an estimator property, so the same estimator serves exact
+and sampled evaluations. An explicit <code>simulation_config={"seed": ...}</code>
+reuses the same randomness at every evaluation, keeping the optimizer's
+landscape deterministic. <code>sampled_std</code> propagates the per-observable
+standard errors (<code>get_standard_error()</code>) through the weights in quadrature —
+<span class="arithmatex">\(\sigma_E = \sqrt{\sum_i c_i^2 \sigma_i^2}\)</span> — the scale of the
+error bar on the noisy objective.</p>
+<div class="language-python highlight"><span class="filename">Python cell 9</span><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">energy_sampled</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Finite-shot energy of the ansatz at ``theta``."""</span>
+    <span class="n">bound</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">assign_parameters</span><span class="p">({</span><span class="n">THETA</span><span class="p">:</span> <span class="n">theta</span><span class="p">})</span>
+    <span class="n">expectations</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ESTIMATOR_SV</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">bound</span><span class="p">,</span> <span class="n">OBSERVABLES</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">simulation_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"seed"</span><span class="p">:</span> <span class="mi">7</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="o">.</span><span class="n">result</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">get_expectation</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">OFFSET</span> <span class="o">+</span> <span class="n">COEFFS</span> <span class="o">@</span> <span class="n">expectations</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sampled_std</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Standard error of the finite-shot energy."""</span>
+    <span class="n">bound</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">assign_parameters</span><span class="p">({</span><span class="n">THETA</span><span class="p">:</span> <span class="n">theta</span><span class="p">})</span>
+    <span class="n">std</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ESTIMATOR_SV</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">bound</span><span class="p">,</span> <span class="n">OBSERVABLES</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">simulation_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"seed"</span><span class="p">:</span> <span class="mi">7</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="o">.</span><span class="n">result</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">get_standard_error</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">COEFFS</span><span class="o">**</span><span class="mi">2</span> <span class="o">@</span> <span class="n">std</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+</code></pre></div>
+<p>The same COBYLA run, now optimizing the noisy objective. Note that what
+matters at the end is the <em>exact</em> energy of the point found — the shot
+noise only steers the search.</p>
+<div class="language-python highlight"><span class="filename">Python cell 10</span><pre><span></span><code><span class="n">trace_sampled</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">result_sampled</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">theta</span><span class="p">:</span> <span class="n">_trace</span><span class="p">(</span><span class="n">energy_sampled</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">trace_sampled</span><span class="p">),</span>
+    <span class="n">x0</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">"COBYLA"</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"maxiter"</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">"rhobeg"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="n">final_exact</span> <span class="o">=</span> <span class="n">energy_exact</span><span class="p">(</span><span class="n">result_sampled</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+<span class="n">final_std</span> <span class="o">=</span> <span class="n">sampled_std</span><span class="p">(</span><span class="n">result_sampled</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"finite-shot VQE stopped at </span><span class="si">{</span><span class="n">result_sampled</span><span class="o">.</span><span class="n">fun</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">final_std</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> Ha"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"exact energy at that point: </span><span class="si">{</span><span class="n">final_exact</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> Ha "</span>
+      <span class="sa">f</span><span class="s2">"(error </span><span class="si">{</span><span class="n">final_exact</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">E0</span><span class="si">:</span><span class="s2">+.5f</span><span class="si">}</span><span class="s2"> Ha)"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>eval   25  energy -1.84443
+finite-shot VQE stopped at -1.85051 ± 0.00700 Ha
+exact energy at that point: -1.85082 Ha (error +0.00646 Ha)
+</code></pre></div>
+</div>
+<div class="language-python highlight"><span class="filename">Python cell 11</span><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ax_zoom</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">E0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"exact $E_0$ = </span><span class="si">{</span><span class="n">E0</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">trace_exact</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"exact objective"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">trace_sampled</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"finite-shot objective (1024 shots)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"energy evaluation"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"energy (Ha)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Finite-shot VQE: full traces"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">cut</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># skip the initial transient</span>
+<span class="n">ax_zoom</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">E0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"exact $E_0$ = </span><span class="si">{</span><span class="n">E0</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">ax_zoom</span><span class="o">.</span><span class="n">axhspan</span><span class="p">(</span><span class="n">E0</span><span class="p">,</span> <span class="n">E0</span> <span class="o">+</span> <span class="n">CHEMICAL_ACCURACY</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"tab:green"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">"chemical accuracy (1.6 mHa)"</span><span class="p">)</span>
+<span class="n">ax_zoom</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">cut</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trace_exact</span><span class="p">)),</span> <span class="n">trace_exact</span><span class="p">[</span><span class="n">cut</span><span class="p">:],</span>
+             <span class="n">label</span><span class="o">=</span><span class="s2">"exact objective"</span><span class="p">)</span>
+<span class="n">ax_zoom</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">cut</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trace_sampled</span><span class="p">)),</span> <span class="n">trace_sampled</span><span class="p">[</span><span class="n">cut</span><span class="p">:],</span>
+             <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"."</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"finite-shot objective"</span><span class="p">)</span>
+<span class="n">ax_zoom</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span>
+    <span class="nb">len</span><span class="p">(</span><span class="n">trace_sampled</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">trace_sampled</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">yerr</span><span class="o">=</span><span class="n">final_std</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"tab:orange"</span><span class="p">,</span>
+    <span class="n">capsize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">"standard error"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax_zoom</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"energy evaluation"</span><span class="p">)</span>
+<span class="n">ax_zoom</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"zoom: riding the statistical noise"</span><span class="p">)</span>
+<span class="n">ax_zoom</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<p><img alt="Finite-shot VQE traces with statistical uncertainty" src="../../assets/generated/tutorials/vqe-h2-02.png" /></p>
+</div>
+<h2 id="a-depolarizing-noise-model">A depolarizing noise model<a class="headerlink" href="#a-depolarizing-noise-model" title="Permanent link">&para;</a></h2>
+<p>Noise is declared independently of the program: a <code>fq.NoiseModel</code>
+holds physical declarations — here <code>fq.noise.Depolarizing</code> after every
+<code>RY</code> (<span class="arithmatex">\(p = 0.01\)</span>) and, more strongly, after every <code>CX</code>
+(<span class="arithmatex">\(p = 0.05\)</span>) — and the same template runs on a density-matrix
+simulator constructed with that model. A density-matrix Estimator in
+<code>shots=0</code> mode returns the noise-averaged expectation exactly: no
+sampling is needed to <em>see</em> the noise. See
+<a href="../../guide/ideal-and-noisy/">ideal and noisy execution</a> for the full workflow.</p>
+<div class="language-python highlight"><span class="filename">Python cell 12</span><pre><span></span><code><span class="n">noise</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">NoiseModel</span><span class="p">()</span>
+<span class="n">noise</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">Depolarizing</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.01</span><span class="p">),</span> <span class="n">operation</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">RY</span><span class="p">)</span>
+<span class="n">noise</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">Depolarizing</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.05</span><span class="p">),</span> <span class="n">operation</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">CX</span><span class="p">)</span>
+<span class="n">ESTIMATOR_NOISY</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Estimator</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">Simulator</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"DM"</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">noise</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">energy_noisy</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Noise-averaged energy of the ansatz at ``theta``."""</span>
+    <span class="n">bound</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">assign_parameters</span><span class="p">({</span><span class="n">THETA</span><span class="p">:</span> <span class="n">theta</span><span class="p">})</span>
+    <span class="n">expectations</span> <span class="o">=</span> <span class="n">ESTIMATOR_NOISY</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">bound</span><span class="p">,</span> <span class="n">OBSERVABLES</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_expectation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">OFFSET</span> <span class="o">+</span> <span class="n">COEFFS</span> <span class="o">@</span> <span class="n">expectations</span><span class="p">)</span>
+</code></pre></div>
+<p>First, the degradation: the exact-VQE minimum is re-evaluated under
+noise. Then COBYLA re-optimizes under noise — and recovers essentially
+nothing: a variational ansatz cannot rotate unital noise away, so the
+lifted floor is there to stay (it can only be mitigated classically,
+not optimized away).</p>
+<div class="language-python highlight"><span class="filename">Python cell 13</span><pre><span></span><code><span class="n">degraded</span> <span class="o">=</span> <span class="n">energy_noisy</span><span class="p">(</span><span class="n">result_exact</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"noiseless minimum under noise: </span><span class="si">{</span><span class="n">degraded</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> Ha "</span>
+      <span class="sa">f</span><span class="s2">"(shift </span><span class="si">{</span><span class="n">degraded</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">result_exact</span><span class="o">.</span><span class="n">fun</span><span class="si">:</span><span class="s2">+.5f</span><span class="si">}</span><span class="s2"> Ha)"</span><span class="p">)</span>
+
+<span class="n">trace_noisy</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">result_noisy</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">theta</span><span class="p">:</span> <span class="n">_trace</span><span class="p">(</span><span class="n">energy_noisy</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">trace_noisy</span><span class="p">),</span>
+    <span class="n">x0</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">"COBYLA"</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"maxiter"</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">"rhobeg"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"noisy VQE minimum </span><span class="si">{</span><span class="n">result_noisy</span><span class="o">.</span><span class="n">fun</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> Ha "</span>
+      <span class="sa">f</span><span class="s2">"(error vs. E0 </span><span class="si">{</span><span class="n">result_noisy</span><span class="o">.</span><span class="n">fun</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">E0</span><span class="si">:</span><span class="s2">+.5f</span><span class="si">}</span><span class="s2"> Ha)"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>noiseless minimum under noise: -1.75682 Ha (shift +0.10045 Ha)
+eval   25  energy -1.75526
+eval   50  energy -1.75661
+eval   75  energy -1.75679
+eval  100  energy -1.75685
+eval  125  energy -1.75688
+eval  150  energy -1.75691
+eval  175  energy -1.75694
+eval  200  energy -1.75697
+noisy VQE minimum -1.75697 Ha (error vs. E0 +0.10031 Ha)
+</code></pre></div>
+</div>
+<div class="language-python highlight"><span class="filename">Python cell 14</span><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">E0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"exact $E_0$ = </span><span class="si">{</span><span class="n">E0</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">trace_exact</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"noiseless objective"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">trace_noisy</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"noisy objective (depolarizing)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">result_noisy</span><span class="o">.</span><span class="n">fun</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"tab:orange"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"noisy floor = </span><span class="si">{</span><span class="n">result_noisy</span><span class="o">.</span><span class="n">fun</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"energy evaluation"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"energy (Ha)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Noise lifts the variational floor"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<p><img alt="Noiseless and depolarizing-noise VQE energy traces" src="../../assets/generated/tutorials/vqe-h2-03.png" /></p>
+</div>
+<h2 id="where-to-go-from-here">Where to go from here<a class="headerlink" href="#where-to-go-from-here" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Bigger molecules need a chemistry package to produce the Pauli sum and
+  a physically motivated ansatz (e.g. UCCSD) instead of the
+  hardware-efficient one used here.</li>
+<li>On larger systems, the bitstrings sampled from the optimized state can
+  be post-processed classically (sample-based quantum diagonalization) —
+  overkill at two qubits, where the sampled subspace is the whole space.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 FatQat contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.prune", "navigation.path", "navigation.top", "navigation.footer", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.tooltips"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+  
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["\\(", "\\)"]],
+        displayMath: [["\\[", "\\]"]],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        ignoreHtmlClass: ".*|",
+        processHtmlClass: "arithmatex"
+      }
+    };
+  </script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
+    integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    document$.subscribe(() => {
+      MathJax.startup.output.clearCache();
+      MathJax.typesetClear();
+      MathJax.texReset();
+      MathJax.typesetPromise();
+    });
+  </script>
+
+  </body>
+</html>

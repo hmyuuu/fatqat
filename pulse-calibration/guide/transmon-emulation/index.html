@@ -1,0 +1,1938 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Model quantum programs from logical circuits to physical dynamics">
+      
+      
+        <meta name="author" content="FatQat contributors">
+      
+      
+        <link rel="canonical" href="https://hmyuuu.github.io/fatqat/pulse-calibration/guide/transmon-emulation/">
+      
+      
+        <link rel="prev" href="../hamiltonian-emulation/">
+      
+      
+        <link rel="next" href="../neutral-atom-emulation/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Transmon emulation - FatQat</title>
+      
+    
+    
+  
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+  <link rel="stylesheet" href="../../assets/stylesheets/site.css">
+
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#emulate-a-superconducting-system" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="FatQat" class="md-header__button md-logo" aria-label="FatQat" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.36 2.64c1.64 0 3 1.36 3 3 0 1.65-1.36 3-3 3-1.65 0-3-1.35-3-3 0-.3.05-.58.14-.84-1.07-.51-2.25-.8-3.5-.8a8 8 0 0 0-8 8l.04.84-1.99.21L2 12A10 10 0 0 1 12 2c1.69 0 3.28.42 4.67 1.16.49-.33 1.07-.52 1.69-.52m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1c.56 0 1-.45 1-1 0-.56-.44-1-1-1M5.64 15.36c1.65 0 3 1.35 3 3 0 .3-.05.58-.14.84 1.07.51 2.25.8 3.5.8a8 8 0 0 0 8-8l-.04-.84 1.99-.21L22 12a10 10 0 0 1-10 10c-1.69 0-3.28-.42-4.67-1.16-.49.33-1.07.52-1.69.52-1.64 0-3-1.36-3-3 0-1.65 1.36-3 3-3m0 2c-.56 0-1 .45-1 1 0 .56.44 1 1 1a1 1 0 0 0 1-1 1 1 0 0 0-1-1M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FatQat
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Transmon emulation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hmyuuu/fatqat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hmyuuu/fatqat
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tutorials/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="FatQat" class="md-nav__button md-logo" aria-label="FatQat" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.36 2.64c1.64 0 3 1.36 3 3 0 1.65-1.36 3-3 3-1.65 0-3-1.35-3-3 0-.3.05-.58.14-.84-1.07-.51-2.25-.8-3.5-.8a8 8 0 0 0-8 8l.04.84-1.99.21L2 12A10 10 0 0 1 12 2c1.69 0 3.28.42 4.67 1.16.49-.33 1.07-.52 1.69-.52m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1c.56 0 1-.45 1-1 0-.56-.44-1-1-1M5.64 15.36c1.65 0 3 1.35 3 3 0 .3-.05.58-.14.84 1.07.51 2.25.8 3.5.8a8 8 0 0 0 8-8l-.04-.84 1.99-.21L22 12a10 10 0 0 1-10 10c-1.69 0-3.28-.42-4.67-1.16-.49.33-1.07.52-1.69.52-1.64 0-3-1.36-3-3 0-1.65 1.36-3 3-3m0 2c-.56 0-1 .45-1 1 0 .56.44 1 1 1a1 1 0 0 0 1-1 1 1 0 0 0-1-1M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4"/></svg>
+
+    </a>
+    FatQat
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hmyuuu/fatqat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hmyuuu/fatqat
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User guide
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Start with one program
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Start with one program
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../program/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Programs and registers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../execution-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Execution models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Study algorithm behavior
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Study algorithm behavior
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../simulation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interpret-results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interpret results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ideal-and-noisy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ideal and noisy runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../performance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model hardware and physics
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Model hardware and physics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hardware-profile-simulation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware-profile simulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hamiltonian-emulation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hamiltonian emulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transmon emulation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transmon emulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#load-a-reproducible-baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load a reproducible baseline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-with-a-transmon-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start with a transmon grid
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-the-rotation-as-a-calibrated-gate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run the rotation as a calibrated gate
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drive-the-transmon-directly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drive the transmon directly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference-pulse-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference pulse model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#know-when-more-physics-changes-the-answer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Know when more physics changes the answer
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../neutral-atom-emulation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Neutral-atom emulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interoperability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interoperability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../tutorials/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../api/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#load-a-reproducible-baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load a reproducible baseline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#start-with-a-transmon-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start with a transmon grid
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-the-rotation-as-a-calibrated-gate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Run the rotation as a calibrated gate
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drive-the-transmon-directly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drive the transmon directly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference-pulse-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference pulse model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#know-when-more-physics-changes-the-answer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Know when more physics changes the answer
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    User guide
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../hardware-profile-simulation/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Model hardware and physics
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="emulate-a-superconducting-system">Emulate a superconducting system<a class="headerlink" href="#emulate-a-superconducting-system" title="Permanent link">&para;</a></h1>
+<p>A transmon is operated as a qubit but modeled with at least three levels.
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TransmonEmulator&lt;/span&gt;" href="../../api/pulse-emulator/#fatqat.emulator.TransmonEmulator"><code>TransmonEmulator</code></a> keeps the third level so that
+pulse-induced leakage remains visible, alongside timing and coupling effects.
+It uses the shared <a href="../hamiltonian-emulation/">Hamiltonian-emulation workflow</a>.</p>
+<h2 id="load-a-reproducible-baseline">Load a reproducible baseline<a class="headerlink" href="#load-a-reproducible-baseline" title="Permanent link">&para;</a></h2>
+<p>The packaged document describes one physical transmon. It is a simulation
+baseline, not a live calibration from a named device:</p>
+<div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat.operations</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ops</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model_document</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">load_model_document</span><span class="p">(</span><span class="s2">"transmon.single"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model_document</span><span class="p">[</span><span class="s2">"parameters"</span><span class="p">][</span><span class="s2">"subsystems"</span><span class="p">][</span><span class="s2">"q0"</span><span class="p">][</span><span class="s2">"frequency"</span><span class="p">]</span>
+<span class="go">5.1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonModel</span><span class="o">.</span><span class="n">from_document</span><span class="p">(</span><span class="n">model_document</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">subsystem_ids</span>
+<span class="go">('q0',)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonEmulator</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"density_matrix"</span><span class="p">)</span>
+</code></pre></div>
+<p>Program qubits bind to those subsystem IDs in declaration order unless a
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ResourceLayout&lt;/span&gt;" href="../../api/registers/#fatqat.ResourceLayout"><code>ResourceLayout</code></a> says otherwise. Every model transmon remains
+in the physical state even when the Program addresses only one of them.
+Retain <code>model_document</code> when you need persisted frequencies, anharmonicities,
+model identity, or coupling topology; the runtime model intentionally exposes
+execution capabilities rather than normalized copies of those records.
+This guide chooses the density-matrix method because it repeatedly inspects
+populations. The common default is <code>method="statevector"</code>; use
+<code>method="unitary"</code> when the complete coherent operator is the result you need.</p>
+<h2 id="start-with-a-transmon-grid">Start with a transmon grid<a class="headerlink" href="#start-with-a-transmon-grid" title="Permanent link">&para;</a></h2>
+<p>To try a rectangular grid without writing model and calibration documents by
+hand, generate a matching pair and use it to create the emulator:</p>
+<div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">model_document</span><span class="p">,</span> <span class="n">calibration_document</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">generate_transmon_grid_documents</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">frequency_groups_ghz</span><span class="o">=</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid_model</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonModel</span><span class="o">.</span><span class="n">from_document</span><span class="p">(</span><span class="n">model_document</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid_calibration</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonCalibration</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">calibration_document</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid_gate_map</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">default_transmon_gate_implementation_map</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">model</span><span class="o">=</span><span class="n">grid_model</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">calibration</span><span class="o">=</span><span class="n">grid_calibration</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid_backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonEmulator</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">grid_model</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">gate_implementation_map</span><span class="o">=</span><span class="n">grid_gate_map</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grid_model</span><span class="o">.</span><span class="n">subsystem_ids</span>
+<span class="go">('q0', 'q1', 'q2', 'q3')</span>
+</code></pre></div>
+<p>This helper is a convenient way to get a simulation running. It places the two
+frequency groups in a checkerboard pattern, adds the requested frequency
+spread, and supplies fixed analytic gate recipes. It does not numerically
+calibrate the pulses or calculate their fidelity or leakage.</p>
+<p>For each edge, the helper chooses the transmon with the higher idle frequency
+as the detuned endpoint for CZ. This gives the generated grid a consistent
+default; it is not a recommendation for a particular device.</p>
+<p>The returned documents are ordinary dictionaries. You can edit them directly
+or save them as JSON and load them again later:</p>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"model.json"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">model_document</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"calibration.json"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">calibration_document</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"model.json"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+    <span class="n">saved_model</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonModel</span><span class="o">.</span><span class="n">from_document</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">))</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"calibration.json"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+    <span class="n">saved_calibration</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonCalibration</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">))</span>
+</code></pre></div>
+<p>For <code>N</code> transmons, the physical qutrit Hilbert-space dimension is <code>3**N</code>.</p>
+<p>The frequency warnings cover the generated idle frequencies only. The RWA
+model does not simulate laboratory-frequency collisions. If a pulse tunes the
+qubit frequencies, check separately that relevant qubits and spectators do not
+cross during the ramp, park, or return.</p>
+<h2 id="run-the-rotation-as-a-calibrated-gate">Run the rotation as a calibrated gate<a class="headerlink" href="#run-the-rotation-as-a-calibrated-gate" title="Permanent link">&para;</a></h2>
+<p>Reuse the guide's central rotation as an ordinary Program operation. The
+emulator realizes it with its gate implementation map and reference
+calibration:</p>
+<div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">rotation</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rotation</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">RX</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calibrated_rho</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">rotation</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_density_matrix</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calibrated_rho</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(3, 3)</span>
+</code></pre></div>
+<p>The Program declares one qubit, and the result covers all three levels of the
+physical transmon:</p>
+<div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">calibrated_populations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">calibrated_rho</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">calibrated_populations</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">bool</span><span class="p">(</span><span class="n">calibrated_populations</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">)</span>
+<span class="go">True</span>
+</code></pre></div>
+<p>Here <code>calibrated_populations[2]</code> is population in physical level <code>|2&gt;</code>. This
+level models transmon leakage; it is not a qutrit declared by the Program.</p>
+<h2 id="drive-the-transmon-directly">Drive the transmon directly<a class="headerlink" href="#drive-the-transmon-directly" title="Permanent link">&para;</a></h2>
+<p>Use a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;PulseOperation&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/pulse-control/pulse-operation/#fatqat.operations.PulseOperation"><code>PulseOperation</code></a> when the waveform is
+part of the experiment. This example uses a Hann envelope with the same
+nominal <span class="arithmatex">\(\pi/2\)</span> area as the calibrated rotation:</p>
+<div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">duration</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="mi">41</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rabi_rate</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">duration</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">times</span> <span class="o">/</span> <span class="n">duration</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">drive</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">SampledWaveform</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="nb">tuple</span><span class="p">(</span><span class="n">times</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="nb">tuple</span><span class="p">(</span><span class="n">rabi_rate</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">control</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">PulseControl</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="s2">"q0"</span><span class="p">),</span> <span class="n">drive</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">direct</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">direct</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">PulseOperation</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="p">(</span><span class="n">control</span><span class="p">,)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">direct_rho</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">direct</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_density_matrix</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">direct_populations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">direct_rho</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">direct_populations</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">array([0.509, 0.491, 0.001])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">direct_populations</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%"</span>
+<span class="go">'0.07%'</span>
+</code></pre></div>
+<p>The waveform samples are the full complex Rabi rate <span class="arithmatex">\(\Omega(t)\)</span> in rad/ns.
+Real samples drive the X quadrature; imaginary samples drive the Y quadrature.
+The analytic Hann envelope has area <span class="arithmatex">\(\pi/2\)</span>, and the sampled spline closely
+approximates it. The 10 ns direct pulse is shorter and stronger than the
+reference recipe's 20 ns <code>RX</code> pulse, and it omits that recipe's DRAG
+corrections. Those differences account for the changed populations and the
+reported <code>|2&gt;</code> leakage. Both pulses use fixed analytic values rather than
+numerical calibration.</p>
+<p>For a complete amplitude scan, parameter selection, and checks on other input
+states, follow <a href="../../tutorials/pulse-calibration/">Calibrating a quantum gate</a>.</p>
+<p><code>SampledWaveform</code> uses the endpoint values you provide. It does not taper a
+waveform or require it to start and finish at zero; this example does both
+explicitly through the envelope.</p>
+<p><img alt="Computational-level populations for a calibrated rotation and a direct drive are shown beside a magnified comparison of their level-two leakage percentages." src="../../assets/generated/guide/transmon-emulation-1.png" /></p>
+<details class="example">
+<summary>Reproduce this figure</summary>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat.operations</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ops</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonModel</span><span class="o">.</span><span class="n">from_document</span><span class="p">(</span>
+    <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">load_model_document</span><span class="p">(</span><span class="s2">"transmon.single"</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonEmulator</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"density_matrix"</span><span class="p">)</span>
+
+<span class="n">calibrated</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">calibrated</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">RX</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">calibrated_rho</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">calibrated</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_density_matrix</span><span class="p">()</span>
+
+<span class="n">duration</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="mi">41</span><span class="p">)</span>
+<span class="n">rabi_rate</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">duration</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">times</span> <span class="o">/</span> <span class="n">duration</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="n">waveform</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">SampledWaveform</span><span class="p">(</span>
+    <span class="nb">tuple</span><span class="p">(</span><span class="n">times</span><span class="p">),</span>
+    <span class="nb">tuple</span><span class="p">(</span><span class="n">rabi_rate</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">control</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">PulseControl</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="s2">"q0"</span><span class="p">),</span> <span class="n">waveform</span><span class="p">)</span>
+<span class="n">direct</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">direct</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">PulseOperation</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="p">(</span><span class="n">control</span><span class="p">,)))</span>
+<span class="n">direct_rho</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">direct</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_density_matrix</span><span class="p">()</span>
+
+<span class="n">calibrated_populations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">calibrated_rho</span><span class="p">))</span>
+<span class="n">direct_populations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">direct_rho</span><span class="p">))</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">calibrated_populations</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">direct_populations</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="mf">1.0</span><span class="p">)</span>
+
+<span class="n">levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">width</span> <span class="o">=</span> <span class="mf">0.36</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">population_ax</span><span class="p">,</span> <span class="n">leakage_ax</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.2</span><span class="p">,</span> <span class="mf">3.8</span><span class="p">),</span>
+    <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">"width_ratios"</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)},</span>
+<span class="p">)</span>
+<span class="n">population_ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+    <span class="n">levels</span> <span class="o">-</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">calibrated_populations</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span>
+    <span class="n">width</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">"calibrated RX(pi/2)"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">population_ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+    <span class="n">levels</span> <span class="o">+</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">direct_populations</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span>
+    <span class="n">width</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">"direct drive"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">population_ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">xticks</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span>
+    <span class="n">xticklabels</span><span class="o">=</span><span class="p">(</span><span class="s2">"|0&gt;"</span><span class="p">,</span> <span class="s2">"|1&gt;"</span><span class="p">),</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">"population on q0"</span><span class="p">,</span>
+    <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.08</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">population_ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">leakage_bars</span> <span class="o">=</span> <span class="n">leakage_ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+    <span class="p">(</span><span class="s2">"calibrated"</span><span class="p">,</span> <span class="s2">"direct"</span><span class="p">),</span>
+    <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">calibrated_populations</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">direct_populations</span><span class="p">[</span><span class="mi">2</span><span class="p">])),</span>
+    <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="s2">"C0"</span><span class="p">,</span> <span class="s2">"C1"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">leakage_ax</span><span class="o">.</span><span class="n">bar_label</span><span class="p">(</span><span class="n">leakage_bars</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">"</span><span class="si">%.2f%%</span><span class="s2">"</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">leakage_ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s2">"|2&gt; population (%)"</span><span class="p">)</span>
+<span class="n">leakage_ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">120</span> <span class="o">*</span> <span class="n">direct_populations</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+<span class="n">leakage_ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+</details>
+<h2 id="reference-pulse-model">Reference pulse model<a class="headerlink" href="#reference-pulse-model" title="Permanent link">&para;</a></h2>
+<p>The packaged calibration is a fixed analytic reference for simulation. Grid
+calibrations use the same pulse shapes, with deterministic rules choosing the
+CZ branch and filling in the recipe. Neither path numerically calibrates the
+pulses, fits them to hardware, or guarantees high fidelity or low leakage.</p>
+<p>The emulator keeps three levels per transmon and uses an effective rotating-
+frame/RWA Hamiltonian. In the solver, <span class="arithmatex">\(\alpha_i\)</span>, <span class="arithmatex">\(\delta_i\)</span>,
+<span class="arithmatex">\(\Omega_i\)</span>, and <span class="arithmatex">\(g_{ij}\)</span> are angular rates:</p>
+<div class="arithmatex">\[
+H(t) =
+\sum_i \frac{\alpha_i}{2} n_i(n_i-1)
++ \sum_i \delta_i(t)n_i
++ \frac{1}{2}\sum_i \left[\Omega_i(t)a_i^\dagger
+                 + \Omega_i^*(t)a_i\right]
++ \sum_{(i,j)\in E} g_{ij}(t)
+  \left(a_i^\dagger a_j+a_i a_j^\dagger\right),
+\qquad n_i=a_i^\dagger a_i.
+\]</div>
+<p>Here <span class="arithmatex">\(a_i\)</span> is the three-level lowering operator. The signed anharmonicity
+<span class="arithmatex">\(\alpha_i\)</span> is the only coherent drift. Drive, detuning, and exchange appear
+only while their controls are active. In particular, there is no static
+exchange. Exchange is allowed only on a declared model edge; generated
+rectangular grids connect horizontal and vertical nearest neighbours.</p>
+<p>The reference iSwap is a 40 ns Hann exchange pulse. For duration <span class="arithmatex">\(T\)</span>,</p>
+<div class="arithmatex">\[
+g_{ij}(t) = -\frac{\pi}{T}\sin^2\!\left(\frac{\pi t}{T}\right),
+\qquad 0\leq t\leq T,
+\]</div>
+<p>so <span class="arithmatex">\(\int_0^T g_{ij}(t)\,dt=-\pi/2\)</span>. A frame swap after the pulse gives
+the public <span class="arithmatex">\(+i\)</span> convention. The full qutrit exchange operator also couples
+<span class="arithmatex">\(\lvert11\rangle\)</span> to <span class="arithmatex">\(\lvert20\rangle\)</span> and <span class="arithmatex">\(\lvert02\rangle\)</span>, so
+conditional-phase error and residual leakage remain possible.</p>
+<p>For CZ, label the selected endpoint <span class="arithmatex">\(i\)</span>. In a basis that lists it first, the
+chosen branch is
+<span class="arithmatex">\(\lvert11\rangle\leftrightarrow\lvert20\rangle\)</span>. The recipe parks that
+endpoint with <span class="arithmatex">\(\delta_i(t)=-\alpha_i s(t)\)</span>. For total duration <span class="arithmatex">\(T\)</span> and
+ramp time <span class="arithmatex">\(t_r\)</span>,</p>
+<div class="arithmatex">\[
+s(t)=
+\begin{cases}
+\frac{1-\cos(\pi t/t_r)}{2}, &amp; 0\leq t&lt;t_r,\\
+1, &amp; t_r\leq t\leq T-t_r,\\
+\frac{1-\cos(\pi(T-t)/t_r)}{2}, &amp; T-t_r&lt;t\leq T.
+\end{cases}
+\]</div>
+<p>Exchange is active only during the parked interval <span class="arithmatex">\(T_p=T-2t_r\)</span>:</p>
+<div class="arithmatex">\[
+g_{ij}(t) = \frac{\sqrt{2}\pi}{T_p}
+\sin^2\!\left(\frac{\pi(t-t_r)}{T_p}\right),
+\qquad t_r\leq t\leq T-t_r.
+\]</div>
+<p>The nominal resonant branch closes one cycle, and a frame update removes the
+local phase accumulated from detuning. The defaults are 60 ns total with 3 ns
+ramps.</p>
+<p>Because exchange is zero during the ramps, this recipe does not model
+Landau–Zener leakage from crossing an avoided crossing with finite coupling.
+It also omits a tunable coupler, residual exchange, waveform distortion, and
+non-RWA terms. Final leakage can therefore be tiny even when the transient
+<span class="arithmatex">\(\lvert20\rangle\)</span> population is large. Changing the duration preserves the
+nominal exchange area; it does not recalibrate phases or fidelity.</p>
+<h2 id="know-when-more-physics-changes-the-answer">Know when more physics changes the answer<a class="headerlink" href="#know-when-more-physics-changes-the-answer" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Coupling:</strong> two-transmon gates are available only on coupling edges in the
+  model, and an unaddressed neighbour is still part of the Hamiltonian.</li>
+<li><strong>Frames and timing:</strong> calibrated frame changes and the placement of later
+  controls can change phases even when computational populations look alike.
+  Returned states include terminal virtual-frame changes.</li>
+<li><strong>Continuous noise:</strong> rate- or time-form Lindblad declarations act over
+  elapsed physical time, rather than once at a circuit-operation boundary.</li>
+</ul>
+<p>Use the calibrated path to study the supplied gate recipe. Use direct controls
+when the waveform itself is the experiment; the two forms can also coexist in
+one Program. The <a href="../../api/pulse-emulator/">transmon emulator API</a> lists the
+supported units, gates, noise forms, and execution methods.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../hamiltonian-emulation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Hamiltonian emulation">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Hamiltonian emulation
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../neutral-atom-emulation/" class="md-footer__link md-footer__link--next" aria-label="Next: Neutral-atom emulation">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Neutral-atom emulation
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 FatQat contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.prune", "navigation.path", "navigation.top", "navigation.footer", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.tooltips"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+  
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["\\(", "\\)"]],
+        displayMath: [["\\[", "\\]"]],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        ignoreHtmlClass: ".*|",
+        processHtmlClass: "arithmatex"
+      }
+    };
+  </script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
+    integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    document$.subscribe(() => {
+      MathJax.startup.output.clearCache();
+      MathJax.typesetClear();
+      MathJax.texReset();
+      MathJax.typesetPromise();
+    });
+  </script>
+
+  </body>
+</html>

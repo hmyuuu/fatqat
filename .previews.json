@@ -5,6 +5,12 @@
     "sha": "047a1c8a4a9fab097f1d7fbc52d13c2c41bdb77c",
     "status": "ready"
   },
+  "pulse-calibration": {
+    "attempt": "48a5f790fbba3e5e40dce553570335b18da00094f0c618a09dc29d138f099123",
+    "branch": "codex/pulse-calibration-tutorial",
+    "sha": "e674cb6e9cac3b29ae29ce917e1f9c53d8721825",
+    "status": "ready"
+  },
   "pxp": {
     "attempt": "3a99d6d87469ddac4a87ff8b09a55c45e1b30b66bd31bfbe0b1e34224d5d4e35",
     "branch": "codex/pxp-incremental-evolution",

@@ -1,0 +1,1183 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Use dynamic Pair and Unpair operations to build an eight-atom GHZ state, then test both its correlations and coherent phase.">
+      
+      
+        <meta name="author" content="FatQat contributors">
+      
+      
+        <link rel="canonical" href="https://hmyuuu.github.io/fatqat/pulse-calibration/tutorials/atom-array-ghz8/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Entangle eight atoms into a GHZ state - FatQat</title>
+      
+    
+    
+  
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+  <link rel="stylesheet" href="../../assets/stylesheets/site.css">
+
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#entangle-eight-atoms-into-a-ghz-state" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="FatQat" class="md-header__button md-logo" aria-label="FatQat" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.36 2.64c1.64 0 3 1.36 3 3 0 1.65-1.36 3-3 3-1.65 0-3-1.35-3-3 0-.3.05-.58.14-.84-1.07-.51-2.25-.8-3.5-.8a8 8 0 0 0-8 8l.04.84-1.99.21L2 12A10 10 0 0 1 12 2c1.69 0 3.28.42 4.67 1.16.49-.33 1.07-.52 1.69-.52m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1c.56 0 1-.45 1-1 0-.56-.44-1-1-1M5.64 15.36c1.65 0 3 1.35 3 3 0 .3-.05.58-.14.84 1.07.51 2.25.8 3.5.8a8 8 0 0 0 8-8l-.04-.84 1.99-.21L22 12a10 10 0 0 1-10 10c-1.69 0-3.28-.42-4.67-1.16-.49.33-1.07.52-1.69.52-1.64 0-3-1.36-3-3 0-1.65 1.36-3 3-3m0 2c-.56 0-1 .45-1 1 0 .56.44 1 1 1a1 1 0 0 0 1-1 1 1 0 0 0-1-1M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FatQat
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Entangle eight atoms into a GHZ state
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hmyuuu/fatqat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hmyuuu/fatqat
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guide/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="FatQat" class="md-nav__button md-logo" aria-label="FatQat" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.36 2.64c1.64 0 3 1.36 3 3 0 1.65-1.36 3-3 3-1.65 0-3-1.35-3-3 0-.3.05-.58.14-.84-1.07-.51-2.25-.8-3.5-.8a8 8 0 0 0-8 8l.04.84-1.99.21L2 12A10 10 0 0 1 12 2c1.69 0 3.28.42 4.67 1.16.49-.33 1.07-.52 1.69-.52m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1c.56 0 1-.45 1-1 0-.56-.44-1-1-1M5.64 15.36c1.65 0 3 1.35 3 3 0 .3-.05.58-.14.84 1.07.51 2.25.8 3.5.8a8 8 0 0 0 8-8l-.04-.84 1.99-.21L22 12a10 10 0 0 1-10 10c-1.69 0-3.28-.42-4.67-1.16-.49.33-1.07.52-1.69.52-1.64 0-3-1.36-3-3 0-1.65 1.36-3 3-3m0 2c-.56 0-1 .45-1 1 0 .56.44 1 1 1a1 1 0 0 0 1-1 1 1 0 0 0-1-1M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4"/></svg>
+
+    </a>
+    FatQat
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hmyuuu/fatqat" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hmyuuu/fatqat
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../guide/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User guide
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../api/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#imports-and-display-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Imports and display settings
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-native-gate-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The native gate set
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-log-depth-entangling-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A log-depth entangling tree
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-the-pairs-must-move-between-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why the pairs must move between layers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sample-the-eight-atom-experiment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sample the eight-atom experiment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#correlated-is-not-the-same-as-coherent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Correlated is not the same as coherent
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-cost-of-moving-atoms-around" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A cost of moving atoms around
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#takeaways-and-next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Takeaways and next steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<!-- Generated from docs/mkdocs/tutorial-sources; do not edit here. -->
+
+<h1 id="entangle-eight-atoms-into-a-ghz-state">Entangle eight atoms into a GHZ state<a class="headerlink" href="#entangle-eight-atoms-into-a-ghz-state" title="Permanent link">&para;</a></h1>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 15a3 3 0 0 1 3 3 3 3 0 0 1-3 3 2.99 2.99 0 0 1-2.83-2H14v-2h1.17c.41-1.17 1.52-2 2.83-2m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1m0-9a1.43 1.43 0 0 0 1.43-1.43 1.43 1.43 0 1 0-2.86 0A1.43 1.43 0 0 0 18 8m0-5.43a4 4 0 0 1 4 4C22 9.56 18 14 18 14s-4-4.44-4-7.43a4 4 0 0 1 4-4M8.83 17H10v2H8.83A2.99 2.99 0 0 1 6 21a3 3 0 0 1-3-3c0-1.31.83-2.42 2-2.83V14h2v1.17c.85.3 1.53.98 1.83 1.83M6 17a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1M6 3a3 3 0 0 1 3 3c0 1.31-.83 2.42-2 2.83V10H5V8.83A2.99 2.99 0 0 1 3 6a3 3 0 0 1 3-3m0 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1m5 14v-2h2v2zm-4-6H5v-2h2z"/></svg></span> <strong>Track</strong></p>
+<p>Neutral-atom physics</p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/></svg></span> <strong>Downloads</strong></p>
+<p><a download="atom-array-ghz8.py" href="../../downloads/tutorials/atom-array-ghz8.py">Python script <code>.py</code></a> · <a download="atom-array-ghz8.ipynb" href="../../downloads/tutorials/atom-array-ghz8.ipynb">Jupyter notebook <code>.ipynb</code></a></p>
+</li>
+</ul>
+</div>
+<p>This tutorial builds an eight-atom Greenberger-Horne-Zeilinger (GHZ) state on
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AtomArraySimulator&lt;/span&gt;" href="../../api/simulators/atom-array/#fatqat.simulator.AtomArraySimulator"><code>AtomArraySimulator</code></a>, fatqat's neutral-atom execution
+target. It is a step up from the two-qubit Bell tutorial in two ways: the state
+spans eight atoms instead of two, and the circuit runs on a backend whose
+two-qubit-gate connectivity is <em>reconfigured mid-circuit</em> rather than fixed.</p>
+<p>The GHZ state generalises the Bell state to <span class="arithmatex">\(n\)</span> qubits,</p>
+<div class="arithmatex">\[
+|\mathrm{GHZ}_8\rangle
+  = \frac{|00000000\rangle + |11111111\rangle}{\sqrt{2}}.
+\]</div>
+<p>Like the Bell state it cannot be factored into independent single-atom states.
+Measuring all eight atoms yields <em>only</em> <code>00000000</code> or <code>11111111</code>, each with
+probability one half, so every atom's outcome is perfectly correlated with
+every other. That correlation alone, however, is also produced by a classical
+coin flip that sets all eight bits together; what makes the GHZ state quantum
+is that the two branches are held in <em>coherent superposition</em>, with a definite
+relative phase. We will confirm the correlations with sampled counts and then
+confirm the coherence with exact expectation values.</p>
+<p>The neutral-atom twist is connectivity. On this backend a <code>CZ</code> acts only on a
+pair of atoms that is currently <em>paired</em>. The <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;Pair&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/operations/atom-gates/#fatqat.operations.Pair"><code>Pair</code></a> /
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;Unpair&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/operations/atom-gates/#fatqat.operations.Unpair"><code>Unpair</code></a> operations update that pairing state as the
+circuit runs. Physically, <code>Pair</code> stands for "move these two
+atoms into a shared entangling zone" and <code>Unpair</code> for "move them apart
+again" -- the atom transport that gives a reconfigurable neutral-atom processor
+its programmable connectivity. We exploit exactly this to entangle atoms that
+no fixed one-dimensional layout would place next to each other.</p>
+<h2 id="imports-and-display-settings">Imports and display settings<a class="headerlink" href="#imports-and-display-settings" title="Permanent link">&para;</a></h2>
+<p>A <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt;" href="../../api/program/#fatqat.Program"><code>fatqat.Program</code></a> is the backend-independent circuit description.
+Gate values live in <a href="../../api/operations/"><code>fatqat.operations</code></a>. NumPy helps us tabulate
+expectation values, and Matplotlib supplies the captured runtime figure.</p>
+<div class="language-python highlight"><span class="filename">Python cell 1</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat.operations</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ops</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">NUM_ATOMS</span> <span class="o">=</span> <span class="mi">8</span>
+</code></pre></div>
+<h2 id="the-native-gate-set">The native gate set<a class="headerlink" href="#the-native-gate-set" title="Permanent link">&para;</a></h2>
+<p>The atom-array backend accepts only its native gates:
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;RX&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/operations/qubit-gates/#fatqat.operations.RX"><code>RX</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;RY&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/operations/qubit-gates/#fatqat.operations.RY"><code>RY</code></a>,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;RZ&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/operations/qubit-gates/#fatqat.operations.RZ"><code>RZ</code></a>, and <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;CZ&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/operations/qubit-gates/#fatqat.operations.CZ"><code>CZ</code></a>. Convenience
+gates such as <code>H</code> and <code>CX</code> are not native here, so we compile them by hand
+-- exactly what a hardware-aware transpiler would do. A Hadamard equals
+<span class="arithmatex">\(R_Z(\pi)\)</span> followed by <span class="arithmatex">\(R_Y(\pi/2)\)</span> up to an irrelevant global
+phase, and a controlled-X is a Hadamard-conjugated <code>CZ</code>:</p>
+<div class="arithmatex">\[
+\mathrm{CX}(c \to t) = H_t \, \mathrm{CZ}(c, t) \, H_t.
+\]</div>
+<p>Writing these as small helpers keeps the circuit-building code below readable.</p>
+<div class="language-python highlight"><span class="filename">Python cell 2</span><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">native_h</span><span class="p">(</span><span class="n">program</span><span class="p">:</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Hadamard in the native gate set: ``RZ(pi)`` then ``RY(pi/2)``."""</span>
+    <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">RZ</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span> <span class="n">target</span><span class="p">)</span>
+    <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">RY</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">target</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">native_cx</span><span class="p">(</span><span class="n">program</span><span class="p">:</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">,</span> <span class="n">control</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""``CX(control -&gt; target)`` as ``H(target) CZ H(target)``.</span>
+
+<span class="sd">    The ``CZ`` in the middle is valid only while ``control`` and ``target`` are</span>
+<span class="sd">    currently paired; otherwise the backend raises</span>
+<span class="sd">    :class:`~fatqat.errors.BackendValidationError`.</span>
+<span class="sd">    """</span>
+    <span class="n">native_h</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">CZ</span><span class="p">,</span> <span class="p">(</span><span class="n">control</span><span class="p">,</span> <span class="n">target</span><span class="p">))</span>
+    <span class="n">native_h</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="a-log-depth-entangling-tree">A log-depth entangling tree<a class="headerlink" href="#a-log-depth-entangling-tree" title="Permanent link">&para;</a></h2>
+<p>We could grow the GHZ state with a chain of seven controlled-X gates, atom
+<code>0</code> reaching each neighbour in turn. Instead we use a <em>binary tree</em>, which
+reaches all eight atoms in only three layers and lets the gates within each
+layer run in parallel on independent atom pairs:</p>
+<div class="language-text highlight"><pre><span></span><code>layer 1:  (0,4)                             1 CX  -- seeds the tree
+layer 2:  (0,2) || (4,6)                    2 CX  in parallel
+layer 3:  (0,1) || (2,3) || (4,5) || (6,7)  4 CX  in parallel
+</code></pre></div>
+<p>Every pair inside a layer is disjoint, so those controlled-X gates act on
+separate atoms and could be executed simultaneously by the hardware.</p>
+<div class="language-python highlight"><span class="filename">Python cell 3</span><pre><span></span><code><span class="n">CX_LAYERS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">...</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),),</span>
+    <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">layer_index</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">CX_LAYERS</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"layer </span><span class="si">{</span><span class="n">layer_index</span><span class="si">}</span><span class="s2">: "</span> <span class="o">+</span> <span class="s2">" || "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"CX</span><span class="si">{</span><span class="n">pair</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">))</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>layer 1: CX(0, 4)
+layer 2: CX(0, 2) || CX(4, 6)
+layer 3: CX(0, 1) || CX(2, 3) || CX(4, 5) || CX(6, 7)
+</code></pre></div>
+</div>
+<h2 id="why-the-pairs-must-move-between-layers">Why the pairs must move between layers<a class="headerlink" href="#why-the-pairs-must-move-between-layers" title="Permanent link">&para;</a></h2>
+<p>The tree deliberately couples atoms that are far apart. Layer 1 entangles
+atoms <code>0</code> and <code>4</code>; layer 2 needs <code>0</code> with <code>2</code> and <code>4</code> with <code>6</code>.
+No fixed nearest-neighbour layout can offer all of those adjacencies at once.</p>
+<p>This is where the reconfigurable connectivity earns its place. Just before a
+layer's gates we <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;Pair&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/operations/atom-gates/#fatqat.operations.Pair"><code>Pair</code></a> its atoms -- transporting
+each pair into a shared entangling zone -- and just after we
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;Unpair&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/operations/atom-gates/#fatqat.operations.Unpair"><code>Unpair</code></a> them, freeing the atoms for the next layer's
+regrouping. If we skipped this rearrangement, the layer-2 and layer-3 <code>CZ</code>
+gates would target atoms that are not paired and the backend would reject the
+program with <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;BackendValidationError&lt;/span&gt;" href="../../api/exceptions/#fatqat.errors.BackendValidationError"><code>BackendValidationError</code></a>. The transport is
+not incidental to the algorithm; it <em>is</em> the algorithm's wiring.</p>
+<div class="language-python highlight"><span class="filename">Python cell 4</span><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_ghz8_program</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">measure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Assemble the eight-atom GHZ program.</span>
+
+<span class="sd">    With ``measure=True`` every atom is read into a classical bit at the end,</span>
+<span class="sd">    which is what the counts experiment needs. With ``measure=False`` the</span>
+<span class="sd">    program has no classical register, leaving the coherent final state for the</span>
+<span class="sd">    :class:`~fatqat.Estimator` to interrogate.</span>
+<span class="sd">    """</span>
+    <span class="n">program</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="n">NUM_ATOMS</span><span class="p">,</span> <span class="n">NUM_ATOMS</span> <span class="k">if</span> <span class="n">measure</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Sites start empty; load one |0&gt; atom into each of the eight traps.</span>
+    <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">Put</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">NUM_ATOMS</span><span class="p">)))</span>
+
+    <span class="c1"># Seed the tree: put atom 0 into |+&gt;, the root the branches grow from.</span>
+    <span class="n">native_h</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">CX_LAYERS</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">:</span>  <span class="c1"># transport the layer's atoms together</span>
+            <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">Pair</span><span class="p">,</span> <span class="n">pair</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">control</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">:</span>  <span class="c1"># one parallel layer of CX = H CZ H</span>
+            <span class="n">native_cx</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">Barrier</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">NUM_ATOMS</span><span class="p">)))</span>  <span class="c1"># visual layer marker</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">:</span>  <span class="c1"># move the pairs apart again</span>
+            <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">Unpair</span><span class="p">,</span> <span class="n">pair</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">measure</span><span class="p">:</span>
+        <span class="n">program</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">program</span>
+
+
+<span class="n">ghz_program</span> <span class="o">=</span> <span class="n">build_ghz8_program</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="sample-the-eight-atom-experiment">Sample the eight-atom experiment<a class="headerlink" href="#sample-the-eight-atom-experiment" title="Permanent link">&para;</a></h2>
+<p>We run the measured program on
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AtomArraySimulator&lt;/span&gt;" href="../../api/simulators/atom-array/#fatqat.simulator.AtomArraySimulator"><code>AtomArraySimulator</code></a>; its eight quantum
+resources also determine the array size. A fixed seed keeps the numbers stable
+across tutorial runs, while omitting it produces independent samples. Because
+the circuit is noiseless, all 2000 shots land on one of the two GHZ branches
+and no other bitstring appears.</p>
+<div class="language-python highlight"><span class="filename">Python cell 5</span><pre><span></span><code><span class="n">shots</span> <span class="o">=</span> <span class="mi">2_000</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">AtomArraySimulator</span><span class="p">()</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">ghz_program</span><span class="p">,</span>
+        <span class="n">shots</span><span class="o">=</span><span class="n">shots</span><span class="p">,</span>
+        <span class="n">simulation_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"seed"</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">result</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Counts:"</span><span class="p">,</span> <span class="n">counts</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>Counts: {'00000000': 1017, '11111111': 983}
+</code></pre></div>
+</div>
+<p>Only <code>00000000</code> and <code>11111111</code> occur, each in roughly half the shots. The
+bars below show the observed frequencies against the ideal <span class="arithmatex">\(1/2\)</span>;
+finite-shot sampling nudges each bar slightly off that line, while every
+intermediate bitstring stays empty.</p>
+<div class="language-python highlight"><span class="filename">Python cell 6</span><pre><span></span><code><span class="n">all_zero</span><span class="p">,</span> <span class="n">all_one</span> <span class="o">=</span> <span class="s2">"0"</span> <span class="o">*</span> <span class="n">NUM_ATOMS</span><span class="p">,</span> <span class="s2">"1"</span> <span class="o">*</span> <span class="n">NUM_ATOMS</span>
+<span class="n">observed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">all_zero</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">all_one</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span> <span class="o">/</span> <span class="n">shots</span>
+
+<span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">observed</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"seeded simulation"</span><span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"_"</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"ideal"</span><span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">xticks</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span>
+    <span class="n">xticklabels</span><span class="o">=</span><span class="p">(</span><span class="n">all_zero</span><span class="p">,</span> <span class="n">all_one</span><span class="p">),</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">"Measured bitstring"</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">"Frequency"</span><span class="p">,</span>
+    <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"GHZ$_8$ measurement frequencies"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<p><img alt="Eight-atom GHZ measurement frequencies" src="../../assets/generated/tutorials/atom-array-ghz8-01.png" /></p>
+</div>
+<h2 id="correlated-is-not-the-same-as-coherent">Correlated is not the same as coherent<a class="headerlink" href="#correlated-is-not-the-same-as-coherent" title="Permanent link">&para;</a></h2>
+<p>The counts prove the eight atoms are perfectly <em>correlated</em>, but a classical
+mixture -- an even coin flip between "all zero" and "all one" -- would give
+the identical histogram. To see the quantum coherence we measure observables
+the mixture and the superposition disagree on, using the exact
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Estimator&lt;/span&gt;" href="../../api/estimator/#fatqat.Estimator"><code>Estimator</code></a> on the unmeasured state.</p>
+<p>Two families pin down <span class="arithmatex">\(|\mathrm{GHZ}_8\rangle\)</span>. Each neighbour parity
+<span class="arithmatex">\(\langle Z_i Z_{i+1}\rangle = 1\)</span> says adjacent atoms always agree --
+something the classical mixture also satisfies. The global
+<span class="arithmatex">\(X\)</span>-parity <span class="arithmatex">\(\langle X_0 X_1 \cdots X_7\rangle = 1\)</span> is the
+discriminator: it equals <span class="arithmatex">\(+1\)</span> only for the coherent superposition and
+averages to <span class="arithmatex">\(0\)</span> for the mixture. Observing both confirms a true GHZ
+state.</p>
+<div class="language-python highlight"><span class="filename">Python cell 7</span><pre><span></span><code><span class="n">zz_observables</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_ATOMS</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"I"</span><span class="p">]</span> <span class="o">*</span> <span class="n">NUM_ATOMS</span>
+    <span class="n">label</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Z"</span>
+    <span class="n">zz_observables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">Observable</span><span class="p">([(</span><span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">label</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)]))</span>
+<span class="n">x_parity</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Observable</span><span class="p">([(</span><span class="s2">"X"</span> <span class="o">*</span> <span class="n">NUM_ATOMS</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)])</span>
+
+<span class="n">estimator</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Estimator</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">AtomArraySimulator</span><span class="p">())</span>
+<span class="n">values</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">estimator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">build_ghz8_program</span><span class="p">(</span><span class="n">measure</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="n">zz_observables</span> <span class="o">+</span> <span class="p">[</span><span class="n">x_parity</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">result</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">get_expectation</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&lt;Z</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">Z</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&gt; = </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">+.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&lt;</span><span class="si">{</span><span class="s1">'X'</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">NUM_ATOMS</span><span class="si">}</span><span class="s2">&gt; = </span><span class="si">{</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">+.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>&lt;Z0Z1&gt; = +1.000000
+&lt;Z1Z2&gt; = +1.000000
+&lt;Z2Z3&gt; = +1.000000
+&lt;Z3Z4&gt; = +1.000000
+&lt;Z4Z5&gt; = +1.000000
+&lt;Z5Z6&gt; = +1.000000
+&lt;Z6Z7&gt; = +1.000000
+&lt;XXXXXXXX&gt; = +1.000000
+</code></pre></div>
+</div>
+<p>Every witness returns <span class="arithmatex">\(+1\)</span>, including the global <span class="arithmatex">\(X\)</span>-parity, so
+the state is the coherent GHZ superposition rather than a classical mixture
+that would merely reproduce its counts.</p>
+<h2 id="a-cost-of-moving-atoms-around">A cost of moving atoms around<a class="headerlink" href="#a-cost-of-moving-atoms-around" title="Permanent link">&para;</a></h2>
+<p>Reconfigurable connectivity is not free: each transport step risks losing an
+atom from its trap. We model that by attaching <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Loss&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/noise/loss/#fatqat.noise.Loss"><code>Loss</code></a> to
+the <code>Pair</code> and <code>Unpair</code> operations, which ejects an atom with some
+probability whenever it is moved. Only this neutral-atom backend models atom
+loss; a generic simulator rejects the same noise model.</p>
+<p>A lost atom is not a <code>|0&gt;</code> and not a <code>|1&gt;</code>: it is <em>gone</em>, and reads out as
+the erasure digit <code>2</code>, distinct from either computational outcome. Any shot
+whose bitstring contains a <code>2</code> therefore had at least one atom fall out
+during transport.</p>
+<div class="language-python highlight"><span class="filename">Python cell 8</span><pre><span></span><code><span class="n">noise</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">NoiseModel</span><span class="p">()</span>
+<span class="n">noise</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">Loss</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.01</span><span class="p">),</span> <span class="n">operation</span><span class="o">=</span><span class="n">ops</span><span class="o">.</span><span class="n">Pair</span><span class="p">)</span>
+<span class="n">noise</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">Loss</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.01</span><span class="p">),</span> <span class="n">operation</span><span class="o">=</span><span class="n">ops</span><span class="o">.</span><span class="n">Unpair</span><span class="p">)</span>
+
+<span class="n">lossy_backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">AtomArraySimulator</span><span class="p">(</span><span class="n">noise</span><span class="o">=</span><span class="n">noise</span><span class="p">)</span>
+<span class="n">lossy_counts</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">lossy_backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">ghz_program</span><span class="p">,</span>
+        <span class="n">shots</span><span class="o">=</span><span class="n">shots</span><span class="p">,</span>
+        <span class="n">simulation_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"seed"</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">result</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="n">lost_shots</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n</span> <span class="k">for</span> <span class="n">bitstring</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">lossy_counts</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="s2">"2"</span> <span class="ow">in</span> <span class="n">bitstring</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">lost_shots</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">shots</span><span class="si">}</span><span class="s2"> shots lost at least one atom (a '2' in the readout)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Most frequent outcomes under 1</span><span class="si">% lo</span><span class="s2">ss per move:"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">bitstring</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lossy_counts</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">kv</span><span class="p">:</span> <span class="o">-</span><span class="n">kv</span><span class="p">[</span><span class="mi">1</span><span class="p">])[:</span><span class="mi">6</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">bitstring</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Runtime result</p>
+<div class="language-text highlight"><pre><span></span><code>469/2000 shots lost at least one atom (a '2' in the readout)
+Most frequent outcomes under 1% loss per move:
+  11111111: 799
+  00000000: 732
+  00002000: 48
+  20000000: 48
+  00200000: 30
+  00000020: 29
+</code></pre></div>
+</div>
+<h2 id="takeaways-and-next-steps">Takeaways and next steps<a class="headerlink" href="#takeaways-and-next-steps" title="Permanent link">&para;</a></h2>
+<p>This tutorial assembled a genuine eight-atom GHZ state, verified its
+correlations from sampled counts and its coherence from exact expectation
+values, and saw how moving atoms to reconfigure connectivity both enables the
+log-depth entangling tree and introduces a realistic loss channel.</p>
+<p>From here, try widening the tree to sixteen atoms by adding a fourth layer,
+raising the loss probability to watch erasures grow, or intentionally
+dropping the <code>Pair</code> / <code>Unpair</code> calls from one layer to see
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AtomArraySimulator&lt;/span&gt;" href="../../api/simulators/atom-array/#fatqat.simulator.AtomArraySimulator"><code>AtomArraySimulator</code></a> reject the first unpaired
+<code>CZ</code> with <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;BackendValidationError&lt;/span&gt;" href="../../api/exceptions/#fatqat.errors.BackendValidationError"><code>BackendValidationError</code></a>. Restore the
+pairing before exploring physical loss: an unpaired gate is a program error,
+while a gate skipped after atom loss is a per-shot physical effect. The
+downloadable Python is generated from these Markdown cells, so the variations
+can be made directly in runnable code.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 FatQat contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.prune", "navigation.path", "navigation.top", "navigation.footer", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.tooltips"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+  
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["\\(", "\\)"]],
+        displayMath: [["\\[", "\\]"]],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        ignoreHtmlClass: ".*|",
+        processHtmlClass: "arithmatex"
+      }
+    };
+  </script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
+    integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    document$.subscribe(() => {
+      MathJax.startup.output.clearCache();
+      MathJax.typesetClear();
+      MathJax.texReset();
+      MathJax.typesetPromise();
+    });
+  </script>
+
+  </body>
+</html>
