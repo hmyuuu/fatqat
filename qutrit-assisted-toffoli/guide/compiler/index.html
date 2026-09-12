@@ -409,8 +409,6 @@
       
         
       
-        
-      
     
     
     
@@ -786,7 +784,7 @@
   <span class="md-ellipsis">
     
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
     
@@ -802,7 +800,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
           </label>
@@ -850,35 +848,7 @@
   <span class="md-ellipsis">
     
   
-    Interpret results
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../visualization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Visualization
+    Estimate observables
   
 
     
@@ -907,6 +877,34 @@
     
   
     Ideal and noisy runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
   
 
     
@@ -1149,6 +1147,69 @@
   
   
   
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Connect and diagnose
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Connect and diagnose
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../interoperability/" class="md-nav__link">
         
@@ -1194,6 +1255,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1478,20 +1547,26 @@
 
 
 <h1 id="compile-a-logical-circuit">Compile a logical circuit<a class="headerlink" href="#compile-a-logical-circuit" title="Permanent link">&para;</a></h1>
-<p>Use <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LogicalProgram&lt;/span&gt;" href="../../api/compiler/#fatqat.LogicalProgram"><code>LogicalProgram</code></a> when you want FatQat to choose a
-hardware-family instruction set, map logical qubits, and route two-qubit gates.
-It is a small, editable circuit frontend with familiar gate methods:</p>
+<div class="admonition warning">
+<p class="admonition-title">Compiler under development</p>
+<p>The compiler module is under active development. Its interfaces and
+supported behavior may change between releases. Pin an exact FatQat
+version when reproducibility matters.</p>
+</div>
+<p>Build a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt;" href="../../api/program/#fatqat.Program"><code>Program</code></a> and compile it when you want FatQat to
+choose a hardware-family instruction set, map logical qubits, and route
+two-qubit gates. Use the same authoring interface as for direct simulation:</p>
 <div class="language-python highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
 
-<span class="n">circuit</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">LogicalProgram</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">circuit</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">CX</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="n">circuit</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
 </code></pre></div>
-<p><code>LogicalProgram</code> is distinct from <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt;" href="../../api/program/#fatqat.Program"><code>Program</code></a>. A
-<code>LogicalProgram</code> is input to the compiler. A <code>Program</code> is the general container
-accepted by simulators and emulators, including direct controls and dynamic
-behavior that the current compiler does not lower.</p>
+<p>Compilation snapshots the Program without editing it, so the same source can
+still be simulated directly or compiled for another target. The compiler
+accepts the static, numeric gate subset described below; direct simulation
+continues to support broader Program behavior.</p>
 <h2 id="compile-and-run-on-an-sc-profile">Compile and run on an SC profile<a class="headerlink" href="#compile-and-run-on-an-sc-profile" title="Permanent link">&para;</a></h2>
 <p>The public superconducting route targets
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;SCQubitSimulator&lt;/span&gt;" href="../../api/simulators/sc-qubit/#fatqat.simulator.SCQubitSimulator"><code>SCQubitSimulator</code></a>. Its coupling graph is
@@ -1533,6 +1608,10 @@ is not part of the public compiler contract.</p>
 boundary. Pass that result directly to the matching simulator. The final
 compiler IR remains available as <code>compiled.output</code>: an <code>SCNativeProgram</code> for
 SC or a <code>ZonedPlan</code> for NA. <code>compiled.route</code> records the passes that ran.</p>
+<p>Compiled programs retain classical registers in source declaration order,
+including unused registers and unwritten slots within measured registers.
+Measurement order does not change count-key positions. Counts follow the
+usual <a href="../../api/result/#ordering-and-mutable-values">ordering and zero-fill rules</a>.</p>
 <p>An explicit intermediate <code>emit</code> returns an inspectable
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;CompilationResult&lt;/span&gt;
 
@@ -1551,12 +1630,20 @@ compilation; mid-circuit
 measurement, conditions, feed-forward, and general control flow are not yet
 compiler inputs.</p>
 <div class="language-python highlight"><pre><span></span><code><span class="n">theta</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="s2">"theta"</span><span class="p">)</span>
-<span class="n">template</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">LogicalProgram</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">template</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">template</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">RX</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">bound</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">assign_parameters</span><span class="p">({</span><span class="n">theta</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">})</span>
 </code></pre></div>
-<p>The frontend offers the union of the current logical gate methods. Target
-normalization reports unsupported combinations: in particular, the current NA
-route rejects <code>sx()</code> and <code>reset()</code>. Such a failure is reported as a
+<p>Each classical slot may be written at most once. Register views are expanded
+into scalar gate occurrences when the source is frozen, preserving register
+identity and operand order.</p>
+<p>A <code>Program</code> input is converted to <code>LogicalProgram</code> before any passes run.
+Device operations and custom operation classes raise <code>ValueError</code> during
+this conversion, even when emitting the editable logical source. Built-in
+logical operations are checked for static compiler and target support at
+later boundaries.</p>
+<p>Target normalization reports unsupported combinations: in particular, the
+current NA route rejects <code>SX</code> and <code>Reset</code>. Such a failure is reported as a
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;PassError&lt;/span&gt;" href="../../api/compiler/#fatqat.compiler.PassError"><code>PassError</code></a> naming the pass and the underlying
 unsupported operation.</p>
 <p>OpenQASM remains an equal frontend through

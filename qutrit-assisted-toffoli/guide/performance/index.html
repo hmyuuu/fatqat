@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://hmyuuu.github.io/fatqat/qutrit-assisted-toffoli/guide/performance/">
       
       
-        <link rel="prev" href="../ideal-and-noisy/">
+        <link rel="prev" href="../visualization/">
       
       
         <link rel="next" href="../hardware-profile-simulation/">
@@ -409,8 +409,6 @@
       
         
       
-        
-      
     
     
     
@@ -706,7 +704,7 @@
   <span class="md-ellipsis">
     
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
     
@@ -722,7 +720,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
           </label>
@@ -770,35 +768,7 @@
   <span class="md-ellipsis">
     
   
-    Interpret results
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../visualization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Visualization
+    Estimate observables
   
 
     
@@ -827,6 +797,34 @@
     
   
     Ideal and noisy runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
   
 
     
@@ -1171,6 +1169,69 @@
   
   
   
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Connect and diagnose
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Connect and diagnose
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../interoperability/" class="md-nav__link">
         
@@ -1216,6 +1277,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1499,7 +1568,7 @@
         <a href="../simulation/" class="md-path__link">
           
   <span class="md-ellipsis">
-    Study algorithm behavior
+    Run and analyze programs
   </span>
 
         </a>
@@ -1611,8 +1680,8 @@ and measures only at the end can reuse more work than one with mid-circuit
 measurement, reset, feedforward, or stochastic trajectories. Avoid estimating
 shot cost from <code>shots</code> alone; benchmark the same Program and result request you
 will use in practice.</p>
-<p>See <a href="../interpret-results/">Ask questions of a run</a> for choosing an answer and
-the <a href="../../api/simulator/">Simulator API</a> for exact method and result
+<p>See <a href="../interpret-results/">Estimate observables</a> for expectation values and
+uncertainty, and the <a href="../../api/simulator/">Simulator API</a> for method and result
 constraints.</p>
 <h2 id="compare-numpy-and-numba-on-your-workload">Compare NumPy and Numba on your workload<a class="headerlink" href="#compare-numpy-and-numba-on-your-workload" title="Permanent link">&para;</a></h2>
 <p>FatQat's general simulator offers two CPU runtimes:</p>
@@ -1736,7 +1805,7 @@ solver and schedule controls available to each physical model.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../ideal-and-noisy/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Ideal and noisy runs">
+          <a href="../visualization/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Visualization">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1746,7 +1815,7 @@ solver and schedule controls available to each physical model.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Ideal and noisy runs
+                Visualization
               </div>
             </div>
           </a>

@@ -409,8 +409,6 @@
       
         
       
-        
-      
     
     
     
@@ -858,7 +856,7 @@
   <span class="md-ellipsis">
     
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
     
@@ -874,7 +872,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
           </label>
@@ -922,35 +920,7 @@
   <span class="md-ellipsis">
     
   
-    Interpret results
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../visualization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Visualization
+    Estimate observables
   
 
     
@@ -979,6 +949,34 @@
     
   
     Ideal and noisy runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
   
 
     
@@ -1221,6 +1219,69 @@
   
   
   
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Connect and diagnose
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Connect and diagnose
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../interoperability/" class="md-nav__link">
         
@@ -1266,6 +1327,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1629,9 +1698,9 @@ symbolic parameters, qubits and qudits, and direct physical controls. A Program
 records its resources and ordered instructions without deciding how a backend
 will execute them.</p>
 <p>If you want the compiler to map and route a static gate circuit before it is
-run, use <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LogicalProgram&lt;/span&gt;" href="../../api/compiler/#fatqat.LogicalProgram"><code>LogicalProgram</code></a> and the
-<a href="../compiler/">compiler workflow</a>. <code>Program</code> remains the execution and
-direct-control interface; users do not manually convert between the two.</p>
+run, pass the Program to <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;compile_to_sc&lt;/span&gt;" href="../../api/compiler/#fatqat.compiler.compile_to_sc"><code>compile_to_sc</code></a> or
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;compile_to_na&lt;/span&gt;" href="../../api/compiler/#fatqat.compiler.compile_to_na"><code>compile_to_na</code></a>. The
+<a href="../compiler/">compiler workflow</a> describes supported gates and source restrictions.</p>
 <p>This chapter begins with a small qubit circuit, then introduces registers,
 feedforward, reusable parameters, mixed local dimensions, drawing, and direct
 controls.</p>

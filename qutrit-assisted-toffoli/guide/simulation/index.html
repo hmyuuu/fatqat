@@ -409,8 +409,6 @@
       
         
       
-        
-      
     
     
     
@@ -706,7 +704,7 @@
   <span class="md-ellipsis">
     
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
     
@@ -722,7 +720,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
           </label>
@@ -795,10 +793,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#start-from-a-reusable-program" class="md-nav__link">
+  <a href="#choose-a-simulation-method" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Start from a reusable Program
+        Choose a simulation method
       
     </span>
   </a>
@@ -850,35 +848,7 @@
   <span class="md-ellipsis">
     
   
-    Interpret results
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../visualization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Visualization
+    Estimate observables
   
 
     
@@ -907,6 +877,34 @@
     
   
     Ideal and noisy runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
   
 
     
@@ -1149,6 +1147,69 @@
   
   
   
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Connect and diagnose
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Connect and diagnose
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../interoperability/" class="md-nav__link">
         
@@ -1194,6 +1255,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1359,10 +1428,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#start-from-a-reusable-program" class="md-nav__link">
+  <a href="#choose-a-simulation-method" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Start from a reusable Program
+        Choose a simulation method
       
     </span>
   </a>
@@ -1455,7 +1524,7 @@
         <a href="./" class="md-path__link">
           
   <span class="md-ellipsis">
-    Study algorithm behavior
+    Run and analyze programs
   </span>
 
         </a>
@@ -1479,89 +1548,114 @@
 
 <h1 id="simulate-a-quantum-program">Simulate a quantum program<a class="headerlink" href="#simulate-a-quantum-program" title="Permanent link">&para;</a></h1>
 <p>Use the general-purpose <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Simulator&lt;/span&gt;" href="../../api/simulator/#fatqat.simulator.Simulator"><code>Simulator</code></a> to study
-logical circuit evolution without choosing a hardware profile or Hamiltonian.
-It applies the operations in a
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt;" href="../../api/program/#fatqat.Program"><code>Program</code></a> as written: it does not transpile, route, or attach
-device timing.</p>
-<p>One reusable rotation will carry us from a state calculation to sampled
-measurements and a parameter sweep.</p>
-<h2 id="start-from-a-reusable-program">Start from a reusable Program<a class="headerlink" href="#start-from-a-reusable-program" title="Permanent link">&para;</a></h2>
-<p>Keep the angle symbolic while you describe the computation. Binding creates a
-new Program, so the template remains available for other values:</p>
-<div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+circuit behavior, with or without noise. Start here with an ideal single-qubit
+rotation: calculate its exact probabilities, sample measurement outcomes,
+then vary the rotation angle to see how the probabilities change.</p>
+<div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat.operations</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ops</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">theta</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="s2">"theta"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rotation</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rotation</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">RY</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">bound</span> <span class="o">=</span> <span class="n">rotation</span><span class="o">.</span><span class="n">assign_parameters</span><span class="p">({</span><span class="n">theta</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rotation</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">RY</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">Simulator</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"statevector"</span><span class="p">,</span> <span class="n">runtime</span><span class="o">=</span><span class="s2">"numpy"</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">bound</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">())</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">rotation</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">probabilities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 <span class="go">[0.5, 0.5]</span>
 </code></pre></div>
-<p><code>RY(pi / 2)</code> prepares equal probabilities for <code>|0&gt;</code> and <code>|1&gt;</code>. The Program has
-not been measured, so the natural answer is its final state. <code>runtime="numpy"</code>
-keeps this small example free of compilation startup; <a href="../performance/">Performance and
-scaling</a> explains when to compare it with the Numba runtime.</p>
-<p>Choose the representation for the output you need:</p>
-<table>
-<thead>
-<tr>
-<th>If you need to know...</th>
-<th>Start with</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>The pure state prepared by an ideal circuit</td>
-<td><code>method="statevector"</code></td>
-</tr>
-<tr>
-<td>The exact mixed state after finite noise channels</td>
-<td><code>method="density_matrix"</code></td>
-</tr>
-<tr>
-<td>The coherent transformation implemented by a small Program</td>
-<td><code>method="unitary"</code></td>
-</tr>
-<tr>
-<td>The complete channel implemented by a small Program</td>
-<td><code>method="superop"</code></td>
-</tr>
-</tbody>
-</table>
-<p>These are different views of logical evolution, not different ways to author
-the computation.</p>
+<p>The statevector contains an amplitude for each basis state. Its squared
+magnitudes give the probabilities of measuring <code>0</code> and <code>1</code>: here, one half
+each. No measurements were sampled to obtain these probabilities. The
+classical bit declared by <code>Program(1, 1)</code> will hold the measurement outcome in
+the next example.</p>
+<p><code>runtime="numpy"</code> avoids compilation startup for this small circuit.
+<a href="../performance/">Performance and scaling</a> explains when to compare it with
+the Numba runtime.</p>
+<h2 id="choose-a-simulation-method">Choose a simulation method<a class="headerlink" href="#choose-a-simulation-method" title="Permanent link">&para;</a></h2>
+<p>Set <code>method</code> to choose how the simulator represents the state:</p>
+<ul>
+<li><strong><code>statevector</code></strong> represents a pure state. With noise, it samples individual
+  noise trajectories.</li>
+<li><strong><code>density_matrix</code></strong> represents a mixed state and applies noise channels
+  directly, without sampling trajectories.</li>
+</ul>
+<p>Use <code>unitary</code> or <code>superop</code> when you need the circuit's full transformation
+rather than its output state.</p>
+<p>For a worked example using a density matrix to study noise, see
+<a href="../ideal-and-noisy/">Ideal and noisy runs</a>.</p>
 <h2 id="measure-a-distribution">Measure a distribution<a class="headerlink" href="#measure-a-distribution" title="Permanent link">&para;</a></h2>
-<p>To see the outcomes an experiment would report, copy the bound Program, append
-a measurement, and request repeated shots:</p>
-<div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">measured</span> <span class="o">=</span> <span class="n">bound</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<p>An exact probability of one half does not mean every set of measurements
+splits evenly. Copy the rotation Program and add a measurement into its
+classical bit. Each shot runs the circuit from its initial state and produces
+one outcome:</p>
+<div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">measured</span> <span class="o">=</span> <span class="n">rotation</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">measured</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">counts</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">measured_result</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">measured</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">shots</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">simulation_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"seed"</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
-<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-<span class="go">200</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">set</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">{</span><span class="s2">"0"</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">}</span>
-<span class="go">True</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">counts</span> <span class="o">=</span> <span class="n">measured_result</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">counts</span>
+<span class="go">{'0': 94, '1': 106}</span>
 </code></pre></div>
-<p>The two outcomes fluctuate around equal frequency. The seed makes this run
-repeatable, but code should normally test the physics—allowed outcomes and
-total shots—rather than one exact random dictionary. See <a href="../interpret-results/">Ask questions of a
-run</a> for count order and for choosing among the answers
-stored in a Result.</p>
+<p>The counts record how many shots produced each outcome. Divide them by the
+number of shots to obtain the observed frequencies. These fluctuate around
+the exact probabilities because measurement is sampled, even though the
+circuit has no noise. More shots generally reduce the sampling fluctuations;
+they do not change the underlying probabilities. The seed makes this example
+repeatable.</p>
+<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;draw&lt;/span&gt;" href="../../api/result/#fatqat.Result.draw"><code>Result.draw()</code></a> can display the counts as frequencies.
+The dashed line below marks the exact probability for both outcomes:</p>
+<p><img alt="A histogram of 200 shots shows outcome frequencies close to, but on opposite sides of, the dashed exact-probability line at one half." src="../../assets/generated/guide/simulation-measurements.png" /></p>
+<details class="example">
+<summary>Reproduce this figure</summary>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat.operations</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ops</span>
+
+<span class="n">rotation</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">rotation</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">RY</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">Simulator</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"statevector"</span><span class="p">,</span> <span class="n">runtime</span><span class="o">=</span><span class="s2">"numpy"</span><span class="p">)</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">rotation</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">()</span>
+<span class="n">exact_probability</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+
+<span class="n">measured</span> <span class="o">=</span> <span class="n">rotation</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">measured</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+    <span class="n">measured</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">simulation_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"seed"</span><span class="p">:</span> <span class="mi">7</span><span class="p">}</span>
+<span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+
+<span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.2</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">))</span>
+<span class="n">result</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">stat</span><span class="o">=</span><span class="s2">"frequencies"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"200 shots of RY(pi/2)"</span><span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
+    <span class="n">exact_probability</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C1"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Exact probability"</span>
+<span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">)</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</details>
 <h2 id="sweep-without-rebuilding">Sweep without rebuilding<a class="headerlink" href="#sweep-without-rebuilding" title="Permanent link">&para;</a></h2>
-<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_sweep&lt;/span&gt;" href="../../api/simulator/#fatqat.simulator.Simulator.run_sweep"><code>run_sweep</code></a> binds each row of values to
-the same Program structure. The program is validated and lowered once; each
-row then only rebuilds the matrices of the gates that hold parameters. Here the
-state itself is the useful answer, so no measurement or sampling is needed:</p>
-<div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+<p>How does the probability of <code>1</code> change with the rotation angle? Replace the
+fixed angle with a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Parameter&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/program/#fatqat.Parameter"><code>Parameter</code></a>, then use
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_sweep&lt;/span&gt;" href="../../api/simulator/#fatqat.simulator.Simulator.run_sweep"><code>run_sweep</code></a> to evaluate a list of angles
+without rebuilding the Program for each value. This is typically faster than
+separate <code>run</code> calls because the simulator reuses setup work across parameter
+values.</p>
+<div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">theta</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="s2">"theta"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterized_rotation</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameterized_rotation</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">RY</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sweep</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run_sweep</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">rotation</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">parameterized_rotation</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="p">{</span><span class="n">theta</span><span class="p">:</span> <span class="n">angles</span><span class="p">},</span>
 <span class="gp">... </span>    <span class="n">result_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"counts"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"final_state"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
 <span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
@@ -1571,7 +1665,13 @@ state itself is the useful answer, so no measurement or sampling is needed:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">probability_one</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]],</span> <span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 <span class="go">[0.0, 1.0, 0.0]</span>
 </code></pre></div>
-<p>The complete response curve makes the reuse visible:</p>
+<p>The mapping <code>{theta: angles}</code> supplies a value of <code>theta</code> for each run. The
+results follow the same order as <code>angles</code>. This Program has no measurements;
+each probability comes directly from a statevector, so the curve has no
+shot-sampling fluctuations.</p>
+<p>For this rotation, <span class="arithmatex">\(P(1) = \sin^2(\theta / 2)\)</span>. It rises from zero to one
+at <span class="arithmatex">\(\theta = \pi\)</span>, then returns to zero at <span class="arithmatex">\(2\pi\)</span>. The plot uses a finer
+angle grid to show that dependence:</p>
 <p><img alt="Probability of measuring one follows a smooth sine-squared curve as the RY angle is swept from zero to two pi." src="../../assets/generated/guide/simulation-1.png" /></p>
 <details class="example">
 <summary>Reproduce this figure</summary>
@@ -1581,7 +1681,7 @@ state itself is the useful answer, so no measurement or sampling is needed:</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fatqat.operations</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ops</span>
 
 <span class="n">theta</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="s2">"theta"</span><span class="p">)</span>
-<span class="n">rotation</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">rotation</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">rotation</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">RY</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
 
 <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">41</span><span class="p">)</span>
@@ -1611,12 +1711,12 @@ state itself is the useful answer, so no measurement or sampling is needed:</p>
 <span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div>
 </details>
-<p>A sweep returns ordinary Results in input order. For accepted method and batch
-forms, see the <a href="../../api/simulator/">Simulator API</a>. Next, <a href="../interpret-results/">Ask questions of
-a run</a> follows counts, states, maps, and expectation
-values through their shared Job and Result boundary.</p>
+<p>For more sweep options, see the <a href="../../api/simulator/">Simulator API</a>.
+Continue with <a href="../interpret-results/">Estimate observables</a> to calculate
+correlations and understand the uncertainty of sampled estimates.</p>
 
 
 
@@ -1671,13 +1771,13 @@ values through their shared Job and Result boundary.</p>
         
         
           
-          <a href="../interpret-results/" class="md-footer__link md-footer__link--next" aria-label="Next: Interpret results">
+          <a href="../interpret-results/" class="md-footer__link md-footer__link--next" aria-label="Next: Estimate observables">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Interpret results
+                Estimate observables
               </div>
             </div>
             <div class="md-footer__button md-icon">

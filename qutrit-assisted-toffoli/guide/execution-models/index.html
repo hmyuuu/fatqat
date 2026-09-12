@@ -409,8 +409,6 @@
       
         
       
-        
-      
     
     
     
@@ -690,10 +688,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-each-level-tells-you" class="md-nav__link">
+  <a href="#compare-a-single-qubit-rotation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What each level tells you
+        Compare a single-qubit rotation
       
     </span>
   </a>
@@ -701,10 +699,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#expect-different-capability-checks" class="md-nav__link">
+  <a href="#see-what-happens-during-a-pulse" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Expect different capability checks
+        See what happens during a pulse
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#moving-between-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Moving between models
       
     </span>
   </a>
@@ -775,7 +784,7 @@
   <span class="md-ellipsis">
     
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
     
@@ -791,7 +800,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
           </label>
@@ -839,35 +848,7 @@
   <span class="md-ellipsis">
     
   
-    Interpret results
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../visualization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Visualization
+    Estimate observables
   
 
     
@@ -896,6 +877,34 @@
     
   
     Ideal and noisy runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
   
 
     
@@ -1138,6 +1147,69 @@
   
   
   
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Connect and diagnose
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Connect and diagnose
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../interoperability/" class="md-nav__link">
         
@@ -1183,6 +1255,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1348,10 +1428,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-each-level-tells-you" class="md-nav__link">
+  <a href="#compare-a-single-qubit-rotation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What each level tells you
+        Compare a single-qubit rotation
       
     </span>
   </a>
@@ -1359,10 +1439,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#expect-different-capability-checks" class="md-nav__link">
+  <a href="#see-what-happens-during-a-pulse" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Expect different capability checks
+        See what happens during a pulse
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#moving-between-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Moving between models
       
     </span>
   </a>
@@ -1456,12 +1547,44 @@
 
 
 <h1 id="choose-how-much-physics-to-model">Choose how much physics to model<a class="headerlink" href="#choose-how-much-physics-to-model" title="Permanent link">&para;</a></h1>
-<p>A backend is more than a place to send a program. It decides what FatQat
-means by “run this.” The general simulator follows logical circuit evolution;
-a hardware profile adds device rules; an emulator follows a physical model in
-time.</p>
-<p>The distinction is easiest to see with equivalent single-qubit rotations.
-Each execution level uses the representation appropriate to its target:</p>
+<p>Choose a backend according to the question you want to answer. A circuit
+simulation can test an algorithm, a hardware profile can check device rules,
+and a physical emulator can resolve what happens while a pulse is applied.</p>
+<table>
+<thead>
+<tr>
+<th>If you want to know…</th>
+<th>Use…</th>
+<th>FatQat models…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>whether a circuit produces the intended result, or how noise channels change it</td>
+<td>the general simulator</td>
+<td>circuit operations on qubits or qudits, with optional noise channels</td>
+</tr>
+<tr>
+<td>whether a Program uses a device's supported operations and resources</td>
+<td>a hardware-profile simulator</td>
+<td>circuit evolution with native-operation, placement, connectivity, capacity, and occupancy checks, plus optional noise</td>
+</tr>
+<tr>
+<td>how pulse shape, duration, or drift affects the state during execution</td>
+<td>a physical emulator</td>
+<td>time-dependent evolution of the model's physical levels under controls, coupling, and compatible continuous noise</td>
+</tr>
+</tbody>
+</table>
+<p>These are choices for different questions. You can begin with any of them.
+In particular, studying noise does not by itself require an emulator: both
+circuit simulators and hardware profiles support noise channels. Use physical
+emulation when you need to resolve dynamics over elapsed time, such as
+excitation during a pulse or relaxation during an idle interval.</p>
+<h2 id="compare-a-single-qubit-rotation">Compare a single-qubit rotation<a class="headerlink" href="#compare-a-single-qubit-rotation" title="Permanent link">&para;</a></h2>
+<p>An ideal <code>RX(pi/2)</code> rotation of a qubit initially in <code>|0&gt;</code> gives equal
+probabilities for <code>0</code> and <code>1</code>. The three backends let you examine this operation
+under different assumptions:</p>
 <div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat.operations</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ops</span>
@@ -1471,8 +1594,9 @@ Each execution level uses the representation appropriate to its target:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="general-simulator" name="__tabbed_1" type="radio" /><input id="hardware-profile" name="__tabbed_1" type="radio" /><input id="physical-emulator" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="general-simulator">General simulator</label><label for="hardware-profile">Hardware profile</label><label for="physical-emulator">Physical emulator</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p>The general <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Simulator&lt;/span&gt;" href="../../api/simulator/#fatqat.simulator.Simulator"><code>Simulator</code></a> applies the logical gate
-operation without assigning the qubit to a particular device:</p>
+<p>The general <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Simulator&lt;/span&gt;" href="../../api/simulator/#fatqat.simulator.Simulator"><code>Simulator</code></a> applies the circuit
+operation without assigning the qubit to a particular device. With no noise
+model, this run gives the ideal probabilities:</p>
 <div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">general</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">Simulator</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"statevector"</span><span class="p">,</span> <span class="n">runtime</span><span class="o">=</span><span class="s2">"numpy"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">general_result</span> <span class="o">=</span> <span class="n">general</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">program</span><span class="p">,</span>
@@ -1482,13 +1606,12 @@ operation without assigning the qubit to a particular device:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">general_result</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">())</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="go">array([0.5, 0.5])</span>
 </code></pre></div>
-<p>This is the quickest answer to the algorithmic question: the rotation leaves
-equal probabilities for <code>0</code> and <code>1</code>.</p>
 </div>
 <div class="tabbed-block">
-<p>A hardware-profile simulator still evolves gates at circuit level, but first
-checks that the program is native and physically placeable. The canonical
-superconducting profile expresses this half rotation as <code>SX</code>:</p>
+<p>A hardware-profile simulator also evolves circuit operations, while checking
+that they belong to its native set and obey its resource rules. The
+superconducting profile expresses this rotation as <code>SX</code>, which has the same
+effect as <code>RX(pi/2)</code> up to a global phase:</p>
 <div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">profile_program</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">profile_program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">SX</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">SCQubitSimulator</span><span class="p">(</span>
@@ -1504,78 +1627,111 @@ superconducting profile expresses this half rotation as <code>SX</code>:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">profile_result</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">())</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="go">array([0.5, 0.5])</span>
 </code></pre></div>
-<p>The numerical answer matches, but the claim is stronger: this particular
-instruction also belongs to the selected native gate set and fits its
-resource model.</p>
+<p>The probabilities match the general simulator's. This run also checks that
+<code>SX</code> is supported on the selected qubit; it does not model the pulse used to
+implement it.</p>
+<p>Calling <code>profile.run(program)</code> with the original <code>RX(pi/2)</code> operation
+would raise <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;UnsupportedOperationError&lt;/span&gt;" href="../../api/exceptions/#fatqat.errors.UnsupportedOperationError"><code>UnsupportedOperationError</code></a>
+because <code>RX</code> is not native to this profile.</p>
 </div>
 <div class="tabbed-block">
-<p>The transmon emulator realizes <code>RX</code> through its packaged pulse calibration and
-integrates a three-level physical model:</p>
+<p>The <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;TransmonEmulator&lt;/span&gt;" href="../../api/pulse-emulator/#fatqat.emulator.TransmonEmulator"><code>TransmonEmulator</code></a> turns <code>RX</code> into a
+pulse using its packaged reference calibration, then integrates the physical
+state over the pulse's duration:</p>
 <div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonModel</span><span class="o">.</span><span class="n">from_document</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">load_model_document</span><span class="p">(</span><span class="s2">"transmon.reference"</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">emulator</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonEmulator</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">physical_result</span> <span class="o">=</span> <span class="n">emulator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">physical_state</span> <span class="o">=</span> <span class="n">physical_result</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">physical_state</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(9,)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">physical_state</span><span class="p">)),</span> <span class="mi">12</span><span class="p">)</span>
-<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">joint_populations</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">physical_state</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q0_populations</span> <span class="o">=</span> <span class="n">joint_populations</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">q0_populations</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">array([0.5, 0.5, 0. ])</span>
 </code></pre></div>
-<p>The reference model contains two physical three-level transmons, so its state
-is larger than the two-amplitude logical state—even though the <code>Program</code>
-addresses only one qubit. That extra space is where unaddressed hardware and
-leakage live.</p>
+<p>The Program declares one qubit with two basis states. The reference model
+contains two physical transmons with three levels each, so the returned
+state has nine amplitudes. Reshaping it gives populations indexed by the
+levels of <code>q0</code> and <code>q1</code>; summing over <code>q1</code> leaves the three populations on
+<code>q0</code> shown above.</p>
+<p>Level <code>|2&gt;</code> represents leakage out of the qubit's <code>|0&gt;</code>, <code>|1&gt;</code> subspace.
+Retaining that physical level does not make the Program a qutrit program.
+The second transmon also remains in the state even though this Program does
+not address it. For this reference pulse, the final populations are close
+to the ideal values and the leakage rounds to zero at this precision. The
+packaged calibration supplies a reproducible simulation example, not a
+current hardware characterization.</p>
 </div>
 </div>
 </div>
-<h2 id="what-each-level-tells-you">What each level tells you<a class="headerlink" href="#what-each-level-tells-you" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>If you want to know…</th>
-<th>Start with…</th>
-<th>FatQat models…</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>whether the algorithm produces the intended logical behavior</td>
-<td>the general simulator</td>
-<td>circuit operations on logical subsystems</td>
-</tr>
-<tr>
-<td>whether the written program obeys a target's native operations and resource rules</td>
-<td>a hardware-profile simulator</td>
-<td>circuit evolution plus layout, connectivity, occupancy, and optional profile noise</td>
-</tr>
-<tr>
-<td>how gates or controls behave as timed physical dynamics</td>
-<td>an emulator</td>
-<td>levels, drift, coupling, pulses, Hamiltonians, and compatible open-system noise</td>
-</tr>
-</tbody>
-</table>
-<p>Start with the simplest model that contains the effect you need. Add device
-rules or continuous-time physics only when those details affect the result.</p>
-<h2 id="expect-different-capability-checks">Expect different capability checks<a class="headerlink" href="#expect-different-capability-checks" title="Permanent link">&para;</a></h2>
-<p>All three paths accept a <code>Program</code>, return a <code>Job</code>, and expose data through a
-<code>Result</code>, but equivalent algorithms may require target-appropriate Programs
-because they do not accept the same instruction set.</p>
-<p>For example, the general simulator supports logical qudits and registers with
-mixed local dimensions. Current hardware profiles and pulse emulators accept
-dimension-two logical resources. A transmon emulator may return a physical
-qutrit state because it retains a leakage level; that is different from
-declaring a logical qutrit in the Program.</p>
-<p>Hardware profiles validate the Program as written; they do not transpile or
-route it. When logical and device labels differ, a
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ResourceLayout&lt;/span&gt;" href="../../api/registers/#fatqat.ResourceLayout"><code>ResourceLayout</code></a> makes the binding explicit. <a href="../hardware-profile-simulation/">Testing a
-hardware profile</a> works through a failed
-placement and its correction.</p>
-<p>Next, <a href="../simulation/">simulate a quantum program</a> to explore states, sweeps,
-and outputs at circuit level, or jump to <a href="../hamiltonian-emulation/">Hamiltonian-level
-emulation</a> when time and controls are already the
-focus.</p>
+<h2 id="see-what-happens-during-a-pulse">See what happens during a pulse<a class="headerlink" href="#see-what-happens-during-a-pulse" title="Permanent link">&para;</a></h2>
+<p>Equal final probabilities do not show how the state changes during a drive.
+For a simple time-resolved example, apply a constant drive to <code>q0</code> and stop it
+at successively later times. This is a direct pulse, separate from the shaped
+reference pulse used for <code>RX</code> above. Its fixed Rabi rate is chosen so that an
+ideal two-level system would reach equal populations after 10 ns.</p>
+<p><img alt="A constant drive transfers population from level zero to level one over 10 nanoseconds; a second panel magnifies the small population in leakage level two." src="../../assets/generated/guide/execution-models-pulse.png" /></p>
+<details class="example">
+<summary>Reproduce this figure</summary>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fatqat.operations</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ops</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonModel</span><span class="o">.</span><span class="n">from_document</span><span class="p">(</span>
+    <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">load_model_document</span><span class="p">(</span><span class="s2">"transmon.reference"</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">emulator</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">TransmonEmulator</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>  <span class="c1"># ns</span>
+<span class="n">rabi_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">20.0</span>  <span class="c1"># rad/ns, held fixed for every run</span>
+<span class="n">populations</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">stop_time</span> <span class="ow">in</span> <span class="n">times</span><span class="p">:</span>
+    <span class="n">pulse_program</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stop_time</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">waveform</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">SampledWaveform</span><span class="p">(</span>
+            <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">stop_time</span><span class="p">),</span> <span class="p">(</span><span class="n">rabi_rate</span><span class="p">,</span> <span class="n">rabi_rate</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">control</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">emulator</span><span class="o">.</span><span class="n">PulseControl</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="s2">"q0"</span><span class="p">),</span> <span class="n">waveform</span><span class="p">)</span>
+        <span class="n">pulse_program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">PulseOperation</span><span class="p">(</span><span class="n">stop_time</span><span class="p">,</span> <span class="p">(</span><span class="n">control</span><span class="p">,)))</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">emulator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">pulse_program</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">()</span>
+    <span class="n">populations</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="n">populations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">populations</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">,</span> <span class="p">(</span><span class="n">population_ax</span><span class="p">,</span> <span class="n">leakage_ax</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">population_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">populations</span><span class="p">[:,</span> <span class="n">level</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"|</span><span class="si">{</span><span class="n">level</span><span class="si">}</span><span class="s2">&gt;"</span><span class="p">)</span>
+<span class="n">population_ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">"Time (ns)"</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">"Population on q0"</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">population_ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">leakage_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">populations</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C2"</span><span class="p">)</span>
+<span class="n">leakage_ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">"Time (ns)"</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">"|2&gt; population (%)"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="p">(</span><span class="n">population_ax</span><span class="p">,</span> <span class="n">leakage_ax</span><span class="p">):</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</details>
+<p>The left panel shows population moving between the qubit levels. The right
+panel uses a smaller scale to reveal population in <code>|2&gt;</code>. This leakage arises
+from the driven three-level dynamics, even though no noise model is attached.
+To compare shaped controls with the calibrated rotation, continue with
+<a href="../transmon-emulation/#drive-the-transmon-directly">Transmon emulation</a>.</p>
+<h2 id="moving-between-models">Moving between models<a class="headerlink" href="#moving-between-models" title="Permanent link">&para;</a></h2>
+<p>You can reuse a Program when the destination backend supports its operations
+and resources. Otherwise, express the computation using operations it accepts,
+as <code>SX</code> does for the superconducting profile above. When program resources
+need specific device locations, a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ResourceLayout&lt;/span&gt;" href="../../api/registers/#fatqat.ResourceLayout"><code>ResourceLayout</code></a>
+binds them to device labels. <a href="../hardware-profile-simulation/">Hardware-profile simulation</a>
+walks through a placement error and its correction.</p>
+<p>For circuit evolution and noise channels, see <a href="../simulation/">Simulation</a> and
+<a href="../ideal-and-noisy/">Ideal and noisy runs</a>. For calibrated gates and direct
+controls, see <a href="../hamiltonian-emulation/">Hamiltonian emulation</a>. The
+<a href="../../api/noise/backend-support/#noise-backend-support">backend noise-support table</a>
+helps you choose compatible noise declarations when changing models.</p>
 
 
 

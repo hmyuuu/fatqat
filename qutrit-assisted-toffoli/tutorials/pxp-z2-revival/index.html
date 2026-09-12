@@ -401,8 +401,6 @@
       
         
       
-        
-      
     
     
     
@@ -873,7 +871,8 @@ then the bulk terms, then the right edge -- and the backward pass is the
 same loop in reverse. Each half-step exponent is <span class="arithmatex">\(h_j\,dt/2\)</span>, and
 <span class="arithmatex">\(h_j\)</span> already carries <span class="arithmatex">\(\Omega/2\)</span>, so every registered matrix
 uses the one angle <span class="arithmatex">\(\theta=\Omega\,dt/4\)</span>. Repeating this symmetric
-step <code>round(duration / dt)</code> times walks the quench out to any duration.</p>
+step <code>round(duration / dt)</code> times walks the quench out to durations that
+are integer multiples of <code>dt</code>.</p>
 <p>A small warning from experience: when fatqat flattens a local matrix, the
 FIRST target is the most significant bit -- index
 <span class="arithmatex">\(b_{t_0}\cdot 2^{k-1} + \cdots + b_{t_{k-1}}\)</span>. It is easy to get
@@ -936,9 +935,7 @@ than an error message.</p>
 <span class="n">implementation_map</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">PXPEdgeLeft</span><span class="p">,</span> <span class="n">EDGE_LEFT_MATRIX</span><span class="p">)</span>
 <span class="n">implementation_map</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">PXPEdgeRight</span><span class="p">,</span> <span class="n">EDGE_RIGHT_MATRIX</span><span class="p">)</span>
 
-<span class="c1"># NumPy runtime on purpose: the program is thousands of tiny local</span>
-<span class="c1"># operations, and at that size the Python loop dwarfs any matrix kernel,</span>
-<span class="c1"># so numba would only add compile time.</span>
+<span class="c1"># Use NumPy to avoid compilation startup in this small example.</span>
 <span class="n">backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">Simulator</span><span class="p">(</span>
     <span class="n">method</span><span class="o">=</span><span class="s2">"SV"</span><span class="p">,</span>
     <span class="n">runtime</span><span class="o">=</span><span class="s2">"numpy"</span><span class="p">,</span>
@@ -966,18 +963,6 @@ than an error message.</p>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">program</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">PXPBulk</span><span class="p">(),</span> <span class="p">(</span><span class="n">site</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">site</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">program</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">evolve_fatqat</span><span class="p">(</span><span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Quench |Z2&gt; for ``duration`` and return the final statevector."""</span>
-    <span class="k">if</span> <span class="n">duration</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Z2</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-        <span class="n">trotter_program</span><span class="p">(</span><span class="n">duration</span><span class="p">),</span>
-        <span class="n">initial_state</span><span class="o">=</span><span class="n">Z2</span><span class="p">,</span>
-        <span class="n">result_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"counts"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"final_state"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="4-the-exact-oracle">4. The exact oracle<a class="headerlink" href="#4-the-exact-oracle" title="Permanent link">&para;</a></h2>
 <p>Never trust a hand-built Trotter circuit without a second opinion. fatqat's
@@ -1053,12 +1038,43 @@ oracle numbers are directly comparable.</p>
     <span class="p">)</span>
 </code></pre></div>
 <h2 id="6-run-the-quench-and-collect-the-time-series">6. Run the quench and collect the time series<a class="headerlink" href="#6-run-the-quench-and-collect-the-time-series" title="Permanent link">&para;</a></h2>
-<p>For each grid time we rebuild the Trotter program (it grows with the
-duration) and evolve it once from <span class="arithmatex">\(|Z_2\rangle\)</span>; the oracle hands us
-the corresponding exact state. It is a bit of a brute-force way to sample
-a time axis, but it keeps everything on the public API -- and the ten-site
-chain is small enough that it finishes in seconds.</p>
-<div class="language-python highlight"><span class="filename">Python cell 5</span><pre><span></span><code><span class="n">fatqat_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">evolve_fatqat</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">TIME_GRID</span><span class="p">]</span>
+<p>Build one Trotter program for the interval between samples. Starting from
+<span class="arithmatex">\(|Z_2\rangle\)</span>, pass each final state into the next run through
+<code>initial_state</code>. For this noiseless, time-independent quench, a uniform,
+Trotter-aligned grid gives the same ordered evolution at each sample as
+restarting from the initial state.</p>
+<div class="language-python highlight"><span class="filename">Python cell 5</span><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">evolve_states</span><span class="p">(</span>
+    <span class="n">initial_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">program</span><span class="p">:</span> <span class="n">fq</span><span class="o">.</span><span class="n">Program</span><span class="p">,</span>
+    <span class="n">num_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">backend</span><span class="p">:</span> <span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">Simulator</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Return the initial state and a snapshot after each program application.</span>
+
+<span class="sd">    Each application advances one sampling interval. The returned num_steps + 1</span>
+<span class="sd">    arrays are independent copies; initial_state is not modified.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">num_steps</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"num_steps must be non-negative"</span><span class="p">)</span>
+
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[</span><span class="n">initial_state</span><span class="o">.</span><span class="n">copy</span><span class="p">()]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">program</span><span class="p">,</span>
+            <span class="n">initial_state</span><span class="o">=</span><span class="n">states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">result_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"counts"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"final_state"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+        <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">states</span>
+
+
+<span class="c1"># The uniform grid samples every 0.05 us: five Trotter steps per interval.</span>
+<span class="n">sample_dt</span> <span class="o">=</span> <span class="n">TIME_GRID</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">TIME_GRID</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">interval_program</span> <span class="o">=</span> <span class="n">trotter_program</span><span class="p">(</span><span class="n">sample_dt</span><span class="p">)</span>
+<span class="n">fatqat_states</span> <span class="o">=</span> <span class="n">evolve_states</span><span class="p">(</span>
+    <span class="n">Z2</span><span class="p">,</span> <span class="n">interval_program</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">TIME_GRID</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span>
+<span class="p">)</span>
 
 <span class="n">fatqat_fidelity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">fidelity</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Z2</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">fatqat_states</span><span class="p">])</span>
 <span class="n">fatqat_alt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">fidelity</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ALT</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">fatqat_states</span><span class="p">])</span>

@@ -409,8 +409,6 @@
       
         
       
-        
-      
     
     
     
@@ -704,7 +702,7 @@
   <span class="md-ellipsis">
     
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
     
@@ -720,7 +718,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
           </label>
@@ -768,35 +766,7 @@
   <span class="md-ellipsis">
     
   
-    Interpret results
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../visualization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Visualization
+    Estimate observables
   
 
     
@@ -825,6 +795,34 @@
     
   
     Ideal and noisy runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
   
 
     
@@ -1010,10 +1008,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#start-from-logical-behavior" class="md-nav__link">
+  <a href="#compare-circuit-behavior" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Start from logical behavior
+        Compare circuit behavior
       
     </span>
   </a>
@@ -1160,6 +1158,69 @@
   
   
   
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Connect and diagnose
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Connect and diagnose
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../interoperability/" class="md-nav__link">
         
@@ -1205,6 +1266,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1370,10 +1439,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#start-from-logical-behavior" class="md-nav__link">
+  <a href="#compare-circuit-behavior" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Start from logical behavior
+        Compare circuit behavior
       
     </span>
   </a>
@@ -1500,17 +1569,17 @@
 
 
 <h1 id="test-a-program-against-a-hardware-profile">Test a Program against a hardware profile<a class="headerlink" href="#test-a-program-against-a-hardware-profile" title="Permanent link">&para;</a></h1>
-<p>A hardware-profile simulator checks whether a Program can run on a selected
-device shape as written. Like the general
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Simulator&lt;/span&gt;" href="../../api/simulator/#fatqat.simulator.Simulator"><code>Simulator</code></a>, it evolves discrete gates at circuit
-level; it also enforces a native operation set, placement, connectivity,
-capacity, and, for atom arrays, occupancy.</p>
-<p>This makes profiles useful before a physical Hamiltonian model is needed. It
-also sets an important boundary: a profile validates your choices; it does not
-make those choices for you.</p>
-<h2 id="start-from-logical-behavior">Start from logical behavior<a class="headerlink" href="#start-from-logical-behavior" title="Permanent link">&para;</a></h2>
-<p>First establish what the Program means with the general-purpose simulator. A
-Bell Program uses convenient logical gates and has no device placement yet:</p>
+<p>A hardware-profile simulator checks whether a Program obeys a selected
+device's rules as written. Like the general
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Simulator&lt;/span&gt;" href="../../api/simulator/#fatqat.simulator.Simulator"><code>Simulator</code></a>, it applies circuit operations and can
+include noise channels. It also enforces a native operation set, placement,
+connectivity, capacity, and, for atom arrays, occupancy.</p>
+<p>Use a profile to test choices such as which operations to use and where to
+place program qubits. The profile validates those choices; you supply the
+Program and layout.</p>
+<h2 id="compare-circuit-behavior">Compare circuit behavior<a class="headerlink" href="#compare-circuit-behavior" title="Permanent link">&para;</a></h2>
+<p>The general-purpose simulator can run this Bell Program, which uses <code>H</code> and
+<code>CX</code> without specifying device placement:</p>
 <div class="language-pycon highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat.operations</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ops</span>
@@ -1573,8 +1642,10 @@ Program itself does not need to change:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
 <span class="go">3</span>
 </code></pre></div>
-<p>This confirms that the gate set and placement are valid. Fidelity, timing, and
-pulse dynamics require a physical emulator.</p>
+<p>This confirms that the operation set and placement are valid. The profile can
+also apply noise channels, as the next example shows. Use a physical emulator
+when the question depends on pulse shapes or how the state evolves during a
+control.</p>
 <h2 id="add-reference-noise-deliberately">Add reference noise deliberately<a class="headerlink" href="#add-reference-noise-deliberately" title="Permanent link">&para;</a></h2>
 <p>The superconducting profile is ideal unless a noise model is passed. Its
 packaged model is a useful comparison baseline, not a current hardware
@@ -1599,13 +1670,10 @@ characterization:</p>
     <span class="n">simulation_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"seed"</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
 <span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
 </code></pre></div>
-<p>Keeping noise opt-in makes the comparison legible: first verify target
-compatibility, then decide whether the reference error model answers your
-question. <code>AtomArraySimulator</code> has no packaged reference noise model; pass a
+<p>Compare runs with and without this model to study its effect on the output.
+<code>AtomArraySimulator</code> has no packaged reference noise model; pass a
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;NoiseModel&lt;/span&gt;" href="../../api/noise/model/#fatqat.NoiseModel"><code>NoiseModel</code></a> of your own when loading, loss, or other
 effects belong in the experiment.</p>
-<p>Inspect the selected profile's implementation map, then make the Program and
-layout choices that it requires.</p>
 <h2 id="atom-occupancy-and-pairing">Track atom occupancy and pairing<a class="headerlink" href="#atom-occupancy-and-pairing" title="Permanent link">&para;</a></h2>
 <p>Unlike the superconducting profile, the atom array has no fixed geometry.
 Program resources define sites that begin empty. <code>Put</code> loads
@@ -1682,9 +1750,9 @@ Omitting <code>Pair</code> before <code>CZ</code> is a program error; FatQat doe
 pair atoms automatically. A missing atom is different: supported gates find
 nothing to act on, and measurement reports the erasure digit <code>2</code>.</p>
 <p>For native gates, program sizing, and method support, use the
-<a href="../../api/simulators/">hardware-profile API</a>. Continue to
-<a href="../hamiltonian-emulation/">Hamiltonian emulation</a> when pulse duration,
-physical levels, drift, or continuous-time noise becomes relevant.</p>
+<a href="../../api/simulators/">hardware-profile API</a>. For pulse duration,
+physical levels, drift, or continuous-time noise, see
+<a href="../hamiltonian-emulation/">Hamiltonian emulation</a>.</p>
 
 
 

@@ -409,8 +409,6 @@
       
         
       
-        
-      
     
     
     
@@ -704,7 +702,7 @@
   <span class="md-ellipsis">
     
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
     
@@ -720,7 +718,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
           </label>
@@ -768,35 +766,7 @@
   <span class="md-ellipsis">
     
   
-    Interpret results
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../visualization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Visualization
+    Estimate observables
   
 
     
@@ -825,6 +795,34 @@
     
   
     Ideal and noisy runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
   
 
     
@@ -1160,6 +1158,69 @@
   
   
   
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Connect and diagnose
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Connect and diagnose
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../interoperability/" class="md-nav__link">
         
@@ -1205,6 +1266,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1500,10 +1569,12 @@
 
 
 <h1 id="follow-a-program-into-physical-dynamics">Follow a Program into physical dynamics<a class="headerlink" href="#follow-a-program-into-physical-dynamics" title="Permanent link">&para;</a></h1>
-<p>A FatQat emulator still accepts a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt;" href="../../api/program/#fatqat.Program"><code>Program</code></a>, but it changes
-what execution means. Instead of applying discrete gate transformations, it
-builds a physical schedule and integrates a time-dependent Hamiltonian (and,
-when requested, Lindblad evolution).</p>
+<p>A FatQat emulator follows the physical state during timed controls. It accepts
+a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt;" href="../../api/program/#fatqat.Program"><code>Program</code></a>, builds a physical schedule, and integrates a
+time-dependent Hamiltonian (and, when requested, Lindblad evolution). Use it
+to study pulse duration, coupling, leakage, or noise acting continuously over
+elapsed time. Circuit simulators can include noise channels without resolving
+this time evolution.</p>
 <p>Two authoring paths meet at that same schedule:</p>
 <div class="language-text highlight"><pre><span></span><code>Program gate ----&gt; calibration ----\
                                   +----&gt; physical schedule
@@ -1535,8 +1606,9 @@ three-level transmons:</p>
 <p><code>RX</code> remains an ordinary Program operation. At execution time, the emulator's
 gate map obtains a pulse recipe from its calibration and binds that recipe to
 the model's drive channel. The physical model has two qutrits, so the returned
-vector covers all <span class="arithmatex">\(3^2\)</span> basis states, including the unaddressed second
-transmon. This physical qutrit state is not a logical qutrit Program.</p>
+vector covers all <span class="arithmatex">\(3^2\)</span> basis states, including the second transmon. The Program
+still declares one two-level qubit. Each transmon's third physical level lets
+the result show leakage out of its qubit states, <code>|0&gt;</code> and <code>|1&gt;</code>.</p>
 <p>Packaged models and calibrations are reference snapshots. Supply a validated
 model document and implementation map when the physical system or calibration
 changes; do not interpret the packaged data as a live-device calibration.</p>
@@ -1583,25 +1655,25 @@ already names physical transmon <code>q0</code>, and a
 channel define the time and value units; the API reference records the exact
 domains for each emulator.</p>
 <h2 id="read-a-pulse-as-continuous-evolution">Read a pulse as continuous evolution<a class="headerlink" href="#read-a-pulse-as-continuous-evolution" title="Permanent link">&para;</a></h2>
-<p>The two waveform samples above are not two gate steps. Over the full 20-unit
-interval, the emulator interpolates the drive, combines it with drift and
-coupling terms, and integrates the physical state. That is why the result
-retains every level in the model, including levels that the logical Program
-did not declare.</p>
+<p>The three waveform samples above specify a drive over the full 20-unit
+interval. The emulator interpolates between them, combines the drive with
+drift and coupling terms, and integrates the physical state. The state covers
+every level in the physical model throughout the pulse, including levels that
+the Program did not declare.</p>
 <p>The next chapter turns this mechanism into a concrete transmon experiment: it
 compares a calibrated rotation with a direct drive and makes the resulting
 leakage visible.</p>
 <h2 id="understand-scheduling">Understand scheduling<a class="headerlink" href="#understand-scheduling" title="Permanent link">&para;</a></h2>
 <p>All controls inside one <code>PulseOperation</code> share its interval; <code>start_offset</code>
 can move an individual waveform within that interval. Between operations, the
-lightweight scheduler preserves source order for blocks that claim the same
-physical resource and may overlap independent blocks. Choose <code>"ASAP"</code> or
+schedule preserves source order for blocks that use the same physical resource
+and may overlap independent blocks. Choose <code>"ASAP"</code> or
 <code>"ALAP"</code> through <code>simulation_config</code> when that placement matters.</p>
 <p>Drift and background continuous noise evolve throughout elapsed time. On an
 emulator that supports classical conditions, a false condition can skip a
 control block without deleting its duration, so the model still evolves during
-the interval. Those differences are why a Hamiltonian emulator answers a
-different question from a hardware-profile simulator.</p>
+the interval. This lets you study the effect of elapsed time even when no
+control is active.</p>
 <p>The constructor's <code>method</code> selects the mathematical representation and Result
 accessor: <code>statevector</code> (the default), <code>density_matrix</code>, or <code>unitary</code>. It does
 not select an internal differential-equation solver.</p>

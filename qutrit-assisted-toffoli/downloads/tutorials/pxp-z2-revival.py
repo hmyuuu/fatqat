@@ -90,9 +90,7 @@ implementation_map.add(PXPBulk, BULK_MATRIX)
 implementation_map.add(PXPEdgeLeft, EDGE_LEFT_MATRIX)
 implementation_map.add(PXPEdgeRight, EDGE_RIGHT_MATRIX)
 
-# NumPy runtime on purpose: the program is thousands of tiny local
-# operations, and at that size the Python loop dwarfs any matrix kernel,
-# so numba would only add compile time.
+# Use NumPy to avoid compilation startup in this small example.
 backend = fq.simulator.Simulator(
     method="SV",
     runtime="numpy",
@@ -120,18 +118,6 @@ def trotter_program(duration: float) -> fq.Program:
             else:
                 program.add(PXPBulk(), (site - 1, site, site + 1))
     return program
-
-
-def evolve_fatqat(duration: float) -> np.ndarray:
-    """Quench |Z2> for ``duration`` and return the final statevector."""
-    if duration == 0.0:
-        return Z2.copy()
-    result = backend.run(
-        trotter_program(duration),
-        initial_state=Z2,
-        result_config={"counts": False, "final_state": True},
-    ).result()
-    return result.get_statevector()
 
 # %%
 import qutip
@@ -189,7 +175,38 @@ def site_occupations(state: np.ndarray) -> np.ndarray:
     )
 
 # %%
-fatqat_states = [evolve_fatqat(t) for t in TIME_GRID]
+def evolve_states(
+    initial_state: np.ndarray,
+    program: fq.Program,
+    num_steps: int,
+    *,
+    backend: fq.simulator.Simulator,
+) -> list[np.ndarray]:
+    """Return the initial state and a snapshot after each program application.
+
+    Each application advances one sampling interval. The returned num_steps + 1
+    arrays are independent copies; initial_state is not modified.
+    """
+    if num_steps < 0:
+        raise ValueError("num_steps must be non-negative")
+
+    states = [initial_state.copy()]
+    for _ in range(num_steps):
+        result = backend.run(
+            program,
+            initial_state=states[-1],
+            result_config={"counts": False, "final_state": True},
+        ).result()
+        states.append(result.get_statevector().copy())
+    return states
+
+
+# The uniform grid samples every 0.05 us: five Trotter steps per interval.
+sample_dt = TIME_GRID[1] - TIME_GRID[0]
+interval_program = trotter_program(sample_dt)
+fatqat_states = evolve_states(
+    Z2, interval_program, num_steps=len(TIME_GRID) - 1, backend=backend
+)
 
 fatqat_fidelity = np.array([fidelity(s, Z2) for s in fatqat_states])
 fatqat_alt = np.array([fidelity(s, ALT) for s in fatqat_states])

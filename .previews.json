@@ -18,9 +18,9 @@
     "status": "ready"
   },
   "qutrit-assisted-toffoli": {
-    "attempt": "52883bad0d0dbda386ee845fc2d882bcd2a3632d13e17b3815cfd245922cdb2f",
+    "attempt": "2ebf0a7e6affd64a811478b4aca60bd9e7c14d446fc0735cea0f76c1e7e561a9",
     "branch": "codex/qutrit-assisted-toffoli",
-    "sha": "8071462c55f093b12f755d0e72233a3f17d82d4f",
+    "sha": "b5b73f79dda5c31f149f739f9e5fd0ba293bcb2a",
     "status": "ready"
   }
 }

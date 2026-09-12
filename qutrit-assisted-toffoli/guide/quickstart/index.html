@@ -409,8 +409,6 @@
       
         
       
-        
-      
     
     
     
@@ -606,13 +604,30 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#install-fatqat-from-source" class="md-nav__link">
+  <a href="#install-fatqat" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Install FatQat from source
+        Install FatQat
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Install FatQat">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#install-the-development-version-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install the development version from source
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -819,7 +834,7 @@
   <span class="md-ellipsis">
     
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
     
@@ -835,7 +850,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
           </label>
@@ -883,35 +898,7 @@
   <span class="md-ellipsis">
     
   
-    Interpret results
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../visualization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Visualization
+    Estimate observables
   
 
     
@@ -940,6 +927,34 @@
     
   
     Ideal and noisy runs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualization
   
 
     
@@ -1182,6 +1197,69 @@
   
   
   
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Connect and diagnose
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Connect and diagnose
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../interoperability/" class="md-nav__link">
         
@@ -1227,6 +1305,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1392,13 +1478,30 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#install-fatqat-from-source" class="md-nav__link">
+  <a href="#install-fatqat" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Install FatQat from source
+        Install FatQat
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Install FatQat">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#install-the-development-version-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install the development version from source
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1547,9 +1650,12 @@
 <p>In about ten minutes, you will create a Bell pair, draw its circuit, run 1,000
 shots, and see why only <code>00</code> and <code>11</code> appear. The computation will live in a
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt;" href="../../api/program/#fatqat.Program"><code>Program</code></a> from start to finish.</p>
-<h2 id="install-fatqat-from-source">Install FatQat from source<a class="headerlink" href="#install-fatqat-from-source" title="Permanent link">&para;</a></h2>
-<p>FatQat requires Python 3.12 or later and is not yet published on PyPI. Clone
-the repository first:</p>
+<h2 id="install-fatqat">Install FatQat<a class="headerlink" href="#install-fatqat" title="Permanent link">&para;</a></h2>
+<p>FatQat requires Python 3.12 or later. In a virtual environment, install FatQat:</p>
+<div class="language-bash highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>fatqat
+</code></pre></div>
+<h3 id="install-the-development-version-from-source">Install the development version from source<a class="headerlink" href="#install-the-development-version-from-source" title="Permanent link">&para;</a></h3>
+<p>To work with the latest source instead, clone the repository:</p>
 <div class="language-bash highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/spaceqat/fatqat.git
 <span class="nb">cd</span><span class="w"> </span>fatqat
 </code></pre></div>

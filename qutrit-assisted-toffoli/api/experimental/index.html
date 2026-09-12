@@ -405,8 +405,6 @@
       
         
       
-        
-      
     
     
     
@@ -1585,6 +1583,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#compiler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compiler
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direct-construction" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1655,6 +1664,17 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#compiler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compiler
+      
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#direct-construction" class="md-nav__link">
@@ -1768,6 +1788,11 @@
 <p>The APIs listed here are public, but their signatures and behavior may change
 between releases. Use them only when the stable backend workflow does not
 cover your integration.</p>
+<h2 id="compiler">Compiler<a class="headerlink" href="#compiler" title="Permanent link">&para;</a></h2>
+<p>The <a href="../compiler/">compiler</a> is under development; its interfaces and supported
+behavior may change. The optional <a href="../compiler/#logicalprogram">LogicalProgram</a>
+subclass accepts built-in device-independent operations while its compiler
+support continues to evolve.</p>
 <h2 id="direct-construction">Direct construction<a class="headerlink" href="#direct-construction" title="Permanent link">&para;</a></h2>
 <p>Backends return <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Job&lt;/span&gt;" href="../job/#fatqat.Job"><code>Job</code></a> and <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Result&lt;/span&gt;" href="../result/#fatqat.Result"><code>Result</code></a>;
 applications normally should not construct either class. When writing a

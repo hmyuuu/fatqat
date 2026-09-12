@@ -15,10 +15,10 @@
         <link rel="canonical" href="https://hmyuuu.github.io/fatqat/qutrit-assisted-toffoli/guide/visualization/">
       
       
-        <link rel="prev" href="../interpret-results/">
+        <link rel="prev" href="../ideal-and-noisy/">
       
       
-        <link rel="next" href="../ideal-and-noisy/">
+        <link rel="next" href="../performance/">
       
       
         
@@ -409,8 +409,6 @@
       
         
       
-        
-      
     
     
     
@@ -706,7 +704,7 @@
   <span class="md-ellipsis">
     
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
     
@@ -722,7 +720,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Study algorithm behavior
+    Run and analyze programs
   
 
           </label>
@@ -770,7 +768,35 @@
   <span class="md-ellipsis">
     
   
-    Interpret results
+    Estimate observables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ideal-and-noisy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ideal and noisy runs
   
 
     
@@ -898,34 +924,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ideal-and-noisy/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Ideal and noisy runs
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -1160,6 +1158,69 @@
   
   
   
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Connect and diagnose
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Connect and diagnose
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../interoperability/" class="md-nav__link">
         
@@ -1205,6 +1266,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1477,7 +1546,7 @@
         <a href="../simulation/" class="md-path__link">
           
   <span class="md-ellipsis">
-    Study algorithm behavior
+    Run and analyze programs
   </span>
 
         </a>
@@ -1604,7 +1673,10 @@
 <span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">program</span><span class="o">.</span><span class="n">interaction_frequency</span><span class="p">()</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Logical interactions"</span><span class="p">)</span>
 </code></pre></div>
-<p>Visualizations inherit Matplotlib's active style and <code>rcParams</code>; FATQAT does not apply a separate palette. A returned figure can be saved with ordinary Matplotlib APIs:</p>
+<p>FATQAT applies a consistent categorical palette when Matplotlib's default color
+cycle is active. An explicitly configured color cycle and other <code>rcParams</code>
+remain in effect, so plots still compose with an application's own theme. A
+returned figure can be saved with ordinary Matplotlib APIs:</p>
 <div class="language-python highlight"><pre><span></span><code><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"interactions.png"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">"tight"</span><span class="p">)</span>
 </code></pre></div>
 
@@ -1647,7 +1719,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../interpret-results/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Interpret results">
+          <a href="../ideal-and-noisy/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Ideal and noisy runs">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1657,20 +1729,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Interpret results
+                Ideal and noisy runs
               </div>
             </div>
           </a>
         
         
           
-          <a href="../ideal-and-noisy/" class="md-footer__link md-footer__link--next" aria-label="Next: Ideal and noisy runs">
+          <a href="../performance/" class="md-footer__link md-footer__link--next" aria-label="Next: Performance">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Ideal and noisy runs
+                Performance
               </div>
             </div>
             <div class="md-footer__button md-icon">
