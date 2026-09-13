@@ -47,6 +47,47 @@ def test_frequencies_stat_divides_counts_by_total():
     assert figure.axes[0].get_ylim() == pytest.approx((0, 1))
 
 
+def test_counts_draw_uses_fatqat_defaults_and_direct_value_labels():
+    with matplotlib.rc_context(matplotlib.rcParamsDefault):
+        figure = _result({"0": 3, "1": 1}).draw(stat="frequencies")
+
+    axis = figure.axes[0]
+    assert to_hex(axis.patches[0].get_facecolor()) == "#4c6fff"
+    assert [text.get_text() for text in axis.texts] == ["75.0%", "25.0%"]
+    assert axis.spines["left"].get_linewidth() == pytest.approx(0.8)
+    assert axis.spines["bottom"].get_linewidth() == pytest.approx(0.8)
+    assert not axis.spines["top"].get_visible()
+    assert not axis.spines["right"].get_visible()
+    assert all(
+        line.get_linewidth() == pytest.approx(0.6)
+        for line in axis.yaxis.get_gridlines()
+    )
+
+
+def test_counts_draw_uses_narrower_bars_for_two_outcomes():
+    figure = _result({"0": 3, "1": 1}).draw()
+
+    axis = figure.axes[0]
+    assert [rectangle.get_width() for rectangle in axis.patches] == pytest.approx(
+        [0.46, 0.46]
+    )
+    assert axis.get_xlim() == pytest.approx((-0.5, 1.5))
+
+
+def test_counts_draw_omits_value_labels_when_categories_are_dense():
+    figure = _result({str(index): index + 1 for index in range(9)}).draw()
+
+    assert len(figure.axes[0].texts) == 0
+
+
+def test_frequency_label_for_unit_outcome_stays_inside_the_axis():
+    figure = _result({"0": 10}).draw(stat="frequencies")
+
+    (label,) = figure.axes[0].texts
+    assert label.get_text() == "100.0%"
+    assert label.get_verticalalignment() == "top"
+
+
 def test_counts_sort_by_key():
     figure = _result({"10": 2, "00": 7, "01": 5}).draw(sort="key")
 

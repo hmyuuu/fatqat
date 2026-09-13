@@ -19,6 +19,9 @@ from typing import ClassVar
 import matplotlib
 import matplotlib.pyplot as plt
 import pytest
+from cycler import cycler
+from matplotlib.colors import to_hex
+from matplotlib.patches import FancyBboxPatch
 
 import fatqat as fq
 import fatqat.operations as ops
@@ -268,6 +271,52 @@ def test_matplotlib_renderer_returns_a_savable_figure():
     try:
         assert isinstance(figure, matplotlib.figure.Figure)
         assert figure in [plt.figure(number) for number in plt.get_fignums()]
+    finally:
+        plt.close(figure)
+
+
+def test_matplotlib_renderer_uses_fatqat_gate_fill_and_outline_defaults():
+    with matplotlib.rc_context(matplotlib.rcParamsDefault):
+        figure = _bell().draw()
+
+    try:
+        boxes = [
+            patch
+            for patch in figure.axes[0].patches
+            if isinstance(patch, FancyBboxPatch)
+        ]
+        colored_boxes = [
+            patch
+            for patch in boxes
+            if to_hex(patch.get_facecolor()) != to_hex(figure.get_facecolor())
+        ]
+        assert colored_boxes
+        assert to_hex(colored_boxes[0].get_facecolor()) != "#6270ce"
+        assert all(patch.get_linewidth() == pytest.approx(1.0) for patch in boxes)
+        assert all(
+            to_hex(patch.get_edgecolor())
+            == to_hex(matplotlib.rcParamsDefault["axes.edgecolor"])
+            for patch in boxes
+        )
+    finally:
+        plt.close(figure)
+
+
+def test_matplotlib_renderer_respects_an_explicit_matplotlib_palette():
+    with matplotlib.rc_context(
+        {"axes.prop_cycle": cycler(color=["#db2777", "#22d3ee"])}
+    ):
+        figure = _bell().draw()
+
+    try:
+        gate = next(
+            patch
+            for patch in figure.axes[0].patches
+            if isinstance(patch, FancyBboxPatch)
+            and to_hex(patch.get_facecolor()) != to_hex(figure.get_facecolor())
+        )
+        red, _, blue, _ = gate.get_facecolor()
+        assert red > blue
     finally:
         plt.close(figure)
 

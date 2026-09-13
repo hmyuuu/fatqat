@@ -140,6 +140,8 @@ Circuit drawings use one wire per slot but do not depict register dimension.
 Unknown or custom operations appear as labeled boxes. A direct
 [`PulseOperation`][fatqat.operations.PulseOperation] cannot be represented and raises
 [`UnsupportedOperationError`][fatqat.errors.UnsupportedOperationError].
+The Matplotlib renderer uses FATQAT's palette by default. Pass a QuTiP-QIP
+`theme` or configure Matplotlib's color cycle to use a different palette.
 
 Use
 [`fatqat.visualization.to_qubit_circuit`][fatqat.visualization.to_qubit_circuit]

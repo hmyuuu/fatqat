@@ -76,8 +76,22 @@ def test_interaction_frequency_draw_returns_figure():
     assert len(axis.collections) == 1
     assert len(axis.collections[0].get_offsets()) == 5
     assert sorted(line.get_linewidth() for line in axis.lines) == pytest.approx(
-        [4.0, 4.0, 4.0, 4.0, 6.5]
+        [2.65, 2.65, 2.65, 2.65, 4.2]
     )
+
+
+def test_interaction_frequency_draw_uses_fatqat_default_palette():
+    program = fq.Program(2)
+    program.add(ops.CZ, (0, 1))
+
+    with matplotlib.rc_context(matplotlib.rcParamsDefault):
+        figure = program.interaction_frequency().draw()
+
+    axis = figure.axes[0]
+    assert to_hex(axis.lines[0].get_color()) == "#4c6fff"
+    assert to_hex(axis.collections[0].get_facecolors()[0]) == "#167d6d"
+    node_labels = [text for text in axis.texts if text.get_bbox_patch() is None]
+    assert all(to_hex(label.get_color()) == "#ffffff" for label in node_labels)
 
 
 def test_interaction_frequency_draw_rejects_non_matplotlib_renderer():

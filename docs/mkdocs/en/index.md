@@ -25,8 +25,10 @@ hero:
   visual_note: Start with one Program, then choose the physical detail at run time.
 ---
 
-> **Development status:** FatQat is under active development, and its interfaces
-> may change between releases. Pin an exact version when reproducibility matters.
+!!! warning "Under active development"
+
+    FatQat is under active development, and its interfaces may change between
+    releases. **Pin an exact version when reproducibility matters.**
 
 <!-- Localized content stays in Markdown; the shared Material hero lives in home.html. -->
 

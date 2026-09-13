@@ -78,9 +78,10 @@ figure = result.draw(number_to_keep=20, sort="count")
 ```
 
 The default `stat="counts"` plots raw occurrences. `stat="frequencies"`
-divides each value by the total number of shots. Colors inherit Matplotlib's
-active style and `rcParams`. `number_to_keep` retains the most frequent
-outcomes and combines the remainder into an `other` bar.
+divides each value by the total number of shots. FATQAT supplies the default
+categorical palette and preserves an explicitly configured Matplotlib color
+cycle and other `rcParams`. `number_to_keep` retains the most frequent outcomes
+and combines the remainder into an `other` bar.
 
 ## Detailed reference
 

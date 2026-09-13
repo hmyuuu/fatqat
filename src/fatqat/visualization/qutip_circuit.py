@@ -20,6 +20,12 @@ from .. import operations as ops
 from ..errors import UnsupportedOperationError
 from ..operations import Measurement, PulseOperation
 from ..registers import RegisterRef, RegisterView, _view_members
+from ._style import (
+    _OUTLINE_LINEWIDTH,
+    _STRUCTURE_LINEWIDTH,
+    _resolve_mpl_style,
+    _tint,
+)
 
 if TYPE_CHECKING:
     from ..program import Program
@@ -334,8 +340,10 @@ def _adapt_legacy_condition_controls(circuit) -> None:
 def _render_matplotlib(circuit, **kwargs):
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
+    from matplotlib.patches import FancyBboxPatch
 
     axis = kwargs.pop("ax", None)
+    has_explicit_theme = "theme" in kwargs
     owns_figure = axis is None
     if owns_figure:
         figure, axis = plt.subplots()
@@ -381,6 +389,51 @@ def _render_matplotlib(circuit, **kwargs):
             super()._draw_multiq_gate(gate, layer)
 
     renderer = _FatqatMatRenderer(circuit, ax=axis, **kwargs)
+    fatqat_style = _resolve_mpl_style(axis)
+    if not has_explicit_theme:
+        background = (
+            renderer.style.bgcolor if "bgcolor" in kwargs else fatqat_style.background
+        )
+        colors = [
+            _tint(fatqat_style.series_color(index), background) for index in range(6)
+        ]
+        renderer.style.theme = {
+            "bgcolor": background,
+            "color": fatqat_style.foreground,
+            "wire_color": fatqat_style.foreground,
+            "default_gate": colors[2],
+            "H": colors[0],
+            "SNOT": colors[0],
+            "X": colors[1],
+            "Y": colors[1],
+            "Z": colors[1],
+            "S": colors[2],
+            "T": colors[2],
+            "RX": colors[5],
+            "RY": colors[5],
+            "RZ": colors[5],
+            "CNOT": colors[0],
+            "CPHASE": colors[2],
+            "TOFFOLI": colors[2],
+            "SWAP": colors[2],
+            "CX": colors[0],
+            "CY": colors[1],
+            "CZ": colors[1],
+            "CS": colors[2],
+            "CT": colors[2],
+            "CRX": colors[5],
+            "CRY": colors[5],
+            "CRZ": colors[5],
+            "BERKELEY": colors[2],
+            "FREDKIN": colors[2],
+        }
+        if "bgcolor" not in kwargs:
+            renderer.style.bgcolor = background
+        if "color" not in kwargs:
+            renderer.style.color = fatqat_style.foreground
+        if "wire_color" not in kwargs:
+            renderer.style.wire_color = fatqat_style.foreground
+        renderer.style.measure_color = fatqat_style.foreground
     if "end_wire_ext" not in kwargs:
         # QuTiP measures the trailing extension in multiples of layer_sep but
         # uses an absolute start pad. Match those physical lengths so the idle
@@ -408,6 +461,14 @@ def _render_matplotlib(circuit, **kwargs):
     finally:
         plt.tight_layout = original_tight_layout
         plt.show = original_show
+    if not has_explicit_theme:
+        for patch in axis.patches:
+            if isinstance(patch, FancyBboxPatch):
+                patch.set_edgecolor(fatqat_style.edge)
+                patch.set_linewidth(_OUTLINE_LINEWIDTH)
+        for line in axis.lines:
+            if line.get_linewidth() == 1:
+                line.set_linewidth(_STRUCTURE_LINEWIDTH)
     return renderer.fig
 
 

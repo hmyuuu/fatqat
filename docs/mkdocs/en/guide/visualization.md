@@ -121,6 +121,21 @@ figure = result.draw(number_to_keep=20, sort="count")
 
     1. `stat="frequencies"` divides each count by the total number of shots; omit it to show raw counts.
 
+## Animate a compiled neutral-atom plan
+
+A final NA compilation retains its physical `ZonedPlan` in `.output`. Animate
+that plan with the same architecture used for compilation:
+
+```python
+animation = fq.compiler.create_na_animation(na_compiled.output, architecture)
+fq.compiler.save_na_animation(animation, "na-schedule.mp4")
+```
+
+The animation shows transfers, atom movements, gate batches, and crosstalk
+events without changing the plan. Creating it requires Matplotlib; saving MP4
+requires FFmpeg on `PATH`. The [compiler guide](compiler.md) shows how to
+produce `na_compiled` and load `architecture`.
+
 ## Embed, style, and save figures
 
 Pass `ax=` to draw into an existing Matplotlib axis:
@@ -132,7 +147,10 @@ figure, axis = plt.subplots()
 program.interaction_frequency().draw(ax=axis, title="Logical interactions")
 ```
 
-Visualizations inherit Matplotlib's active style and `rcParams`; FATQAT does not apply a separate palette. A returned figure can be saved with ordinary Matplotlib APIs:
+FATQAT applies a consistent categorical palette when Matplotlib's default color
+cycle is active. An explicitly configured color cycle and other `rcParams`
+remain in effect, so plots still compose with an application's own theme. A
+returned figure can be saved with ordinary Matplotlib APIs:
 
 ```python
 figure.savefig("interactions.png", dpi=200, bbox_inches="tight")

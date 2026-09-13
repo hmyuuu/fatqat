@@ -311,7 +311,8 @@ class Result:
     ) -> Any:
         """Draw measurement outcomes as a bar chart.
 
-        Colors inherit Matplotlib's active style and ``rcParams``.
+        The default Matplotlib color cycle uses FATQAT's palette. An explicitly
+        configured Matplotlib color cycle and other ``rcParams`` are preserved.
 
         Args:
             view: Result view to draw. Must be ``"counts"``.

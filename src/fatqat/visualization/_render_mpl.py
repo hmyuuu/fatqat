@@ -4,6 +4,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from ._style import (
+    _OUTLINE_LINEWIDTH,
+    _STRUCTURE_LINEWIDTH,
+    _apply_cartesian_style,
+    _contrasting_color,
+    _resolve_mpl_style,
+)
 from ._viewmodels import _CountsView
 
 if TYPE_CHECKING:
@@ -33,17 +40,58 @@ def _render_counts(
         axis = ax
         figure = axis.get_figure()
 
+    from matplotlib.ticker import PercentFormatter
+
+    style = _resolve_mpl_style(axis)
     positions = list(range(len(view.labels)))
-    axis.bar(positions, view.values, edgecolor="none")
+    category_count = len(view.labels)
+    width = 0.46 if category_count == 2 else 0.62 if category_count <= 4 else 0.78
+    bars = axis.bar(
+        positions,
+        view.values,
+        width=width,
+        color=style.series_color(0),
+        edgecolor="none",
+    )
+    if category_count == 2:
+        axis.set_xlim(-0.5, 1.5)
     axis.set_xticks(positions, view.labels)
     axis.set_xlabel("Outcome")
     axis.set_ylabel("Frequency" if view.stat == "frequencies" else "Counts")
     if view.stat == "frequencies":
         axis.set_ylim(0, 1)
+        axis.yaxis.set_major_formatter(PercentFormatter(xmax=1, decimals=0))
     else:
         axis.set_ylim(bottom=0)
-    axis.set_axisbelow(True)
-    axis.grid(axis="y", linewidth=0.8, alpha=0.7)
+
+    if len(view.labels) <= 8:
+        labels = (
+            [f"{value:.1%}" for value in view.values]
+            if view.stat == "frequencies"
+            else [f"{int(value):,}" for value in view.values]
+        )
+        for rectangle, value, label in zip(bars, view.values, labels, strict=True):
+            inside = view.stat == "frequencies" and value >= 0.9
+            axis.annotate(
+                label,
+                (
+                    rectangle.get_x() + rectangle.get_width() / 2,
+                    rectangle.get_height(),
+                ),
+                xytext=(0, -5 if inside else 4),
+                textcoords="offset points",
+                ha="center",
+                va="top" if inside else "bottom",
+                color=(
+                    _contrasting_color(
+                        rectangle.get_facecolor(),
+                        style.foreground,
+                        style.background,
+                    )
+                    if inside
+                    else style.foreground
+                ),
+            )
 
     if title is not None:
         axis.set_title(title)
@@ -53,8 +101,7 @@ def _render_counts(
         for label in axis.get_xticklabels():
             label.set_horizontalalignment("right")
 
-    axis.spines["top"].set_visible(False)
-    axis.spines["right"].set_visible(False)
+    _apply_cartesian_style(axis, style)
 
     if owns_figure:
         figure.tight_layout()
@@ -72,9 +119,7 @@ def _render_interaction_frequency(
     """Render a logical-qubit interaction frequency graph."""
     from math import cos, pi, sin
 
-    from matplotlib import rcParams
     from matplotlib.backends.backend_agg import FigureCanvasAgg
-    from matplotlib.colors import to_rgba
     from matplotlib.figure import Figure
     from matplotlib.lines import Line2D
 
@@ -90,14 +135,14 @@ def _render_interaction_frequency(
         axis = ax
         figure = axis.get_figure()
 
-    label_background = axis.get_facecolor()
-    node_edge_color = rcParams["text.color"]
-    cycle_colors = tuple(rcParams["axes.prop_cycle"].by_key().get("color", ()))
-    edge_color = to_rgba(cycle_colors[0] if cycle_colors else rcParams["lines.color"])
-    node_color = to_rgba(
-        cycle_colors[1]
-        if len(cycle_colors) > 1
-        else cycle_colors[0] if cycle_colors else rcParams["patch.facecolor"]
+    style = _resolve_mpl_style(axis)
+    label_background = style.background
+    edge_color = style.series_color(0)
+    node_color = style.series_color(1)
+    node_label_color = _contrasting_color(
+        node_color,
+        style.foreground,
+        style.background,
     )
 
     count = len(graph.nodes)
@@ -122,9 +167,9 @@ def _render_interaction_frequency(
             Line2D(
                 [x1, x2],
                 [y1, y2],
-                linewidth=1.5 + 5.0 * edge.count / maximum,
+                linewidth=_STRUCTURE_LINEWIDTH + 3.1 * edge.count / maximum,
                 color=edge_color,
-                alpha=0.8,
+                alpha=0.76,
                 zorder=1,
             )
         )
@@ -132,6 +177,7 @@ def _render_interaction_frequency(
             (x1 + x2) / 2,
             (y1 + y2) / 2,
             str(edge.count),
+            color=style.foreground,
             ha="center",
             va="center",
             bbox={
@@ -150,8 +196,8 @@ def _render_interaction_frequency(
             s=700,
             marker="o",
             color=node_color,
-            edgecolors=node_edge_color,
-            linewidths=1.2,
+            edgecolors=style.foreground,
+            linewidths=_OUTLINE_LINEWIDTH,
             zorder=2,
         )
         for node in graph.nodes:
@@ -160,6 +206,7 @@ def _render_interaction_frequency(
                 x,
                 y,
                 node_labels[node],
+                color=node_label_color,
                 ha="center",
                 va="center",
                 zorder=4,
