@@ -613,6 +613,8 @@
       
         
       
+        
+      
     
     
     
@@ -678,6 +680,34 @@
     
   
     Program
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logical-program/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LogicalProgram
   
 
     
@@ -2144,9 +2174,10 @@ errors, see <a href="../../guide/interpret-results/">Estimate observables</a>.</
 <span class="n">figure</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">number_to_keep</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="s2">"count"</span><span class="p">)</span>
 </code></pre></div>
 <p>The default <code>stat="counts"</code> plots raw occurrences. <code>stat="frequencies"</code>
-divides each value by the total number of shots. Colors inherit Matplotlib's
-active style and <code>rcParams</code>. <code>number_to_keep</code> retains the most frequent
-outcomes and combines the remainder into an <code>other</code> bar.</p>
+divides each value by the total number of shots. FATQAT supplies the default
+categorical palette and preserves an explicitly configured Matplotlib color
+cycle and other <code>rcParams</code>. <code>number_to_keep</code> retains the most frequent outcomes
+and combines the remainder into an <code>other</code> bar.</p>
 <h2 id="detailed-reference">Detailed reference<a class="headerlink" href="#detailed-reference" title="Permanent link">&para;</a></h2>
 
 
@@ -2449,7 +2480,8 @@ otherwise commas separate them.</p>
     <div class="doc doc-contents ">
 
         <p>Draw measurement outcomes as a bar chart.</p>
-<p>Colors inherit Matplotlib's active style and <code>rcParams</code>.</p>
+<p>The default Matplotlib color cycle uses FATQAT's palette. An explicitly
+configured Matplotlib color cycle and other <code>rcParams</code> are preserved.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>

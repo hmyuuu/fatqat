@@ -29,7 +29,7 @@
     
     
       
-        <title>Compile a logical circuit - FatQat</title>
+        <title>Compile and run a logical circuit - FatQat</title>
       
     
     
@@ -79,7 +79,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#compile-a-logical-circuit" class="md-skip">
+        <a href="#compile-and-run-a-logical-circuit" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Compile a logical circuit
+              Compile and run a logical circuit
             
           </span>
         </div>
@@ -616,7 +616,7 @@
   <span class="md-ellipsis">
     
   
-    Compile a logical circuit
+    Compile and run a logical circuit
   
 
     
@@ -634,7 +634,7 @@
   <span class="md-ellipsis">
     
   
-    Compile a logical circuit
+    Compile and run a logical circuit
   
 
     
@@ -660,10 +660,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#compile-and-run-on-an-sc-profile" class="md-nav__link">
+  <a href="#build-a-circuit" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Compile and run on an SC profile
+        Build a circuit
       
     </span>
   </a>
@@ -671,10 +671,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#compile-for-a-neutral-atom-architecture" class="md-nav__link">
+  <a href="#run-on-a-superconducting-profile" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Compile for a neutral-atom architecture
+        Run on a superconducting profile
       
     </span>
   </a>
@@ -682,10 +682,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#supported-source-behavior" class="md-nav__link">
+  <a href="#run-on-a-neutral-atom-architecture" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Supported source behavior
+        Run on a neutral-atom architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compile-openqasm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compile OpenQASM
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspect-a-compilation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect a compilation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bind-circuit-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bind circuit parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-compiler-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current compiler support
       
     </span>
   </a>
@@ -1428,10 +1472,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#compile-and-run-on-an-sc-profile" class="md-nav__link">
+  <a href="#build-a-circuit" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Compile and run on an SC profile
+        Build a circuit
       
     </span>
   </a>
@@ -1439,10 +1483,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#compile-for-a-neutral-atom-architecture" class="md-nav__link">
+  <a href="#run-on-a-superconducting-profile" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Compile for a neutral-atom architecture
+        Run on a superconducting profile
       
     </span>
   </a>
@@ -1450,10 +1494,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#supported-source-behavior" class="md-nav__link">
+  <a href="#run-on-a-neutral-atom-architecture" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Supported source behavior
+        Run on a neutral-atom architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compile-openqasm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compile OpenQASM
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspect-a-compilation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspect a compilation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bind-circuit-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bind circuit parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-compiler-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current compiler support
       
     </span>
   </a>
@@ -1546,95 +1634,69 @@
   
 
 
-<h1 id="compile-a-logical-circuit">Compile a logical circuit<a class="headerlink" href="#compile-a-logical-circuit" title="Permanent link">&para;</a></h1>
-<p>Use <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LogicalProgram&lt;/span&gt;" href="../../api/compiler/#fatqat.LogicalProgram"><code>LogicalProgram</code></a> when you want FatQat to choose a
-hardware-family instruction set, map logical qubits, and route two-qubit gates.
-It is a small, editable circuit frontend with familiar gate methods:</p>
+<h1 id="compile-and-run-a-logical-circuit">Compile and run a logical circuit<a class="headerlink" href="#compile-and-run-a-logical-circuit" title="Permanent link">&para;</a></h1>
+<p>FatQat can prepare the same logical circuit for a superconducting simulator or
+a neutral-atom simulator. The normal workflow has three steps:</p>
+<ol>
+<li>Build a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LogicalProgram&lt;/span&gt;" href="../../api/logical-program/#fatqat.LogicalProgram"><code>LogicalProgram</code></a>.</li>
+<li>Compile it for a target.</li>
+<li>Run the compiled result on the matching simulator.</li>
+</ol>
+<h2 id="build-a-circuit">Build a circuit<a class="headerlink" href="#build-a-circuit" title="Permanent link">&para;</a></h2>
+<p>This Bell-state circuit will be used for both targets:</p>
 <div class="language-python highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">fatqat</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fq</span>
 
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">LogicalProgram</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">circuit</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">CX</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="n">circuit</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
 </code></pre></div>
-<p><code>LogicalProgram</code> is distinct from <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt;" href="../../api/program/#fatqat.Program"><code>Program</code></a>. A
-<code>LogicalProgram</code> is input to the compiler. A <code>Program</code> is the general container
-accepted by simulators and emulators, including direct controls and dynamic
-behavior that the current compiler does not lower.</p>
-<h2 id="compile-and-run-on-an-sc-profile">Compile and run on an SC profile<a class="headerlink" href="#compile-and-run-on-an-sc-profile" title="Permanent link">&para;</a></h2>
-<p>The public superconducting route targets
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;SCQubitSimulator&lt;/span&gt;" href="../../api/simulators/sc-qubit/#fatqat.simulator.SCQubitSimulator"><code>SCQubitSimulator</code></a>. Its coupling graph is
-the compiler's routing target; it may be any valid graph and does not need to
-be a grid.</p>
+<p><code>LogicalProgram</code> uses the same circuit-building interface as
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Program&lt;/span&gt;" href="../../api/program/#fatqat.Program"><code>Program</code></a>. You can simulate it directly while developing an
+algorithm, then compile it when you are ready to run against a hardware
+profile. Compilation does not modify the circuit, so it can be reused with
+more than one target.</p>
+<h2 id="run-on-a-superconducting-profile">Run on a superconducting profile<a class="headerlink" href="#run-on-a-superconducting-profile" title="Permanent link">&para;</a></h2>
+<p>Create an <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;SCQubitSimulator&lt;/span&gt;" href="../../api/simulators/sc-qubit/#fatqat.simulator.SCQubitSimulator"><code>SCQubitSimulator</code></a> with the
+number of physical qubits and their allowed two-qubit connections. The
+compiler maps the logical qubits to this topology and adds routing operations
+where they are needed.</p>
 <div class="language-python highlight"><pre><span></span><code><span class="n">sc_backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">SCQubitSimulator</span><span class="p">(</span>
     <span class="n">num_qubits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">couplings</span><span class="o">=</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
     <span class="n">runtime</span><span class="o">=</span><span class="s2">"numpy"</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">compiled</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">compile_to_sc</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">sc_backend</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">sc_compiled</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">compile_to_sc</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">sc_backend</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">sc_backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+    <span class="n">sc_compiled</span><span class="p">,</span>
+    <span class="n">shots</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">simulation_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"seed"</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
+<span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 
-<span class="n">counts</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">sc_backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-        <span class="n">compiled</span><span class="p">,</span>
-        <span class="n">shots</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-        <span class="n">simulation_config</span><span class="o">=</span><span class="p">{</span><span class="s2">"seed"</span><span class="p">:</span> <span class="mi">7</span><span class="p">},</span>
-    <span class="p">)</span>
-    <span class="o">.</span><span class="n">result</span><span class="p">()</span>
-    <span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
-<span class="p">)</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
 </code></pre></div>
-<p>The route freezes the editable circuit, normalizes it to the common SC gate
-IR, performs SABRE mapping and routing, and lowers it to the public
-X/SX/RZ/CZ native profile. The rotation/iSWAP profile is currently private and
-is not part of the public compiler contract.</p>
-<h2 id="compile-for-a-neutral-atom-architecture">Compile for a neutral-atom architecture<a class="headerlink" href="#compile-for-a-neutral-atom-architecture" title="Permanent link">&para;</a></h2>
-<p>The neutral-atom route uses the bundled ZAP scheduler:</p>
-<div class="language-python highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fatqat.compiler.algorithms.zap</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_architecture</span>
+<p><code>couplings</code> can describe any valid graph; the topology does not need to be a
+grid. The current public SC profile uses X, SX, RZ, and CZ as its native gate
+set.</p>
+<h2 id="run-on-a-neutral-atom-architecture">Run on a neutral-atom architecture<a class="headerlink" href="#run-on-a-neutral-atom-architecture" title="Permanent link">&para;</a></h2>
+<p>For neutral atoms, load an architecture and compile the same circuit with
+<code>compile_to_na()</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fatqat.compiler.algorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_architecture</span>
 
 <span class="n">architecture</span> <span class="o">=</span> <span class="n">load_architecture</span><span class="p">(</span><span class="s2">"default"</span><span class="p">)</span>
-<span class="n">compiled</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">compile_to_na</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">architecture</span><span class="p">)</span>
+<span class="n">na_compiled</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">compile_to_na</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">architecture</span><span class="p">)</span>
+
 <span class="n">na_backend</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">AtomArraySimulator</span><span class="p">(</span><span class="n">runtime</span><span class="o">=</span><span class="s2">"numpy"</span><span class="p">)</span>
-
-<span class="n">counts</span> <span class="o">=</span> <span class="n">na_backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">compiled</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">na_backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">na_compiled</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
 </code></pre></div>
-<p>Both target compilers return an executable result at their default final
-boundary. Pass that result directly to the matching simulator. The final
-compiler IR remains available as <code>compiled.output</code>: an <code>SCNativeProgram</code> for
-SC or a <code>ZonedPlan</code> for NA. <code>compiled.route</code> records the passes that ran.</p>
-<p>An explicit intermediate <code>emit</code> returns an inspectable
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;CompilationResult&lt;/span&gt;
-
-
-  &lt;span class=&quot;doc doc-labels&quot;&gt;
-      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt;" href="../../api/compiler/#fatqat.compiler.CompilationResult"><code>CompilationResult</code></a> rather than an
-executable result. The low-level
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;to_sc_simulator_program&lt;/span&gt;" href="../../api/compiler/#fatqat.compiler.to_sc_simulator_program"><code>to_sc_simulator_program</code></a> and
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;to_na_simulator_program&lt;/span&gt;" href="../../api/compiler/#fatqat.compiler.to_na_simulator_program"><code>to_na_simulator_program</code></a> functions
-remain available when advanced callers construct or modify final IR directly.</p>
-<h2 id="supported-source-behavior">Supported source behavior<a class="headerlink" href="#supported-source-behavior" title="Permanent link">&para;</a></h2>
-<p>The v0.3 compiler accepts static, numeric gate circuits. Measurements must be
-terminal. Bind symbolic parameters with <code>assign_parameters()</code> before
-compilation; mid-circuit
-measurement, conditions, feed-forward, and general control flow are not yet
-compiler inputs.</p>
-<div class="language-python highlight"><pre><span></span><code><span class="n">theta</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="s2">"theta"</span><span class="p">)</span>
-<span class="n">template</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">LogicalProgram</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">bound</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">assign_parameters</span><span class="p">({</span><span class="n">theta</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">})</span>
-</code></pre></div>
-<p>The frontend offers the union of the current logical gate methods. Target
-normalization reports unsupported combinations: in particular, the current NA
-route rejects <code>sx()</code> and <code>reset()</code>. Such a failure is reported as a
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;PassError&lt;/span&gt;" href="../../api/compiler/#fatqat.compiler.PassError"><code>PassError</code></a> naming the pass and the underlying
-unsupported operation.</p>
-<p>OpenQASM remains an equal frontend through
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;compile_qasm_to_sc&lt;/span&gt;" href="../../api/compiler/#fatqat.compiler.compile_qasm_to_sc"><code>compile_qasm_to_sc</code></a> and
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;compile_qasm_to_na&lt;/span&gt;" href="../../api/compiler/#fatqat.compiler.compile_qasm_to_na"><code>compile_qasm_to_na</code></a>. Python and QASM
-inputs converge at the same immutable logical IR, so all later lowering is
-shared. The OpenQASM <code>U</code>, <code>u1</code>, <code>u2</code>, and <code>u3</code> families are normalized into
-the existing target rotations; they are not added to the SC or NA hardware
-dialects. Their default results use the same direct execution API:</p>
+<p>The architecture describes the zones and movement constraints used to create
+the neutral-atom schedule. FatQat also includes <code>scale_to_100</code> and
+<code>scale_to_500</code> profiles for larger studies.</p>
+<h2 id="compile-openqasm">Compile OpenQASM<a class="headerlink" href="#compile-openqasm" title="Permanent link">&para;</a></h2>
+<p>OpenQASM 2 and OpenQASM 3 can be compiled without first creating a
+<code>LogicalProgram</code>. Choose the function that matches the target:</p>
 <div class="language-python highlight"><pre><span></span><code><span class="n">qasm_source</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">OPENQASM 3.0;</span>
 <span class="s2">qubit[2] q;</span>
@@ -1650,6 +1712,60 @@ dialects. Their default results use the same direct execution API:</p>
 <span class="n">na_compiled</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">compile_qasm_to_na</span><span class="p">(</span><span class="n">qasm_source</span><span class="p">,</span> <span class="n">architecture</span><span class="p">)</span>
 <span class="n">na_result</span> <span class="o">=</span> <span class="n">na_backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">na_compiled</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 </code></pre></div>
+<p>OpenQASM <code>U</code>, <code>u1</code>, <code>u2</code>, and <code>u3</code> gates are converted to rotations supported
+by the target compilation route.</p>
+<h2 id="inspect-a-compilation">Inspect a compilation<a class="headerlink" href="#inspect-a-compilation" title="Permanent link">&para;</a></h2>
+<p>The default compile functions return a result that is ready for the matching
+simulator. It also keeps two useful views of the compilation:</p>
+<ul>
+<li><code>compiled.output</code> is the final compiler representation: an
+  <code>SCNativeProgram</code> for SC or a <code>ZonedPlan</code> for NA.</li>
+<li><code>compiled.route</code> lists the compiler stages that ran.</li>
+</ul>
+<p>Compiled programs keep classical registers in source declaration order,
+including unused registers and unwritten slots. Measurement order does not
+change count-key positions. Counts follow the usual
+<a href="../../api/result/#ordering-and-mutable-values">ordering and zero-fill rules</a>.</p>
+<p>To inspect an earlier representation, pass its IR identifier with <code>emit</code>. In
+that case the compiler returns a
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;CompilationResult&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/compiler/#fatqat.compiler.CompilationResult"><code>CompilationResult</code></a> for inspection rather
+than a simulator-ready result.</p>
+<p>For a neutral-atom compilation, you can animate the resulting schedule:</p>
+<div class="language-python highlight"><pre><span></span><code><span class="n">animation</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">create_na_animation</span><span class="p">(</span><span class="n">na_compiled</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">architecture</span><span class="p">)</span>
+<span class="n">fq</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">save_na_animation</span><span class="p">(</span><span class="n">animation</span><span class="p">,</span> <span class="s2">"na-schedule.mp4"</span><span class="p">)</span>
+</code></pre></div>
+<p>Creating the animation requires Matplotlib. Saving it as MP4 also requires
+FFmpeg on <code>PATH</code>.</p>
+<h2 id="bind-circuit-parameters">Bind circuit parameters<a class="headerlink" href="#bind-circuit-parameters" title="Permanent link">&para;</a></h2>
+<p>Keep symbolic parameters while building a reusable circuit, then bind numeric
+values before compiling:</p>
+<div class="language-python highlight"><pre><span></span><code><span class="n">theta</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="s2">"theta"</span><span class="p">)</span>
+
+<span class="n">template</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">LogicalProgram</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">template</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fq</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">RX</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">assign_parameters</span><span class="p">({</span><span class="n">theta</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">})</span>
+<span class="n">compiled</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">compile_to_sc</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">sc_backend</span><span class="p">)</span>
+</code></pre></div>
+<p><code>assign_parameters()</code> returns a new <code>LogicalProgram</code>; the template remains
+available for another set of values.</p>
+<h2 id="current-compiler-support">Current compiler support<a class="headerlink" href="#current-compiler-support" title="Permanent link">&para;</a></h2>
+<p>The compiler currently handles static circuits with numeric parameters. Both
+targets support I, H, X, Y, Z, S, Sdg, T, Tdg, RX, RY, RZ, Phase, U, U1, U2,
+U3, CX, CZ, and Swap. The SC route also supports SX and Reset. Measurements
+belong at the end of the circuit, and each classical slot can receive one
+measurement result.</p>
+<p>Other operations available to <code>LogicalProgram</code>, including classical
+conditions, feed-forward, mid-circuit measurement, multi-controlled gates,
+and qudit gates, can still be used in direct simulation but are not compiled
+yet. If a circuit uses an operation unavailable on its chosen target,
+compilation raises a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;PassError&lt;/span&gt;" href="../../api/compiler/#fatqat.compiler.PassError"><code>PassError</code></a> that identifies
+the compiler stage and operation.</p>
 
 
 

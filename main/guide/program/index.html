@@ -759,7 +759,7 @@
   <span class="md-ellipsis">
     
   
-    Compile a logical circuit
+    Compile and run a logical circuit
   
 
     
@@ -1698,9 +1698,10 @@ symbolic parameters, qubits and qudits, and direct physical controls. A Program
 records its resources and ordered instructions without deciding how a backend
 will execute them.</p>
 <p>If you want the compiler to map and route a static gate circuit before it is
-run, use <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LogicalProgram&lt;/span&gt;" href="../../api/compiler/#fatqat.LogicalProgram"><code>LogicalProgram</code></a> and the
-<a href="../compiler/">compiler workflow</a>. <code>Program</code> remains the execution and
-direct-control interface; users do not manually convert between the two.</p>
+run, construct a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LogicalProgram&lt;/span&gt;" href="../../api/logical-program/#fatqat.LogicalProgram"><code>LogicalProgram</code></a> instead. It keeps
+the same register and authoring model while restricting operations to the
+device-independent compiler frontend. The <a href="../compiler/">compiler workflow</a>
+describes its supported gates and source restrictions.</p>
 <p>This chapter begins with a small qubit circuit, then introduces registers,
 feedforward, reusable parameters, mixed local dimensions, drawing, and direct
 controls.</p>
@@ -2007,13 +2008,13 @@ validation behavior.</p>
         
         
           
-          <a href="../compiler/" class="md-footer__link md-footer__link--next" aria-label="Next: Compile a logical circuit">
+          <a href="../compiler/" class="md-footer__link md-footer__link--next" aria-label="Next: Compile and run a logical circuit">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Compile a logical circuit
+                Compile and run a logical circuit
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -605,7 +605,7 @@
   <span class="md-ellipsis">
     
   
-    Compile a logical circuit
+    Compile and run a logical circuit
   
 
     
@@ -903,6 +903,17 @@
     <span class="md-ellipsis">
       
         Draw measurement outcomes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#animate-a-compiled-neutral-atom-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Animate a compiled neutral-atom plan
       
     </span>
   </a>
@@ -1472,6 +1483,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#animate-a-compiled-neutral-atom-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Animate a compiled neutral-atom plan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#embed-style-and-save-figures" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1666,6 +1688,16 @@
 <li><code>stat="frequencies"</code> divides each count by the total number of shots; omit it to show raw counts.</li>
 </ol>
 </details>
+<h2 id="animate-a-compiled-neutral-atom-plan">Animate a compiled neutral-atom plan<a class="headerlink" href="#animate-a-compiled-neutral-atom-plan" title="Permanent link">&para;</a></h2>
+<p>A final NA compilation retains its physical <code>ZonedPlan</code> in <code>.output</code>. Animate
+that plan with the same architecture used for compilation:</p>
+<div class="language-python highlight"><pre><span></span><code><span class="n">animation</span> <span class="o">=</span> <span class="n">fq</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">create_na_animation</span><span class="p">(</span><span class="n">na_compiled</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">architecture</span><span class="p">)</span>
+<span class="n">fq</span><span class="o">.</span><span class="n">compiler</span><span class="o">.</span><span class="n">save_na_animation</span><span class="p">(</span><span class="n">animation</span><span class="p">,</span> <span class="s2">"na-schedule.mp4"</span><span class="p">)</span>
+</code></pre></div>
+<p>The animation shows transfers, atom movements, gate batches, and crosstalk
+events without changing the plan. Creating it requires Matplotlib; saving MP4
+requires FFmpeg on <code>PATH</code>. The <a href="../compiler/">compiler guide</a> shows how to
+produce <code>na_compiled</code> and load <code>architecture</code>.</p>
 <h2 id="embed-style-and-save-figures">Embed, style, and save figures<a class="headerlink" href="#embed-style-and-save-figures" title="Permanent link">&para;</a></h2>
 <p>Pass <code>ax=</code> to draw into an existing Matplotlib axis:</p>
 <div class="language-python highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -1673,7 +1705,10 @@
 <span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">program</span><span class="o">.</span><span class="n">interaction_frequency</span><span class="p">()</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Logical interactions"</span><span class="p">)</span>
 </code></pre></div>
-<p>Visualizations inherit Matplotlib's active style and <code>rcParams</code>; FATQAT does not apply a separate palette. A returned figure can be saved with ordinary Matplotlib APIs:</p>
+<p>FATQAT applies a consistent categorical palette when Matplotlib's default color
+cycle is active. An explicitly configured color cycle and other <code>rcParams</code>
+remain in effect, so plots still compose with an application's own theme. A
+returned figure can be saved with ordinary Matplotlib APIs:</p>
 <div class="language-python highlight"><pre><span></span><code><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"interactions.png"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">"tight"</span><span class="p">)</span>
 </code></pre></div>
 
